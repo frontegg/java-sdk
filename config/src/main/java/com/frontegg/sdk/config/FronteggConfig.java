@@ -10,6 +10,10 @@ public class FronteggConfig {
         return config;
     }
 
+    public void setUrlConfig(FronteggUrlConfig urlConfig) {
+        this.urlConfig = urlConfig;
+    }
+
     public FronteggUrlConfig getUrlConfig() {
         return urlConfig;
     }

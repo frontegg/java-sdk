@@ -11,5 +11,12 @@
 
     <artifactId>config</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.frontegg</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>
