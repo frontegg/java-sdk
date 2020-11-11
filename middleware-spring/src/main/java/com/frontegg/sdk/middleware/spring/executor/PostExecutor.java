@@ -22,7 +22,7 @@ public class PostExecutor extends AbstractExecutor {
     }
 
     public static <T> Optional<T> execute(RestTemplate restTemplate, Class<T> clazz, String url, Object body) {
-        return (Optional<T>) Optional.ofNullable(new PostExecutor(restTemplate, clazz, url, null).executePost(body));
+        return (Optional<T>) Optional.ofNullable(new PostExecutor(restTemplate, clazz, url, null).executePost(body, clazz));
     }
 
     protected HttpMethod getMethod() {
