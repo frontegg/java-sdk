@@ -3,9 +3,12 @@ package com.frontegg.sdk.middleware.spring.executor;
 import com.frontegg.sdk.middleware.response.BaseResponse;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 abstract class AbstractExecutor {
 
@@ -46,14 +49,16 @@ abstract class AbstractExecutor {
         }
     }
 
-    Object executePost(Object body) {
-        final ResponseEntity<? extends BaseResponse> responseEntity  = doPost(body);
-        validate(url, responseEntity);
-        return getData(responseEntity.getBody());
+    <T> Object executePost(Object body, Class<T> clazz) {
+        final ResponseEntity<T> responseEntity  = doPost(body, clazz);
+        return (T)responseEntity.getBody();
     }
 
-    private ResponseEntity<? extends BaseResponse> doPost(Object body) {
-        return restTemplate.postForEntity(url, new HttpEntity<>(body), BaseResponse.class);
+    private <T> ResponseEntity<T> doPost(Object body, Class<T> clazz) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        HttpEntity entity = new HttpEntity<>(body, headers);
+        return restTemplate.postForEntity(url, entity, clazz);
     }
 
 
