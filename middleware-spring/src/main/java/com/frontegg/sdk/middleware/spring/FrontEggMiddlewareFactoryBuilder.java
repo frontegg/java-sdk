@@ -1,5 +1,6 @@
 package com.frontegg.sdk.middleware.spring;
 
+import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.IFronteggMiddleware;
 
@@ -10,6 +11,7 @@ public class FrontEggMiddlewareFactoryBuilder {
     private boolean disableCors;
     private int maxRetries;
     private String cookieDomainRewrite;
+    private FronteggConfig fronteggConfig;
 
     public FrontEggMiddlewareFactoryBuilder withCredentials(String clientID, String apiKey) {
         this.apiKey = apiKey;
@@ -33,6 +35,11 @@ public class FrontEggMiddlewareFactoryBuilder {
 
     }
 
+    public FrontEggMiddlewareFactoryBuilder withConfigs(FronteggConfig fronteggConfig) {
+        this.fronteggConfig = fronteggConfig;
+        return this;
+    }
+
     public IFronteggMiddleware build() {
         FronteggOptions fronteggOptions = new FronteggOptions();
         fronteggOptions.setApiKey(apiKey);
@@ -40,6 +47,6 @@ public class FrontEggMiddlewareFactoryBuilder {
         fronteggOptions.setCookieDomainRewrite(cookieDomainRewrite);
         fronteggOptions.setDisableCors(disableCors);
         fronteggOptions.setMaxRetries(maxRetries);
-        return new FrontEggMiddlewareService(fronteggOptions);
+        return new FrontEggMiddlewareService(fronteggOptions, fronteggConfig);
     }
 }

@@ -10,7 +10,6 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.spring.client.ApiClient;
 import com.frontegg.sdk.middleware.spring.client.ApiClientFactory;
-import com.frontegg.sdk.middleware.spring.config.DefaultFronteggConfigProviderChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -28,16 +27,15 @@ public class FrontEggMiddlewareService implements IFronteggMiddleware {
     private FronteggOptions fronteggOptions;
     private FronteggAuthenticator authenticator;
     private ApiClientFactory apiClientFactory;
-    private DefaultFronteggConfigProviderChain configProviderChain = DefaultFronteggConfigProviderChain.getInstance();
     private FronteggConfig config;
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    public FrontEggMiddlewareService(FronteggOptions fronteggOptions) {
+    public FrontEggMiddlewareService(FronteggOptions fronteggOptions, FronteggConfig config) {
         this.fronteggOptions = fronteggOptions;
         validate(fronteggOptions);
         apiClientFactory = new ApiClientFactory(restTemplate);
-        config = configProviderChain.resolveConfigs();
+        this.config = config;
         IApiClient apiClient = new ApiClient(restTemplate);
         authenticator = new FronteggAuthenticator(fronteggOptions.getClientId(), fronteggOptions.getApiKey(), config, apiClient);
     }
