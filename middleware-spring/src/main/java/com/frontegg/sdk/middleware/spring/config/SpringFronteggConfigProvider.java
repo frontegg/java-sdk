@@ -5,10 +5,12 @@ import com.frontegg.sdk.config.ConfigProvider;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.config.FronteggUrlConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import static com.frontegg.sdk.config.FronteggUrlConfig.*;
 
+@Order(4)
 @Component
 public class SpringFronteggConfigProvider implements ConfigProvider {
 

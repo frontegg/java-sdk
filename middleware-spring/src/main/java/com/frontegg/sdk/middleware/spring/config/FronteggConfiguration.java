@@ -11,17 +11,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FronteggConfiguration {
 
-    @Autowired
-    private SpringFronteggConfigProvider springFronteggConfigProvider;
-
-
-    @Bean
-    public ConfigProvider configProvider() {
-        return new FronteggConfigProviderChain(
-                new EnvironmentVariableConfigProvider(),
-                new SystemPropertiesConfigProvider(),
-                new DefaultConfigProvider(),
-                springFronteggConfigProvider
-        );
-    }
+//    @Autowired
+//    private SpringFronteggConfigProvider springFronteggConfigProvider;
+//
+//
+//    @Bean
+//    public ConfigProvider configProvider() {
+//        return new FronteggConfigProviderChain(
+//                springFronteggConfigProvider,
+//                new EnvironmentVariableConfigProvider(),
+//                new SystemPropertiesConfigProvider(),
+//                new DefaultConfigProvider()
+//        );
+//    }
 }
