@@ -18,7 +18,7 @@ public class PostExecutor extends AbstractExecutor {
     }
 
     public static <T> Optional<T> execute(RestTemplate restTemplate, Class<T> clazz, String url, HttpEntity<Object> httpEntity) {
-        return (Optional<T>) Optional.ofNullable(new PostExecutor(restTemplate, clazz, url, httpEntity).execute());
+        return (Optional<T>) Optional.ofNullable(new PostExecutor(restTemplate, clazz, url, httpEntity).executeGet(clazz));
     }
 
     public static <T> Optional<T> execute(RestTemplate restTemplate, Class<T> clazz, String url, Object body) {

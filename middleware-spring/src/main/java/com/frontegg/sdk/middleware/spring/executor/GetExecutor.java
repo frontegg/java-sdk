@@ -18,7 +18,7 @@ public class GetExecutor extends AbstractExecutor {
     }
 
     public static <T> Optional<T> execute(RestTemplate restTemplate, Class<T> clazz, String url, HttpEntity<Object> httpEntity) {
-        return (Optional<T>) Optional.ofNullable(new GetExecutor(restTemplate, clazz, url, httpEntity).execute());
+        return (Optional<T>) Optional.ofNullable(new GetExecutor(restTemplate, clazz, url, httpEntity).executeGet(clazz));
     }
 
     protected HttpMethod getMethod() {

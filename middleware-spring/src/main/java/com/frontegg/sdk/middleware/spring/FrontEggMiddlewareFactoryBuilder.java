@@ -1,8 +1,10 @@
 package com.frontegg.sdk.middleware.spring;
 
 import com.frontegg.sdk.config.FronteggConfig;
+import com.frontegg.sdk.middleware.AuthMiddleware;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.IFronteggMiddleware;
+import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 
 public class FrontEggMiddlewareFactoryBuilder {
 
@@ -12,6 +14,8 @@ public class FrontEggMiddlewareFactoryBuilder {
     private int maxRetries;
     private String cookieDomainRewrite;
     private FronteggConfig fronteggConfig;
+    private AuthMiddleware authMiddleware;
+    private IFronteggContextResolver contextResolver;
 
     public FrontEggMiddlewareFactoryBuilder withCredentials(String clientID, String apiKey) {
         this.apiKey = apiKey;
@@ -40,6 +44,17 @@ public class FrontEggMiddlewareFactoryBuilder {
         return this;
     }
 
+    public FrontEggMiddlewareFactoryBuilder withAuthMiddleware(AuthMiddleware authMiddleware) {
+        this.authMiddleware = authMiddleware;
+        return this;
+    }
+
+    public FrontEggMiddlewareFactoryBuilder withContextResolver(IFronteggContextResolver contextResolver) {
+        this.contextResolver = contextResolver;
+        return this;
+
+    }
+
     public IFronteggMiddleware build() {
         FronteggOptions fronteggOptions = new FronteggOptions();
         fronteggOptions.setApiKey(apiKey);
@@ -47,6 +62,8 @@ public class FrontEggMiddlewareFactoryBuilder {
         fronteggOptions.setCookieDomainRewrite(cookieDomainRewrite);
         fronteggOptions.setDisableCors(disableCors);
         fronteggOptions.setMaxRetries(maxRetries);
+        fronteggOptions.setAuthMiddleware(authMiddleware);
+        fronteggOptions.setContextResolver(contextResolver);
         return new FrontEggMiddlewareService(fronteggOptions, fronteggConfig);
     }
 }
