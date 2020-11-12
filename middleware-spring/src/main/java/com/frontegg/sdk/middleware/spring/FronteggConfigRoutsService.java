@@ -1,7 +1,9 @@
 package com.frontegg.sdk.middleware.spring;
 
 import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
+import com.frontegg.sdk.middleware.spring.routes.KeyValPair;
 import com.frontegg.sdk.middleware.spring.routes.RoutesConfig;
 import com.frontegg.sdk.middleware.spring.routes.VendorClientPublicRouts;
 
@@ -43,18 +45,19 @@ public class FronteggConfigRoutsService {
         return false;
     }
 
-    private boolean isValidateQueryParams(HttpServletRequest request, List<Map<String, String>> withQueryParams) {
+    private boolean isValidateQueryParams(HttpServletRequest request, List<KeyValPair> withQueryParams) {
 
-        Map<String, String> queryMap = request.getParameterMap();
-        boolean hasAllQueryParams = false;
-        for (Map<String, String> queryParam : withQueryParams) {
-            for (String key : queryParam.keySet()) {
-                if (!queryMap.keySet().contains(key)) hasAllQueryParams = false;
+        Map<String, Object> queryMap = request.getParameterMap();
+        boolean hasAllQueryParams = true;
 
-                //if (queryMap.get(key).equals(queryParam.get(key))) hasAllQueryParams = false;
+        for (KeyValPair keyValPair : withQueryParams) {
+            String key = keyValPair.getKey();
+            String val = keyValPair.getValue();
+            if (!queryMap.keySet().contains(key)) hasAllQueryParams =  false;
+            if (!StringHelper.stringValueOf(queryMap.get(key)).equals(val)) hasAllQueryParams = false;
 
-                if (!hasAllQueryParams) return false;
-            }
+
+            if (!hasAllQueryParams) return false;
         }
          return hasAllQueryParams;
     }

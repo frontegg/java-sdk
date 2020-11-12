@@ -63,8 +63,7 @@ public class ApiClient implements IApiClient {
             httpHeaders.put(key, Arrays.asList(proxyHeaders.get(key)));
         }
 
-
-        HttpEntity httpEntity = new HttpEntity(headers);
+        HttpEntity httpEntity = new HttpEntity(httpHeaders);
         return httpEntity;
     }
 

@@ -1,13 +1,12 @@
 package com.frontegg.sdk.middleware.spring.routes;
 
 import java.util.List;
-import java.util.Map;
 
 public class VendorClientPublicRouts {
     private String method;
     private String url;
     private String description;
-    private List<Map<String, String>> withQueryParams;
+    private List<KeyValPair> withQueryParams;
 
     public String getMethod() {
         return method;
@@ -33,11 +32,11 @@ public class VendorClientPublicRouts {
         this.description = description;
     }
 
-    public List<Map<String, String>> getWithQueryParams() {
+    public List<KeyValPair> getWithQueryParams() {
         return withQueryParams;
     }
 
-    public void setWithQueryParams(List<Map<String, String>> withQueryParams) {
+    public void setWithQueryParams(List<KeyValPair> withQueryParams) {
         this.withQueryParams = withQueryParams;
     }
 }
