@@ -18,22 +18,11 @@ import java.util.Optional;
 
 public class ApiClient implements IApiClient {
 
-    private static final String BASE_URL = "https://api.frontegg.com/";
     private RestTemplate restTemplate;
-    private String url;
     private HttpHeaders httpHeaders = new HttpHeaders();
 
     public ApiClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-    }
-
-
-    public <T> Optional<T> get(Class<T> clazz, Map<String,String> queryParams) {
-        return GetExecutor.execute(restTemplate, clazz, buildUrl(clazz), createHttpEntity());
-    }
-
-    private <T> String buildUrl(Class<T> clazz) {
-        return BASE_URL;
     }
 
     private HttpEntity<Object> createHttpEntity() {
@@ -55,23 +44,17 @@ public class ApiClient implements IApiClient {
         return httpEntity;
     }
 
-
-    private <R> HttpEntity<Object> createHttpEntity(HttpServletRequest request,
-                                                    Map<String, String> proxyHeaders) {
+    private HttpEntity<Object> createHttpEntity(HttpServletRequest request,
+                                                Map<String, String> proxyHeaders) {
 
         HttpHeaders headers = new HttpHeaders();
-        httpHeaders.putAll(httpHeaders);
+        headers.putAll(httpHeaders);
         for (String key : proxyHeaders.keySet()) {
-            httpHeaders.put(key, Arrays.asList(proxyHeaders.get(key)));
+            headers.put(key, Arrays.asList(proxyHeaders.get(key)));
         }
 
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        HttpEntity httpEntity = new HttpEntity(headers);
         return httpEntity;
-    }
-
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     @Override
@@ -90,6 +73,7 @@ public class ApiClient implements IApiClient {
                                    HttpServletResponse response,
                                    Map<String, String> proxyHeaders,
                                    Class<T> clazz) {
+
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         if (!StringHelper.isBlank(request.getQueryString())) {
             builder.query(request.getQueryString());

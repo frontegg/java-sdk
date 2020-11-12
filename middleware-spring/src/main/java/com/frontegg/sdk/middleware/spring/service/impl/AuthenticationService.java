@@ -1,13 +1,20 @@
 package com.frontegg.sdk.middleware.spring.service.impl;
 
 import com.frontegg.sdk.common.util.StringHelper;
+import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
+import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
+import com.frontegg.sdk.middleware.spring.context.ContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthenticationService {
+
+    @Autowired
+    private FronteggAuthenticator authenticator;
 
     public void withAuthentication(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("authorization");
@@ -29,5 +36,10 @@ public class AuthenticationService {
 
     private void verifyToken(String token) {
 
+    }
+
+    public void authenticateApp() {
+        Authentication authentication = authenticator.authenticate();
+        ContextHolder.setAuthenctication(authentication);
     }
 }

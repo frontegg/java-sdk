@@ -24,6 +24,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        authenticationService.authenticateApp();
+
         if (isFronteggPublicRoute(request)) {
             logger.debug("will pass request threw the auth middleware");
             authenticationService.withAuthentication(request);

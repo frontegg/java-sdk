@@ -5,9 +5,7 @@ import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.IFronteggService;
-import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 import com.frontegg.sdk.middleware.context.RequestContext;
 import com.frontegg.sdk.middleware.spring.context.ContextHolder;
 import org.slf4j.Logger;
@@ -27,20 +25,10 @@ public class FrontEggService implements IFronteggService {
 
     private static final Logger logger = LoggerFactory.getLogger(FrontEggService.class);
 
-    private FronteggAuthenticator authenticator;
-
     @Autowired
     private FronteggConfig config;
-
-    @Autowired
-    private IFronteggContextResolver contextResolver;
     @Autowired
     private IApiClient apiClient;
-
-    @Value("${frontegg.clientId}")
-    private String clientID;
-    @Value("${frontegg.apiKey}")
-    private String apiKey;
 
     @Value("${frontegg.settings.disableCors:#{true}}")
     private boolean disableCors;
@@ -48,24 +36,6 @@ public class FrontEggService implements IFronteggService {
     private int maxRetries;
     @Value("${frontegg.settings.cookieDomainRewrite:#{''}}")
     private String cookieDomainRewrite;
-
-    public FrontEggService() {
-        validate();
-        authenticator = new FronteggAuthenticator(clientID, apiKey, config, apiClient);
-    }
-
-
-    private void validate() {
-
-        if (StringHelper.isBlank(clientID)) {
-            throw new InvalidParameterException("Missing client ID");
-        }
-
-        if (StringHelper.isBlank(apiKey)) {
-            throw new InvalidParameterException("Missing api key");
-        }
-    }
-
 
     public Object doProcess(HttpServletRequest request, HttpServletResponse response) {
 
@@ -94,9 +64,10 @@ public class FrontEggService implements IFronteggService {
     }
 
     private Map<String, String> initProxyHeaders(HttpServletRequest request, FronteggContext context) {
+        String token = ContextHolder.getAuthentication().getAccessToken();
         String hostName = request.getLocalAddr();
         Map<String, String> headers = new HashMap<>();
-        headers.put("x-access-token", authenticator.getAccessToken());
+        headers.put("x-access-token", token);
         headers.put("frontegg-tenant-id", context.getTenantId() == null  ? "" : context.getTenantId());
         headers.put("frontegg-user-id", context.getUserId() == null  ? "" : context.getUserId());
         headers.put("frontegg-vendor-host", hostName);
