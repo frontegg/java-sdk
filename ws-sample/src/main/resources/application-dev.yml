@@ -1,0 +1,14 @@
+frontegg:
+  clientId: 9c666e80-b5bd-46e5-90ec-972c89bbdb24
+  apiKey: d6f6f4d5-3a89-4b83-ae44-aa6c05d382ed
+  config:
+    urls:
+      baseUrl: https://api.frontegg.com
+      authenticationService: /vendors/auth/token
+      auditsService: /audits/
+      notificationService: /notification/
+      tenantsService: /tenants/
+      metadataService: /metadata/
+      teamService: /team
+      eventService: /event
+      identityService: /identity
