@@ -14,7 +14,6 @@ import com.frontegg.sdk.middleware.spring.client.ApiClient;
 import com.frontegg.sdk.middleware.spring.client.ApiClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,7 +74,8 @@ public class FrontEggMiddlewareService implements IFronteggMiddleware {
     public void doProcess(HttpServletRequest request, HttpServletResponse response) {
         String method = request.getMethod();
 
-        if (authMiddleware != null && fronteggConfigRoutsService.isFronteggPublicRoute(request)) {
+
+        if (authMiddleware != null && !fronteggConfigRoutsService.isFronteggPublicRoute(request)) {
             logger.debug("will pass request threw the auth middleware");
             try {
                 callMiddleware(request, response, authMiddleware);
@@ -120,12 +120,19 @@ public class FrontEggMiddlewareService implements IFronteggMiddleware {
         authMiddleware.callMiddleware(request, response);
     }
 
+    /**
+     * TODO enable retry mechanism
+     * @param request
+     * @param response
+     * @param context
+     */
     private void proxyRequest(HttpServletRequest request, HttpServletResponse response, FronteggContext context) {
         logger.info("going to proxy request - " + request.getRequestURI() + " to  " + config.getUrlConfig().getBaseUrl());
         IApiClient apiClient = new ApiClient(restTemplate);
         Map<String, String> proxyHeaders = initProxyHeaders(request, context);
 
-        Optional<Object> val = apiClient.service(config.getUrlConfig().getBaseUrl(), request, response, proxyHeaders, Object.class);
+        String url = config.getUrlConfig().getBaseUrl() + request.getRequestURI();
+        Optional<Object> val = apiClient.service(url, request, response, proxyHeaders, Object.class);
         logger.info("Response  = " + val.get());
     }
 

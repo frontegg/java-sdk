@@ -16,7 +16,7 @@ public class AuthClient {
     }
 
     public AuthResponse authenticate(String clientId, String apiKey, FronteggConfig config) {
-        AuthResponse authResponse = null;
+        AuthResponse authResponse;
         try {
             AuthRequest request = new AuthRequest(clientId, apiKey);
             Gson gson = new Gson();
