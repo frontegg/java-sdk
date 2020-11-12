@@ -30,8 +30,9 @@ public class FronteggAuthenticator {
         authenticate(false);
     }
 
-    private String authenticate(boolean force) {
-        if (!force && !StringHelper.isBlank(accessToken)) return this.accessToken;
+    private Authentication authenticate(boolean force) {
+        if (!force && !StringHelper.isBlank(accessToken))
+            return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
 
         logger.info("posting authentication request");
 
@@ -46,7 +47,7 @@ public class FronteggAuthenticator {
         long nextRefresh = (long) ((response.getExpiresIn() * 1000) * 0.8);
         this.accessTokenExpiry = LocalDateTime.now().plusSeconds(nextRefresh);
 
-        return this.accessToken;
+        return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
     }
 
     public void refreshAuthentication() {

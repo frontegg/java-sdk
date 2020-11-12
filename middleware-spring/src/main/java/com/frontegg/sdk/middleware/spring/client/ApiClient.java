@@ -1,12 +1,14 @@
 package com.frontegg.sdk.middleware.spring.client;
 
 import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.spring.executor.GetExecutor;
 import com.frontegg.sdk.middleware.spring.executor.PostExecutor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,7 +90,11 @@ public class ApiClient implements IApiClient {
                                    HttpServletResponse response,
                                    Map<String, String> proxyHeaders,
                                    Class<T> clazz) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        if (!StringHelper.isBlank(request.getQueryString())) {
+            builder.query(request.getQueryString());
+        }
         HttpMethod method = HttpMethod.resolve(request.getMethod());
-        return Optional.of(restTemplate.exchange(url,method, createHttpEntity(request, proxyHeaders), clazz).getBody());
+        return Optional.of(restTemplate.exchange(builder.toUriString(), method, createHttpEntity(request, proxyHeaders), clazz).getBody());
     }
 }

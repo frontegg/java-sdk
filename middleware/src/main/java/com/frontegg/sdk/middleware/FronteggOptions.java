@@ -6,7 +6,6 @@ public class FronteggOptions {
     private String clientId;
     private String apiKey;
     private IFronteggContextResolver contextResolver;
-    private AuthMiddleware authMiddleware;
     private boolean disableCors;
     private String cookieDomainRewrite;
     private int maxRetries;
@@ -34,14 +33,6 @@ public class FronteggOptions {
 
     public void setContextResolver(IFronteggContextResolver contextResolver) {
         this.contextResolver = contextResolver;
-    }
-
-    public AuthMiddleware getAuthMiddleware() {
-        return authMiddleware;
-    }
-
-    public void setAuthMiddleware(AuthMiddleware authMiddleware) {
-        this.authMiddleware = authMiddleware;
     }
 
     public boolean isDisableCors() {

@@ -1,7 +1,9 @@
 package com.frontegg.ws.sample;
 
-import com.frontegg.sdk.middleware.IFronteggMiddleware;
+import com.frontegg.sdk.middleware.IFronteggService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,12 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 public class TestContreoller {
 
     @Autowired
-    private IFronteggMiddleware fronteggMiddleware;
+    private IFronteggService fronteggMiddleware;
 
 
     @RequestMapping(value = "/{path}", method = {RequestMethod.GET, RequestMethod.POST})
-    public String doProcess(@PathVariable String path, HttpServletRequest request, HttpServletResponse response) {
-        fronteggMiddleware.doProcess(request, response);
-        return String.valueOf(response.getStatus());
+    public ResponseEntity<?> doProcess(@PathVariable String path,
+                                       HttpServletRequest request,
+                                       HttpServletResponse response) {
+
+        return new ResponseEntity<>(
+                fronteggMiddleware.doProcess(request, response),
+                HttpStatus.OK
+        );
     }
 }
