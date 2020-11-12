@@ -23,11 +23,10 @@ public class FronteggAuthenticator {
         this.apiKey = apiKey;
         this.config = config;
         authClient = new AuthClient(client);
-        authenticate();
     }
 
-    private void authenticate() {
-        authenticate(false);
+    public Authentication authenticate() {
+        return authenticate(false);
     }
 
     private Authentication authenticate(boolean force) {
@@ -50,8 +49,8 @@ public class FronteggAuthenticator {
         return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
     }
 
-    public void refreshAuthentication() {
-        this.authenticate(true);
+    public Authentication refreshAuthentication() {
+        return this.authenticate(true);
     }
 
     public void validateAuthentication() {
