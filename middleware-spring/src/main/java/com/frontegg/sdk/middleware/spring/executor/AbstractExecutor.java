@@ -62,4 +62,14 @@ abstract class AbstractExecutor {
     }
 
 
+    <T> Object executeGet(Class<T> clazz) {
+        final ResponseEntity<T> responseEntity  = doGet(clazz);
+        return (T)responseEntity.getBody();
+    }
+
+    private <T> ResponseEntity<T> doGet(Class<T> clazz) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        return restTemplate.getForEntity(url, clazz);
+    }
 }

@@ -1,11 +1,11 @@
 package com.frontegg.sdk.middleware;
 
-import com.frontegg.sdk.middleware.context.FronteggContextResolver;
+import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 
 public class FronteggOptions {
     private String clientId;
     private String apiKey;
-    private FronteggContextResolver contextResolver;
+    private IFronteggContextResolver contextResolver;
     private AuthMiddleware authMiddleware;
     private boolean disableCors;
     private String cookieDomainRewrite;
@@ -28,11 +28,11 @@ public class FronteggOptions {
         this.apiKey = apiKey;
     }
 
-    public FronteggContextResolver getContextResolver() {
+    public IFronteggContextResolver getContextResolver() {
         return contextResolver;
     }
 
-    public void setContextResolver(FronteggContextResolver contextResolver) {
+    public void setContextResolver(IFronteggContextResolver contextResolver) {
         this.contextResolver = contextResolver;
     }
 
