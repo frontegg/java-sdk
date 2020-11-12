@@ -3,7 +3,7 @@ package com.frontegg.sdk.middleware;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface IFronteggMiddleware {
+public interface IFronteggService {
 
-    void doProcess(HttpServletRequest request, HttpServletResponse response);
+    Object doProcess(HttpServletRequest request, HttpServletResponse response);
 }

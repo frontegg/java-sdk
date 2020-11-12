@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.config;
 
-import com.frontegg.sdk.middleware.IFronteggMiddleware;
+import com.frontegg.sdk.middleware.IFronteggService;
 import com.frontegg.sdk.middleware.spring.FrontEggMiddlewareFactoryBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class FronteggAutoconfiguration {
     private String cookieDomainRewrite;
 
     @Bean
-    public IFronteggMiddleware fronteggMiddleware() {
+    public IFronteggService fronteggMiddleware() {
         return new FrontEggMiddlewareFactoryBuilder()
                 .withCredentials(clientID, apiKey)
                 //.withAuthMiddleware()
