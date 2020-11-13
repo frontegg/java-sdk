@@ -2,12 +2,14 @@ package com.frontegg.ws.sample;
 
 import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.config.*;
+import com.frontegg.sdk.middleware.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 import com.frontegg.sdk.middleware.spring.client.ApiClient;
 import com.frontegg.sdk.middleware.spring.config.FronteggConfigProviderChain;
 import com.frontegg.sdk.middleware.spring.config.SpringFronteggConfigProvider;
 import com.frontegg.sdk.middleware.spring.context.DefaultFronteggContextResolver;
+import com.frontegg.sdk.middleware.spring.service.impl.PermissionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +49,10 @@ public class MyAppConfiguration {
     public FronteggConfig fronteggConfig() {
         return configProvider().resolveConfigs();
     }
+    @Bean
+    public IPermissionEvaluator permissionEvaluator() {
+        return new PermissionEvaluator();
+    }
 
     @Bean
     public IApiClient apiClient() {
@@ -57,5 +63,4 @@ public class MyAppConfiguration {
     public FronteggAuthenticator fronteggAuthenticator() {
         return new FronteggAuthenticator(clientID, apiKey, fronteggConfig(), apiClient());
     }
-
 }

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController()
 @RequestMapping("/frontegg")
-public class TestContreoller {
+public class FrontEggController {
 
     @Autowired
     private IFronteggService fronteggMiddleware;

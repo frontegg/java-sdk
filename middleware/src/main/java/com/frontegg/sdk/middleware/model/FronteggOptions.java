@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware;
+package com.frontegg.sdk.middleware.model;
 
 import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 

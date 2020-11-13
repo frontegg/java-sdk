@@ -1,5 +1,8 @@
 package com.frontegg.sdk.common.util;
 
+import java.util.Collection;
+import java.util.List;
+
 public class StringHelper {
 
     public static boolean isBlank(String val) {
@@ -25,5 +28,9 @@ public class StringHelper {
         }
 
         return o.toString();
+    }
+
+    public static boolean startWithAny(Collection<String> routs, String url) {
+        return routs.stream().filter(s -> s.startsWith(url)).findAny().isPresent();
     }
 }

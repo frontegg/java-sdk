@@ -1,8 +1,6 @@
 package com.frontegg.sdk.middleware.spring.service.impl;
 
 import com.frontegg.sdk.api.client.IApiClient;
-import com.frontegg.sdk.common.exception.InvalidParameterException;
-import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.IFronteggService;
 import com.frontegg.sdk.middleware.context.FronteggContext;
@@ -50,7 +48,7 @@ public class FrontEggService implements IFronteggService {
 //        if (!req.frontegg) {
 //            req.frontegg = {};
 //        }
-//
+
 //        req.frontegg.retryCount = 0;
 
         RequestContext context = ContextHolder.getRequestContext();

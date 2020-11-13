@@ -1,7 +1,5 @@
 package com.frontegg.sdk.middleware.context;
 
-import com.frontegg.sdk.middleware.context.FronteggContext;
-
 public class RequestContext {
 
     private String requestPath;
