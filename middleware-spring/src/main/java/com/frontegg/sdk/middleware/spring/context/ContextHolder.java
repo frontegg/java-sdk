@@ -11,8 +11,8 @@ public class ContextHolder {
     public static Authentication getAuthentication() {
         return authContextHolder.get();
     }
-    public static void setAuthenctication(Authentication authenctication) {
-        authContextHolder.set(authenctication);
+    public static void setAuthentication(Authentication authentication) {
+        authContextHolder.set(authentication);
     }
     public static void removeAuthenticationContext() {
         authContextHolder.remove();

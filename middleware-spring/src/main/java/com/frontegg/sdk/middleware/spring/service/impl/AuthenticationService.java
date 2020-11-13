@@ -40,6 +40,6 @@ public class AuthenticationService {
 
     public void authenticateApp() {
         Authentication authentication = authenticator.authenticate();
-        ContextHolder.setAuthenctication(authentication);
+        ContextHolder.setAuthentication(authentication);
     }
 }
