@@ -3,26 +3,31 @@ package com.frontegg.sdk.middleware.spring.service.impl;
 import com.frontegg.sdk.common.exception.InsuffisiantAccessException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
+import com.frontegg.sdk.config.WhiteListConfig;
 import com.frontegg.sdk.middleware.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.model.Permission;
-import com.frontegg.sdk.middleware.permission.FrontEggPermissionEnum;
-import com.frontegg.sdk.middleware.permission.PermissionActionEnum;
+import com.frontegg.sdk.middleware.model.FrontEggPermissionEnum;
+import com.frontegg.sdk.middleware.model.PermissionActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class PermissionEvaluator implements IPermissionEvaluator {
+    private static final Logger logger = LoggerFactory.getLogger(PermissionEvaluator.class);
 
     //TODO make it configurable
     public static final String CONTEXT_MAIN_PATH = "/frontegg";
 
-
-    private static final Logger logger = LoggerFactory.getLogger(PermissionEvaluator.class);
+    @Autowired
+    private WhiteListConfig whiteListConfig;
 
     @Override
     public void validatePermissions(HttpServletRequest request, FronteggContext context) {
@@ -44,26 +49,25 @@ public class PermissionEvaluator implements IPermissionEvaluator {
             return;
         }
 
-
-
         String url = HttpUtil.getRequestUrl(request.getRequestURI(), CONTEXT_MAIN_PATH);
 
-        if (isValidatePermission(url, request.getMethod(), permissions)) {
-            return;
-        }
+        if (isWhiteListUrl(url)) return;
 
-//
-//        for (const whiteListed of Whitelist) {
-//            if (url.startsWith(whiteListed)) {
-//                logger.info("URL ${url} is whitelisted");
-//                return;
-//            }
-//        }
-
+        if (isValidatePermission(url, request.getMethod(), permissions)) return;
 
 
         logger.error("No matching permission for "+ request.getMethod() + " " + url + ". Permissions : " + permissions);
         throw new InsuffisiantAccessException("No matching permission for " + request.getMethod() + " " + url);
+    }
+
+    private boolean isWhiteListUrl(String url) {
+        for (String whiteListed : whiteListConfig.getUrls()) {
+            if (url.startsWith(whiteListed)) {
+                logger.info("URL " + url + " is whitelisted");
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isValidatePermission(String url, String method, List<Permission> permissions) {

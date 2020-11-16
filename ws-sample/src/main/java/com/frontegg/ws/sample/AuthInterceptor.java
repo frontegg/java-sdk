@@ -1,12 +1,11 @@
 package com.frontegg.ws.sample;
 
-import com.frontegg.sdk.middleware.spring.service.impl.AuthenticationService;
 import com.frontegg.sdk.middleware.spring.service.IFronteggRouteService;
+import com.frontegg.sdk.middleware.spring.service.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,12 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
         authenticationService.authenticateApp();
 
-        if (isFronteggPublicRoute(request)) {
+        if (request.getMethod().equals("OPTIONS")) {
+            response.setStatus(204);
+            return false;
+        }
+
+        if (!isFronteggPublicRoute(request)) {
             logger.debug("will pass request threw the auth middleware");
             authenticationService.withAuthentication(request);
             if (response.containsHeader("headersSent")) {
@@ -41,20 +45,5 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     private boolean isFronteggPublicRoute(HttpServletRequest request) {
         return fronteggRouteService.isFronteggPublicRoute(request);
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        super.postHandle(request, response, handler, modelAndView);
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        super.afterCompletion(request, response, handler, ex);
-    }
-
-    @Override
-    public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        super.afterConcurrentHandlingStarted(request, response, handler);
     }
 }

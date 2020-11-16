@@ -1,6 +1,7 @@
 package com.frontegg.sdk.middleware.spring.service.impl;
 
 import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.spring.routes.KeyValPair;
@@ -25,7 +26,7 @@ public class FronteggConfigRoutsService implements IFronteggRouteService {
     public boolean isFronteggPublicRoute(HttpServletRequest request) {
         RoutesConfig routesConfig = fetchRoutesConfig();
         if (routesConfig == null || routesConfig.getVendorClientPublicRoutes() == null) return false;
-        String path = request.getRequestURI().replace("/", "");
+        String path = HttpUtil.getRequestUrl(request.getRequestURI(), "/frontegg").replaceFirst("/", "");
 
         for (VendorClientPublicRouts vendorClientPublicRouts : routesConfig.getVendorClientPublicRoutes()) {
             if (!path.equals(vendorClientPublicRouts.getUrl())) {

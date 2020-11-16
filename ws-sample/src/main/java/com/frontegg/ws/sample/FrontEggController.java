@@ -1,33 +1,29 @@
 package com.frontegg.ws.sample;
 
+import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.middleware.IFronteggService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController()
-@RequestMapping("/frontegg")
+@RequestMapping("/frontegg/")
 public class FrontEggController {
 
     @Autowired
     private IFronteggService fronteggMiddleware;
 
 
-    @RequestMapping(value = "/{path}", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<?> doProcess(@PathVariable String path,
-                                       HttpServletRequest request,
+    @CrossOrigin()
+    @RequestMapping(value = "**", method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<?> doProcess(HttpServletRequest request,
                                        HttpServletResponse response) {
 
-        return new ResponseEntity<>(
-                fronteggMiddleware.doProcess(request, response),
-                HttpStatus.OK
-        );
+        FronteggHttpResponse<Object> fronteggHttpResponse = fronteggMiddleware.doProcess(request, response);
+        return new ResponseEntity<>(fronteggHttpResponse.getBody(), HttpStatus.resolve(fronteggHttpResponse.getStatusCode()));
     }
 }

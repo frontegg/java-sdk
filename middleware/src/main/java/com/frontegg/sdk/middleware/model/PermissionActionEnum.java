@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.permission;
+package com.frontegg.sdk.middleware.model;
 
 public enum PermissionActionEnum {
 

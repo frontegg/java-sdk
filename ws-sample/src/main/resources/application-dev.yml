@@ -1,6 +1,6 @@
 frontegg:
-  clientId: 9c666e80-b5bd-46e5-90ec-972c89bbdb24
-  apiKey: d6f6f4d5-3a89-4b83-ae44-aa6c05d382ed
+  clientId: 0677451a-bddc-4e9a-8c84-d98b220e1881
+  apiKey: f940981e-acf6-42a0-bca4-39d9f732a516
   config:
     urls:
       baseUrl: https://api.frontegg.com
@@ -12,3 +12,5 @@ frontegg:
       teamService: /team
       eventService: /event
       identityService: /identity
+  whitelist:
+    - /metadata

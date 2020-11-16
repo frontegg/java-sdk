@@ -10,16 +10,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private AuthInterceptor authInterceptor;
-    @Autowired
-    private PermissionCheckerInterceptor permissionCheckerInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/frontegg/**");
-
-        registry.addInterceptor(permissionCheckerInterceptor)
-                .addPathPatterns("/frontegg/**")
-                .excludePathPatterns("/metadata");
     }
 }
