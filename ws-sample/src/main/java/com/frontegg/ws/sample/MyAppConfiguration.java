@@ -1,15 +1,17 @@
 package com.frontegg.ws.sample;
 
 import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.audit.AuditClient;
+import com.frontegg.sdk.audit.IAuditClient;
 import com.frontegg.sdk.config.*;
-import com.frontegg.sdk.middleware.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 import com.frontegg.sdk.middleware.spring.client.ApiClient;
 import com.frontegg.sdk.middleware.spring.config.FronteggConfigProviderChain;
+import com.frontegg.sdk.middleware.spring.config.FronteggWhiteListProviderChain;
 import com.frontegg.sdk.middleware.spring.config.SpringFronteggConfigProvider;
+import com.frontegg.sdk.middleware.spring.config.SpringWhiteConfigProvider;
 import com.frontegg.sdk.middleware.spring.context.DefaultFronteggContextResolver;
-import com.frontegg.sdk.middleware.spring.service.impl.PermissionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +31,8 @@ public class MyAppConfiguration {
 
     @Autowired
     private SpringFronteggConfigProvider springFronteggConfigProvider;
+    @Autowired
+    private SpringWhiteConfigProvider springWhiteConfigProvider;
 
     @Bean
     public ConfigProvider configProvider() {
@@ -37,6 +41,14 @@ public class MyAppConfiguration {
                 new EnvironmentVariableConfigProvider(),
                 new SystemPropertiesConfigProvider(),
                 new DefaultConfigProvider()
+        );
+    }
+
+    @Bean
+    public WhiteListProvider whiteListProvider() {
+        return new FronteggWhiteListProviderChain(
+                springWhiteConfigProvider,
+                new DefaultWhiteListProvider()
         );
     }
 
@@ -50,8 +62,8 @@ public class MyAppConfiguration {
         return configProvider().resolveConfigs();
     }
     @Bean
-    public IPermissionEvaluator permissionEvaluator() {
-        return new PermissionEvaluator();
+    public WhiteListConfig whiteListConfig() {
+        return whiteListProvider().resolveConfigs();
     }
 
     @Bean
@@ -62,5 +74,10 @@ public class MyAppConfiguration {
     @Bean
     public FronteggAuthenticator fronteggAuthenticator() {
         return new FronteggAuthenticator(clientID, apiKey, fronteggConfig(), apiClient());
+    }
+
+    @Bean
+    public IAuditClient auditClient() {
+        return new AuditClient(fronteggAuthenticator(), apiClient(), fronteggConfig());
     }
 }

@@ -1,9 +1,6 @@
 package com.frontegg.sdk.middleware.config;
 
-import com.frontegg.sdk.middleware.IFronteggService;
-import com.frontegg.sdk.middleware.spring.FrontEggMiddlewareFactoryBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,14 +20,14 @@ public class FronteggAutoconfiguration {
     @Value("${frontegg.settings.cookieDomainRewrite#{''}}")
     private String cookieDomainRewrite;
 
-    @Bean
-    public IFronteggService fronteggMiddleware() {
-        return new FrontEggMiddlewareFactoryBuilder()
-                .withCredentials(clientID, apiKey)
-                //.withAuthMiddleware()
-                .disableCors(disableCors)
-                .maxRetries(maxRetries)
-                .cookieDomainRewrite(cookieDomainRewrite)
-                .build();
-    }
+//    @Bean
+//    public IFronteggService fronteggMiddleware() {
+//        return new FrontEggMiddlewareFactoryBuilder()
+//                .withCredentials(clientID, apiKey)
+//                //.withAuthMiddleware()
+//                .disableCors(disableCors)
+//                .maxRetries(maxRetries)
+//                .cookieDomainRewrite(cookieDomainRewrite)
+//                .build();
+//    }
 }

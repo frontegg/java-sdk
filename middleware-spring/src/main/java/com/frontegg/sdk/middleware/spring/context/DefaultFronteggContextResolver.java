@@ -4,18 +4,19 @@ import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 import com.frontegg.sdk.middleware.context.RequestContext;
-import com.frontegg.sdk.middleware.model.Permission;
-import com.frontegg.sdk.middleware.permission.FrontEggPermissionEnum;
-import com.frontegg.sdk.middleware.permission.PermissionActionEnum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
 
+@Component
 public class DefaultFronteggContextResolver implements IFronteggContextResolver {
 
     //TODO make it configurable
     public static final String CONTEXT_MAIN_PATH = "/frontegg";
+
+    @Autowired
+    private IPermissionResolver permissionResolver;
 
     @Override
     public RequestContext resolveContext(HttpServletRequest request) {
@@ -27,24 +28,11 @@ public class DefaultFronteggContextResolver implements IFronteggContextResolver 
 
 
         FronteggContext fronteggContext = new FronteggContext();
-        fronteggContext.setPermissions(getAppPermissions());
+        fronteggContext.setPermissions(permissionResolver.resolveAppPermissions());
         fronteggContext.setUserId("");
         fronteggContext.setTenantId("");
         requestContext.setFronteggContext(fronteggContext);
 
         return requestContext;
-    }
-
-    public List<Permission> getAppPermissions() {
-        return Arrays.asList(
-                FrontEggPermissionEnum.AUDITS.with(
-                        PermissionActionEnum.READ,
-                        PermissionActionEnum.STATS
-                ),
-
-                FrontEggPermissionEnum.TENANTS.with(
-                        PermissionActionEnum.ALL
-                )
-        );
     }
 }

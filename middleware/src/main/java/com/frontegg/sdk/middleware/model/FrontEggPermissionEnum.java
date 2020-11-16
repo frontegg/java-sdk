@@ -1,6 +1,4 @@
-package com.frontegg.sdk.middleware.permission;
-
-import com.frontegg.sdk.middleware.model.Permission;
+package com.frontegg.sdk.middleware.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

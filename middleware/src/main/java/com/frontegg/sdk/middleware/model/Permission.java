@@ -1,5 +1,7 @@
 package com.frontegg.sdk.middleware.model;
 
+import java.util.Arrays;
+
 public class Permission {
 
     private String rootPermission;
@@ -19,5 +21,13 @@ public class Permission {
 
     public void setActionPermissions(String[] actionPermissions) {
         this.actionPermissions = actionPermissions;
+    }
+
+    @Override
+    public String toString() {
+        return "Permission{" +
+                "rootPermission='" + rootPermission + '\'' +
+                ", actionPermissions=" + Arrays.toString(actionPermissions) +
+                '}';
     }
 }

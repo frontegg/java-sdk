@@ -10,6 +10,8 @@ public class FronteggContext {
     private String userId;
     private List<Permission> permissions;
 
+    private int retryCount;
+
     public String getTenantId() {
         return tenantId;
     }
@@ -32,5 +34,13 @@ public class FronteggContext {
 
     public void setPermissions(List<Permission> permissions) {
         this.permissions = permissions;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
     }
 }

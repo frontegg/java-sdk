@@ -16,6 +16,8 @@
         <module>middleware</module>
         <module>api-client</module>
         <module>config</module>
+        <module>audit</module>
+        <module>middleware-web</module>
     </modules>
 
     <properties>

@@ -1,20 +1,18 @@
 package com.frontegg.sdk.middleware.spring.client;
 
 import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.common.model.FronteggHttpHeader;
+import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
-import com.frontegg.sdk.middleware.spring.executor.GetExecutor;
-import com.frontegg.sdk.middleware.spring.executor.PostExecutor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ApiClient implements IApiClient {
 
@@ -26,22 +24,25 @@ public class ApiClient implements IApiClient {
     }
 
     private HttpEntity<Object> createHttpEntity() {
-
         HttpHeaders headers = new HttpHeaders();
-        headers.put("Content-Type", Arrays.asList("application/json"));
+        headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
         httpHeaders.putAll(httpHeaders);
 
         HttpEntity httpEntity = new HttpEntity(headers);
         return httpEntity;
     }
 
-    private <R> HttpEntity<Object> createHttpEntity(R body) {
-
+    private <R> HttpEntity<Object> createHttpEntity(Map<String, String> proxyHeaders, R body) {
         HttpHeaders headers = new HttpHeaders();
+        headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
         httpHeaders.putAll(httpHeaders);
+        if (proxyHeaders != null) {
+            for (String key : proxyHeaders.keySet()) {
+                headers.put(key, Arrays.asList(proxyHeaders.get(key)));
+            }
+        }
 
-        HttpEntity httpEntity = new HttpEntity(body, headers);
-        return httpEntity;
+        return body == null ? new HttpEntity(headers) : new HttpEntity(body, headers);
     }
 
     private HttpEntity<Object> createHttpEntity(HttpServletRequest request,
@@ -49,36 +50,103 @@ public class ApiClient implements IApiClient {
 
         HttpHeaders headers = new HttpHeaders();
         headers.putAll(httpHeaders);
-        for (String key : proxyHeaders.keySet()) {
-            headers.put(key, Arrays.asList(proxyHeaders.get(key)));
+        if (proxyHeaders != null) {
+            for (String key : proxyHeaders.keySet()) {
+                headers.put(key, Arrays.asList(proxyHeaders.get(key)));
+            }
         }
 
-        HttpEntity httpEntity = new HttpEntity(headers);
+        HttpEntity httpEntity;
+        String body = getBody(request);
+        if (body != null) {
+            headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
+            headers.put(HttpHeaders.CONTENT_LENGTH, Arrays.asList(String.valueOf(body.length())));
+            httpEntity = new HttpEntity(body, headers);
+        } else {
+            httpEntity = new HttpEntity(headers);
+        }
+
         return httpEntity;
+    }
+
+    private String getBody(HttpServletRequest request) {
+        HttpMethod method = HttpMethod.resolve(request.getMethod());
+        if (method == HttpMethod.POST || method == HttpMethod.POST || method == HttpMethod.POST) {
+            try {
+                return request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     @Override
     public <T> Optional<T> get(String url, Class<T> clazz) {
-        return GetExecutor.execute(restTemplate, clazz, url, createHttpEntity());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, createHttpEntity(), clazz);
+        return Optional.of(responseEntity.getBody());
+    }
+
+    @Override
+    public <T> Optional<T> get(String url, Map<String, String> headers, Class<T> clazz) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, createHttpEntity(headers, null), clazz);
+        return Optional.of(responseEntity.getBody());
     }
 
     @Override
     public <T, R> Optional<T> post(String url, Class<T> clazz, R body) {
-        return PostExecutor.execute(restTemplate, clazz, url, body);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(null, body), clazz);
+        return Optional.of(responseEntity.getBody());
     }
 
     @Override
-    public <T> Optional<T> service(String url,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response,
-                                   Map<String, String> proxyHeaders,
-                                   Class<T> clazz) {
+    public <T, R> Optional<T> post(String url, Class<T> clazz, R body, Map<String, String> headers) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(headers, null), clazz);
+        return Optional.of(responseEntity.getBody());
+    }
+
+    @Override
+    public <T> FronteggHttpResponse<T> service(String url,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response,
+                                               Map<String, String> headers,
+                                               Class<T> clazz) {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         if (!StringHelper.isBlank(request.getQueryString())) {
             builder.query(request.getQueryString());
         }
+
         HttpMethod method = HttpMethod.resolve(request.getMethod());
-        return Optional.of(restTemplate.exchange(builder.toUriString(), method, createHttpEntity(request, proxyHeaders), clazz).getBody());
+        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), method, createHttpEntity(request, headers), clazz);
+
+        return convert(responseEntity);
+    }
+
+    private <T> ResponseEntity<T> doService(String url, HttpMethod method, HttpEntity httpEntity, Class<T> clazz) {
+        return restTemplate.exchange(url, method, httpEntity, clazz);
+    }
+
+    private static <T> FronteggHttpResponse<T> convert(ResponseEntity<T> responseEntity) {
+        FronteggHttpResponse<T> response = new FronteggHttpResponse<>();
+        response.setBody(responseEntity.getBody());
+        response.setStatusCode(responseEntity.getStatusCodeValue());
+        response.setHeaders(convertHeaders(responseEntity.getHeaders()));
+        return response;
+    }
+
+    private static List<FronteggHttpHeader> convertHeaders(HttpHeaders headers) {
+        List<FronteggHttpHeader> fronteggHttpHeaders = new ArrayList<>();
+        Set<Map.Entry<String, List<String>>> entries = headers.entrySet();
+        for (Map.Entry<String, List<String>> entry : entries) {
+            String key = entry.getKey();
+            String value = entry.getValue().stream().collect(Collectors.joining(","));
+            fronteggHttpHeaders.add(new FronteggHttpHeader(key, value));
+        }
+        return fronteggHttpHeaders;
     }
 }
