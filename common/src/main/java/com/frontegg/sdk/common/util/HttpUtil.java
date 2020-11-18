@@ -13,13 +13,21 @@ public class HttpUtil {
     public static final String FRONTEGG_HEADER_TENANT_ID = "frontegg-tenant-id";
     public static final String FRONTEGG_HEADER_USER_ID = "frontegg-user-id";
     public static final String FRONTEGG_HEADER_VENDOR_HOST = "frontegg-vendor-host";
+    public static final String FRONTEGG_HEADER_HOST = "host";
 
     public static String getRequestUrl(String path, String excludeContextPath) {
         return path.substring(excludeContextPath.length());
     }
 
     public static String getHostnameFromRequest(HttpServletRequest request){
-        return "";
+        String hostHeader = getHeader(request, FRONTEGG_HEADER_HOST, "");
+        if (!StringHelper.isBlank(hostHeader)) {
+            if (hostHeader.contains(":")) return hostHeader.split(":")[0];
+
+            return hostHeader;
+        }
+
+        return request.getLocalName();
     }
 
     public static String getHeader(HttpServletRequest request, String headerName) {

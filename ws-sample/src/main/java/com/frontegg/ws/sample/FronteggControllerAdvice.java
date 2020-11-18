@@ -1,7 +1,7 @@
 package com.frontegg.ws.sample;
 
 import com.frontegg.sdk.common.exception.FronteggSDKException;
-import com.frontegg.sdk.common.exception.InsuffisiantAccessException;
+import com.frontegg.sdk.common.exception.InefficientAccessException;
 import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +19,7 @@ public class FronteggControllerAdvice extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleUnAuthorized(RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex, "Unauthorized!", new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
     }
-    @ExceptionHandler(InsuffisiantAccessException.class)
+    @ExceptionHandler(InefficientAccessException.class)
     protected ResponseEntity<Object> handlePermissionDenied(RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex, "Permission Denied", new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }

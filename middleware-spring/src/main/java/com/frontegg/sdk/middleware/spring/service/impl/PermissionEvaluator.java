@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.spring.service.impl;
 
-import com.frontegg.sdk.common.exception.InsuffisiantAccessException;
+import com.frontegg.sdk.common.exception.InefficientAccessException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.WhiteListConfig;
@@ -35,12 +35,12 @@ public class PermissionEvaluator implements IPermissionEvaluator {
 
         if (permissions == null ) {
             logger.error("No permissions were passed for frontegg middleware");
-            throw new InsuffisiantAccessException("No permissions were passed for frontegg middleware");
+            throw new InefficientAccessException("No permissions were passed for frontegg middleware");
         }
 
         if (permissions.isEmpty()) {
             logger.error("Permissions array is empty for frontegg middleware");
-            throw new InsuffisiantAccessException("Permissions array is empty for frontegg middleware");
+            throw new InefficientAccessException("Permissions array is empty for frontegg middleware");
         }
 
         // We allow OPTIONS
@@ -57,7 +57,7 @@ public class PermissionEvaluator implements IPermissionEvaluator {
 
 
         logger.error("No matching permission for "+ request.getMethod() + " " + url + ". Permissions : " + permissions);
-        throw new InsuffisiantAccessException("No matching permission for " + request.getMethod() + " " + url);
+        throw new InefficientAccessException("No matching permission for " + request.getMethod() + " " + url);
     }
 
     private boolean isWhiteListUrl(String url) {
