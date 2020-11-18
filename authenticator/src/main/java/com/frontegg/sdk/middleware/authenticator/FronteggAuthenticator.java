@@ -56,11 +56,12 @@ public class FronteggAuthenticator {
     public void validateAuthentication() {
         if (StringHelper.isBlank(this.accessToken) || this.accessTokenExpiry == null || LocalDateTime.now().isAfter(this.accessTokenExpiry)) {
             logger.info("authentication token needs refresh - going to refresh it");
-            this.refreshAuthentication();
+            refreshAuthentication();
         }
     }
 
     public String getAccessToken() {
+        validateAuthentication();
         return accessToken;
     }
 }

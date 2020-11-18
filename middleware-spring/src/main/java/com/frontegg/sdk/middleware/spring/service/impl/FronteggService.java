@@ -27,9 +27,9 @@ import java.util.Map;
 import static com.frontegg.sdk.common.util.HttpUtil.*;
 
 @Service
-public class FrontEggService implements IFronteggService {
+public class FronteggService implements IFronteggService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FrontEggService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FronteggService.class);
 
     @Autowired
     private FronteggConfig config;

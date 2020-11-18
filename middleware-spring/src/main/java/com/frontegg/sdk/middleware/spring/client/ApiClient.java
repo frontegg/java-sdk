@@ -4,6 +4,9 @@ import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,70 +18,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ApiClient implements IApiClient {
+    private static final Logger logger = LoggerFactory.getLogger(ApiClient.class);
 
     private RestTemplate restTemplate;
-    private HttpHeaders httpHeaders = new HttpHeaders();
 
     public ApiClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-    }
-
-    private HttpEntity<Object> createHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
-        httpHeaders.putAll(httpHeaders);
-
-        HttpEntity httpEntity = new HttpEntity(headers);
-        return httpEntity;
-    }
-
-    private <R> HttpEntity<Object> createHttpEntity(Map<String, String> proxyHeaders, R body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
-        httpHeaders.putAll(httpHeaders);
-        if (proxyHeaders != null) {
-            for (String key : proxyHeaders.keySet()) {
-                headers.put(key, Arrays.asList(proxyHeaders.get(key)));
-            }
-        }
-
-        return body == null ? new HttpEntity(headers) : new HttpEntity(body, headers);
-    }
-
-    private HttpEntity<Object> createHttpEntity(HttpServletRequest request,
-                                                Map<String, String> proxyHeaders) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.putAll(httpHeaders);
-        if (proxyHeaders != null) {
-            for (String key : proxyHeaders.keySet()) {
-                headers.put(key, Arrays.asList(proxyHeaders.get(key)));
-            }
-        }
-
-        HttpEntity httpEntity;
-        String body = getBody(request);
-        if (body != null) {
-            headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
-            headers.put(HttpHeaders.CONTENT_LENGTH, Arrays.asList(String.valueOf(body.length())));
-            httpEntity = new HttpEntity(body, headers);
-        } else {
-            httpEntity = new HttpEntity(headers);
-        }
-
-        return httpEntity;
-    }
-
-    private String getBody(HttpServletRequest request) {
-        HttpMethod method = HttpMethod.resolve(request.getMethod());
-        if (method == HttpMethod.POST || method == HttpMethod.POST || method == HttpMethod.POST) {
-            try {
-                return request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
     }
 
     @Override
@@ -103,13 +48,6 @@ public class ApiClient implements IApiClient {
     }
 
     @Override
-    public <T, R> Optional<T> post(String url, Class<T> clazz, R body, Map<String, String> headers) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(headers, null), clazz);
-        return Optional.of(responseEntity.getBody());
-    }
-
-    @Override
     public <T> FronteggHttpResponse<T> service(String url,
                                                HttpServletRequest request,
                                                HttpServletResponse response,
@@ -127,11 +65,85 @@ public class ApiClient implements IApiClient {
         return convert(responseEntity);
     }
 
-    private <T> ResponseEntity<T> doService(String url, HttpMethod method, HttpEntity httpEntity, Class<T> clazz) {
-        return restTemplate.exchange(url, method, httpEntity, clazz);
+    private HttpEntity<Object> createHttpEntity() {
+        return new HttpEntity(buildHttpHeaders(null));
     }
 
-    private static <T> FronteggHttpResponse<T> convert(ResponseEntity<T> responseEntity) {
+    private <R> HttpEntity<Object> createHttpEntity(Map<String, String> proxyHeaders, R body) {
+        HttpHeaders headers = buildHttpHeaders(proxyHeaders);
+        return buildHttpEntity(body, headers);
+    }
+
+    private HttpEntity<Object> createHttpEntity(HttpServletRequest request, Map<String, String> proxyHeaders) {
+        HttpHeaders headers = buildHttpHeaders(proxyHeaders);
+        populateRequestHeadersToApiRequest(headers, request);
+        return buildHttpEntity(getBody(request), headers);
+    }
+
+    private <T> HttpEntity<T> buildHttpEntity(T body, HttpHeaders headers) {
+        if (body == null) return new HttpEntity<>(headers);
+
+        if (body instanceof String) {
+            String strBody = (String) body;
+            if (!StringHelper.isBlank(strBody)) {
+                return buildHttpEntity(headers, strBody);
+            }
+        } else {
+            try {
+                Gson gson = new Gson();
+                String strBody = gson.toJson(body);
+                return buildHttpEntity(headers, strBody);
+            } catch (Exception ex) {
+                logger.error("unable to jsonify the request body of class -> " + body.getClass());
+            }
+        }
+
+        return new HttpEntity<>(headers);
+    }
+
+    private <T> HttpEntity<T> buildHttpEntity(HttpHeaders headers, String strBody) {
+        headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
+        headers.put(HttpHeaders.CONTENT_LENGTH, Arrays.asList(String.valueOf(strBody.length())));
+        return new HttpEntity(strBody, headers);
+    }
+
+    private void populateRequestHeadersToApiRequest(HttpHeaders headers, HttpServletRequest request) {
+        Enumeration enumeration = request.getHeaderNames();
+        while (enumeration.hasMoreElements()) {
+            String headerName = (String) enumeration.nextElement();
+            if (headers.containsKey(headerName)) continue;
+
+            String headerValue = request.getHeader(headerName);
+            headers.add(headerName, headerValue);
+        }
+    }
+
+    private HttpHeaders buildHttpHeaders(Map<String, String> headersMap) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
+
+        if (headersMap != null) {
+            for (String key : headersMap.keySet()) {
+                headers.add(key, headersMap.get(key));
+            }
+        }
+
+        return headers;
+    }
+
+    private String getBody(HttpServletRequest request) {
+        HttpMethod method = HttpMethod.resolve(request.getMethod());
+        if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+            try {
+                return request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            } catch (IOException e) {
+                logger.error("Unable to read the body of request", e);
+            }
+        }
+        return null;
+    }
+
+    private <T> FronteggHttpResponse<T> convert(ResponseEntity<T> responseEntity) {
         FronteggHttpResponse<T> response = new FronteggHttpResponse<>();
         response.setBody(responseEntity.getBody());
         response.setStatusCode(responseEntity.getStatusCodeValue());
@@ -139,12 +151,12 @@ public class ApiClient implements IApiClient {
         return response;
     }
 
-    private static List<FronteggHttpHeader> convertHeaders(HttpHeaders headers) {
+    private List<FronteggHttpHeader> convertHeaders(HttpHeaders headers) {
         List<FronteggHttpHeader> fronteggHttpHeaders = new ArrayList<>();
         Set<Map.Entry<String, List<String>>> entries = headers.entrySet();
         for (Map.Entry<String, List<String>> entry : entries) {
             String key = entry.getKey();
-            String value = entry.getValue().stream().collect(Collectors.joining(","));
+            String value = entry.getValue().stream().collect(Collectors.joining(";"));
             fronteggHttpHeaders.add(new FronteggHttpHeader(key, value));
         }
         return fronteggHttpHeaders;

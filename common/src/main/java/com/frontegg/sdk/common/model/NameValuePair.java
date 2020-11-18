@@ -1,6 +1,7 @@
 package com.frontegg.sdk.common.model;
 
 public interface NameValuePair {
+
     /**
      * Gets the name of this pair.
      *
