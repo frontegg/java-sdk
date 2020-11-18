@@ -34,11 +34,6 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         if (!isFronteggPublicRoute(request)) {
             logger.debug("will pass request threw the auth middleware");
             authenticationService.withAuthentication(request);
-
-            if (response.containsHeader("headersSent")) {
-                // response was already sent from the middleware, we have nothing left to do
-                return false;
-            }
         }
 
         return super.preHandle(request, response, handler);

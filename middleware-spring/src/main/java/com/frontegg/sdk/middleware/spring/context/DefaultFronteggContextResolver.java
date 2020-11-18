@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class DefaultFronteggContextResolver implements IFronteggContextResolver {
 
-    //TODO make it configurable
     public static final String CONTEXT_MAIN_PATH = "/frontegg";
 
     @Autowired

@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @ComponentScan("com.frontegg.sdk.middleware.spring")
-@ComponentScan("com.frontegg.sdk.middleware.spring.config")
 @Configuration
 public class MyAppConfiguration {
 

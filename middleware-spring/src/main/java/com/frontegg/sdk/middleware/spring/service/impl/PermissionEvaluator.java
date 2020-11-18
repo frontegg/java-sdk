@@ -23,7 +23,6 @@ import java.util.Map;
 public class PermissionEvaluator implements IPermissionEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(PermissionEvaluator.class);
 
-    //TODO make it configurable
     public static final String CONTEXT_MAIN_PATH = "/frontegg";
 
     @Autowired
