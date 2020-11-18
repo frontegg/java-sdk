@@ -38,6 +38,4 @@ public class FronteggControllerAdvice extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleInternalErrors(Exception ex, WebRequest request) {
         return handleExceptionInternal(ex, "Something went wrong!", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
-
-
 }
