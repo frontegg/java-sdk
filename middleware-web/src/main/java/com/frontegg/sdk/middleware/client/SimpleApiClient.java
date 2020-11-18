@@ -37,11 +37,6 @@ public class SimpleApiClient implements IApiClient {
     }
 
     @Override
-    public <T, R> Optional<T> post(String url, Class<T> clazz, R body, Map<String, String> headers) {
-        return Optional.empty();
-    }
-
-    @Override
     public <T> FronteggHttpResponse<T> service(String url,
                                                HttpServletRequest request,
                                                HttpServletResponse response,
