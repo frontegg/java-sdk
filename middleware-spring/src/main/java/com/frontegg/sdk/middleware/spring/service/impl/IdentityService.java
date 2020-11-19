@@ -9,7 +9,7 @@ import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.IIdentityService;
+import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;

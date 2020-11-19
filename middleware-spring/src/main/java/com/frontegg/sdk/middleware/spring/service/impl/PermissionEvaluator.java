@@ -4,10 +4,10 @@ import com.frontegg.sdk.common.exception.InefficientAccessException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.WhiteListConfig;
-import com.frontegg.sdk.middleware.IPermissionEvaluator;
+import com.frontegg.sdk.middleware.permission.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.model.Permission;
-import com.frontegg.sdk.middleware.model.FrontEggPermissionEnum;
+import com.frontegg.sdk.middleware.model.FronteggPermissionEnum;
 import com.frontegg.sdk.middleware.model.PermissionActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,13 +70,13 @@ public class PermissionEvaluator implements IPermissionEvaluator {
     }
 
     private boolean isValidatePermission(String url, String method, List<Permission> permissions) {
-        if (includes(permissions, FrontEggPermissionEnum.ALL)) {
+        if (includes(permissions, FronteggPermissionEnum.ALL)) {
             logger.info("User is authorized for ALL actions in the system");
             return true;
         }
 
         for (Permission permission : permissions) {
-            FrontEggPermissionEnum permissionEnum = FrontEggPermissionEnum.valueOf(permission.getRootPermission());
+            FronteggPermissionEnum permissionEnum = FronteggPermissionEnum.valueOf(permission.getRootPermission());
 
             for (String action : permission.getActionPermissions()) {
                 PermissionActionEnum actionEnum = PermissionActionEnum.valueOf(action);
@@ -103,7 +103,7 @@ public class PermissionEvaluator implements IPermissionEvaluator {
         return false;
     }
 
-    private boolean includes(List<Permission> permissions, FrontEggPermissionEnum permission) {
+    private boolean includes(List<Permission> permissions, FronteggPermissionEnum permission) {
         return permissions.stream().filter(  p -> permission.name().equals(p.getRootPermission())).findAny().isPresent();
     }
 }

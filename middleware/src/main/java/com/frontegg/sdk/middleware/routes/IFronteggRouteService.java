@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.spring.service;
+package com.frontegg.sdk.middleware.routes;
 
 import javax.servlet.http.HttpServletRequest;
 

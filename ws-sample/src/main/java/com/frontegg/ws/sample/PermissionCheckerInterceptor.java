@@ -1,7 +1,7 @@
 package com.frontegg.ws.sample;
 
 import com.frontegg.sdk.common.exception.InefficientAccessException;
-import com.frontegg.sdk.middleware.IPermissionEvaluator;
+import com.frontegg.sdk.middleware.permission.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
 import org.slf4j.Logger;

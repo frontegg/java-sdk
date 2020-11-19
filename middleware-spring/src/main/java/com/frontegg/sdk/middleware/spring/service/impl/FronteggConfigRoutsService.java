@@ -7,7 +7,7 @@ import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.spring.routes.KeyValPair;
 import com.frontegg.sdk.middleware.spring.routes.RoutesConfig;
 import com.frontegg.sdk.middleware.spring.routes.VendorClientPublicRouts;
-import com.frontegg.sdk.middleware.spring.service.IFronteggRouteService;
+import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

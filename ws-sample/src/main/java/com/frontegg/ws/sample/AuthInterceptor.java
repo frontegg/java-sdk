@@ -1,6 +1,6 @@
 package com.frontegg.ws.sample;
 
-import com.frontegg.sdk.middleware.spring.service.IFronteggRouteService;
+import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.spring.service.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

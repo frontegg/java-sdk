@@ -53,7 +53,7 @@ public class MyAppConfiguration {
     }
 
     @Bean
-    public Filter frontEggFilter() {
+    public Filter fronteggFilter() {
         return new FronteggContextFilter();
     }
 
@@ -61,6 +61,7 @@ public class MyAppConfiguration {
     public FronteggConfig fronteggConfig() {
         return configProvider().resolveConfigs();
     }
+
     @Bean
     public WhiteListConfig whiteListConfig() {
         return whiteListProvider().resolveConfigs();

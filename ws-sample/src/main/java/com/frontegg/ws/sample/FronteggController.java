@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController()
 @RequestMapping("/frontegg/")
-public class FrontEggController {
+public class FronteggController {
 
     @Autowired
     private IFronteggService fronteggMiddleware;
