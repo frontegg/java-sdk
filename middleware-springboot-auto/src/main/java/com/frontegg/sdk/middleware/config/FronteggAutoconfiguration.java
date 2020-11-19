@@ -19,15 +19,4 @@ public class FronteggAutoconfiguration {
     private int maxRetries;
     @Value("${frontegg.settings.cookieDomainRewrite#{''}}")
     private String cookieDomainRewrite;
-
-//    @Bean
-//    public IFronteggService fronteggMiddleware() {
-//        return new FrontEggMiddlewareFactoryBuilder()
-//                .withCredentials(clientID, apiKey)
-//                //.withAuthMiddleware()
-//                .disableCors(disableCors)
-//                .maxRetries(maxRetries)
-//                .cookieDomainRewrite(cookieDomainRewrite)
-//                .build();
-//    }
 }

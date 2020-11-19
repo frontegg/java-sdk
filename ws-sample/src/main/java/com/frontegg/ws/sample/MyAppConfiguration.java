@@ -5,19 +5,20 @@ import com.frontegg.sdk.audit.AuditClient;
 import com.frontegg.sdk.audit.IAuditClient;
 import com.frontegg.sdk.config.*;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
-import com.frontegg.sdk.middleware.context.IFronteggContextResolver;
 import com.frontegg.sdk.middleware.spring.client.ApiClient;
 import com.frontegg.sdk.middleware.spring.config.FronteggConfigProviderChain;
 import com.frontegg.sdk.middleware.spring.config.FronteggWhiteListProviderChain;
 import com.frontegg.sdk.middleware.spring.config.SpringFronteggConfigProvider;
 import com.frontegg.sdk.middleware.spring.config.SpringWhiteConfigProvider;
-import com.frontegg.sdk.middleware.spring.context.DefaultFronteggContextResolver;
+import com.frontegg.sdk.middleware.spring.filter.FronteggContextFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.Filter;
 
 @ComponentScan("com.frontegg.sdk.middleware.spring")
 @Configuration
@@ -52,8 +53,8 @@ public class MyAppConfiguration {
     }
 
     @Bean
-    public IFronteggContextResolver fronteggContextResolver() {
-        return new DefaultFronteggContextResolver();
+    public Filter frontEggFilter() {
+        return new FronteggContextFilter();
     }
 
     @Bean

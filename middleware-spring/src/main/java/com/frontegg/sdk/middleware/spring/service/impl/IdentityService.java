@@ -12,8 +12,7 @@ import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.context.RequestContext;
-import com.frontegg.sdk.middleware.spring.context.ContextHolder;
+import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.spring.model.IdentityModel;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -55,6 +54,9 @@ public class IdentityService implements IIdentityService {
                     IdentityModel.class
             ).get();
 
+
+            // And save it as member of the class
+            logger.info("going to extract public key from response");
             DecodedJWT jwt = JWT.decode(token);
 
             RSAPublicKey publicKey = new RSAPublicKeyImpl(Base64.decode(normalizedPublicKey(identityModel.getPublicKey())));
@@ -65,16 +67,11 @@ public class IdentityService implements IIdentityService {
             String userID = claimMap.get("sub").asString();
             String tenantID = claimMap.get("tenantId").asString();
 
-            // And save it as member of the class
-            logger.info("going to extract public key from response");
-
-            RequestContext context = ContextHolder.getRequestContext();
-            FronteggContext fronteggContext = context.getFronteggContext();
+            FronteggContext fronteggContext = FronteggContextHolder.getContext();
             fronteggContext.setUserId(userID);
             fronteggContext.setTenantId(tenantID);
-            context.setFronteggContext(fronteggContext);
             //fronteggContext.setUser(claimMap);
-            ContextHolder.setRequestContext(context);
+            FronteggContextHolder.setContext(fronteggContext);
 
         } catch (Exception e) {
             throw new FronteggSDKException("Unable to verify token", e);

@@ -49,7 +49,8 @@ public class FronteggConfigRoutsService implements IFronteggRouteService {
 
     private boolean isValidateQueryParams(HttpServletRequest request, List<KeyValPair> withQueryParams) {
 
-        Map<String, Object> queryMap = request.getParameterMap();
+        //TODO
+        Map<String, String[]> queryMap = request.getParameterMap();
         boolean hasAllQueryParams = true;
 
         for (KeyValPair keyValPair : withQueryParams) {

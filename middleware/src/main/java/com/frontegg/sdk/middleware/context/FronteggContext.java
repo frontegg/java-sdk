@@ -1,5 +1,6 @@
 package com.frontegg.sdk.middleware.context;
 
+import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.model.Permission;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class FronteggContext {
     private String userId;
     private List<Permission> permissions;
 
+    private Authentication authentication;
     private int retryCount;
 
     public String getTenantId() {
@@ -42,5 +44,13 @@ public class FronteggContext {
 
     public void setRetryCount(int retryCount) {
         this.retryCount = retryCount;
+    }
+
+    public Authentication getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
     }
 }

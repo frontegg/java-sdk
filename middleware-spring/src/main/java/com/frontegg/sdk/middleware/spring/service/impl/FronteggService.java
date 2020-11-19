@@ -7,10 +7,10 @@ import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.IFronteggService;
+import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.context.RequestContext;
-import com.frontegg.sdk.middleware.spring.context.ContextHolder;
+import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ import static com.frontegg.sdk.common.util.HttpUtil.*;
 public class FronteggService implements IFronteggService {
 
     private static final Logger logger = LoggerFactory.getLogger(FronteggService.class);
+    public static final String CONTEXT_MAIN_PATH = "/frontegg";
 
     @Autowired
     private FronteggConfig config;
@@ -47,11 +48,12 @@ public class FronteggService implements IFronteggService {
 
     public FronteggHttpResponse<Object> doProcess(HttpServletRequest request, HttpServletResponse response) {
 
-        RequestContext context = ContextHolder.getRequestContext();
+        FronteggContext context = FronteggContextHolder.getContext();
         logger.info("going to proxy request - " + request.getRequestURI() + " to  " + config.getUrlConfig().getBaseUrl());
-        Map<String, String> headers = initHeaders(request, context.getFronteggContext());
+        Map<String, String> headers = initHeaders(request, context);
 
-        String url = config.getUrlConfig().getBaseUrl() + context.getRequestPath();
+        String requestUrl = HttpUtil.getRequestUrl(request.getRequestURI(), CONTEXT_MAIN_PATH);
+        String url = config.getUrlConfig().getBaseUrl() + requestUrl;
 
         FronteggHttpResponse<Object> val = initiateRequest(url, request, response, headers);
         logger.info("Response  = " + val.toString());
@@ -78,7 +80,7 @@ public class FronteggService implements IFronteggService {
             //UnAuthorized
             if (val.getStatusCode() == 401) {
 
-                FronteggContext context = ContextHolder.getRequestContext().getFronteggContext();
+                FronteggContext context = FronteggContextHolder.getContext();
                 context.setRetryCount(context.getRetryCount() + 1);
                 logger.info(url + "failed with authentication error from proxy - retryCount - " +  context.getRetryCount());
 
@@ -104,7 +106,7 @@ public class FronteggService implements IFronteggService {
     }
 
     private FronteggHttpResponse<Object> handleError(String url, HttpServletRequest request, HttpServletResponse response, Map<String, String> headers, Exception ex) {
-        FronteggContext context = ContextHolder.getRequestContext().getFronteggContext();
+        FronteggContext context = FronteggContextHolder.getContext();
         logger.error("Failed proxy request to - " + url);
         context.setRetryCount(context.getRetryCount() + 1);
         logger.info("retry count of " + url + " = " + context.getRetryCount());
@@ -131,9 +133,9 @@ public class FronteggService implements IFronteggService {
     }
 
     private Map<String, String> initHeaders(HttpServletRequest request, FronteggContext context) {
-        String token = ContextHolder.getAuthentication().getAccessToken();
+        Authentication authentication = FronteggContextHolder.getContext().getAuthentication();
         Map<String, String> headers = new HashMap<>();
-        headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, token);
+        headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, authentication.getAccessToken());
         headers.put(FRONTEGG_HEADER_TENANT_ID, context.getTenantId() == null  ? "" : context.getTenantId());
         headers.put(FRONTEGG_HEADER_USER_ID, context.getUserId() == null  ? "" : context.getUserId());
         headers.put(FRONTEGG_HEADER_VENDOR_HOST, HttpUtil.getHostnameFromRequest(request));

@@ -5,7 +5,8 @@ import com.frontegg.sdk.middleware.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
-import com.frontegg.sdk.middleware.spring.context.ContextHolder;
+import com.frontegg.sdk.middleware.context.FronteggContext;
+import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ public class AuthenticationService {
 
     public void authenticateApp() {
         Authentication authentication = authenticator.authenticate();
-        ContextHolder.setAuthentication(authentication);
+        FronteggContext fronteggContext = FronteggContextHolder.getContext();
+        fronteggContext.setAuthentication(authentication);
+        FronteggContextHolder.setContext(fronteggContext);
     }
 }

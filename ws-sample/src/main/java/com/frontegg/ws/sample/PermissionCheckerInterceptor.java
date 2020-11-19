@@ -3,7 +3,7 @@ package com.frontegg.ws.sample;
 import com.frontegg.sdk.common.exception.InefficientAccessException;
 import com.frontegg.sdk.middleware.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.spring.context.ContextHolder;
+import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class PermissionCheckerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         try {
-            FronteggContext fronteggContext = ContextHolder.getRequestContext().getFronteggContext();
+            FronteggContext fronteggContext = FronteggContextHolder.getContext();
             permissionEvaluator.validatePermissions(request, fronteggContext);
         } catch (InefficientAccessException ex) {
             logger.error(ex.getMessage(), ex);
