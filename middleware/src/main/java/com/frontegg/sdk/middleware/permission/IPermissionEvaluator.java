@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware;
+package com.frontegg.sdk.middleware.permission;
 
 import com.frontegg.sdk.middleware.context.FronteggContext;
 

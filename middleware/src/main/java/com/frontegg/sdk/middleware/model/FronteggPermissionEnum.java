@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public enum FrontEggPermissionEnum {
+public enum FronteggPermissionEnum {
 
     ALL (new ActionPermissionDefinition[]{
             new ActionPermissionDefinition(
@@ -193,7 +193,7 @@ public enum FrontEggPermissionEnum {
         }
     );
 
-    FrontEggPermissionEnum(ActionPermissionDefinition[] permissions) {
+    FronteggPermissionEnum(ActionPermissionDefinition[] permissions) {
         this.permissions = permissions;
     }
 

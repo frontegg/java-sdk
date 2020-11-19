@@ -1,7 +1,7 @@
 package com.frontegg.sdk.middleware.spring.service.impl;
 
 import com.frontegg.sdk.common.util.StringHelper;
-import com.frontegg.sdk.middleware.IIdentityService;
+import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;

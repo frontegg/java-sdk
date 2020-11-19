@@ -1,7 +1,7 @@
 package com.frontegg.ws.sample;
 
 import com.frontegg.sdk.middleware.model.Permission;
-import com.frontegg.sdk.middleware.model.FrontEggPermissionEnum;
+import com.frontegg.sdk.middleware.model.FronteggPermissionEnum;
 import com.frontegg.sdk.middleware.model.PermissionActionEnum;
 import com.frontegg.sdk.middleware.spring.context.IPermissionResolver;
 
@@ -12,12 +12,12 @@ public class FronteggPermissionResolver implements IPermissionResolver {
     @Override
     public List<Permission> resolveAppPermissions() {
         return Arrays.asList(
-                FrontEggPermissionEnum.AUDITS.with(
+                FronteggPermissionEnum.AUDITS.with(
                         PermissionActionEnum.READ,
                         PermissionActionEnum.STATS
                 ),
 
-                FrontEggPermissionEnum.TENANTS.with(
+                FronteggPermissionEnum.TENANTS.with(
                         PermissionActionEnum.ALL
                 )
         );
