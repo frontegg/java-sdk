@@ -4,8 +4,8 @@ import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.config.*;
 import com.frontegg.sdk.middleware.FronteggService;
 import com.frontegg.sdk.middleware.IFronteggService;
-import com.frontegg.sdk.middleware.authentication.IAuthenticationService;
-import com.frontegg.sdk.middleware.authentication.impl.AuthenticationService;
+import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationService;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.identity.impl.IdentityService;
@@ -14,8 +14,6 @@ import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
 import com.frontegg.sdk.middleware.spring.FronteggListenerSupport;
 import com.frontegg.sdk.middleware.spring.client.ApiClient;
-import com.frontegg.sdk.middleware.spring.filter.FronteggAuthenticationFilter;
-import com.frontegg.sdk.middleware.spring.filter.FronteggContextFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,12 +23,9 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.Filter;
-
 
 @Configuration
 public class FronteggConfiguration {
-
 
     @Value("${frontegg.settings.disableCors:#{true}}")
     private boolean disableCors;
@@ -67,15 +62,6 @@ public class FronteggConfiguration {
     }
 
     @Bean
-    public Filter fronteggFilter() {
-        return new FronteggContextFilter();
-    }
-    @Bean
-    public Filter fronteggAuthenticationFilter() {
-        return new FronteggAuthenticationFilter(authenticationService(), fronteggRouteService());
-    }
-
-    @Bean
     public FronteggConfig fronteggConfig() {
         return configProvider().resolveConfigs();
     }
@@ -96,8 +82,8 @@ public class FronteggConfiguration {
     }
 
     @Bean
-    public IAuthenticationService authenticationService() {
-        return new AuthenticationService(fronteggAuthenticator(), identityService());
+    public IFronteggAuthenticationService authenticationService() {
+        return new FronteggAuthenticationService(fronteggAuthenticator(), identityService());
     }
 
     @Bean

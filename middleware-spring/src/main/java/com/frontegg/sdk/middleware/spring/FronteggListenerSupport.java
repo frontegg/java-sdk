@@ -12,7 +12,7 @@ public class FronteggListenerSupport extends RetryListenerSupport {
     @Override
     public <T, E extends Throwable> void close(RetryContext context,
                                                RetryCallback<T, E> callback, Throwable throwable) {
-        logger.info("onClose");
+        //logger.info("onClose");
         super.close(context, callback, throwable);
     }
 
