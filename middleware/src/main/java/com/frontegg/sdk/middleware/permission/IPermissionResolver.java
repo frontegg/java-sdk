@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.spring.context;
+package com.frontegg.sdk.middleware.permission;
 
 
 import com.frontegg.sdk.middleware.permission.model.Permission;

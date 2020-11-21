@@ -2,7 +2,7 @@ package com.frontegg.sdk.middleware.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface IAuthenticationService {
+public interface IFronteggAuthenticationService {
 
     void withAuthentication(HttpServletRequest request);
 

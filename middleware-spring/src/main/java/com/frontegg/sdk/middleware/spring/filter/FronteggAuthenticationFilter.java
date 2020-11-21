@@ -1,8 +1,7 @@
 package com.frontegg.sdk.middleware.spring.filter;
 
-import com.frontegg.sdk.middleware.authentication.IAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
-import com.frontegg.sdk.middleware.authentication.impl.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.GenericFilterBean;
@@ -15,10 +14,10 @@ import java.io.IOException;
 public class FronteggAuthenticationFilter extends GenericFilterBean {
     private static Logger logger = LoggerFactory.getLogger(FronteggAuthenticationFilter.class);
 
-    private IAuthenticationService authenticationService;
+    private IFronteggAuthenticationService authenticationService;
     private IFronteggRouteService fronteggRouteService;
 
-    public FronteggAuthenticationFilter(IAuthenticationService authenticationService, IFronteggRouteService fronteggRouteService) {
+    public FronteggAuthenticationFilter(IFronteggAuthenticationService authenticationService, IFronteggRouteService fronteggRouteService) {
         this.authenticationService = authenticationService;
         this.fronteggRouteService = fronteggRouteService;
     }

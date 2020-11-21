@@ -1,7 +1,7 @@
 package com.frontegg.sdk.middleware.authentication.impl;
 
 import com.frontegg.sdk.common.util.StringHelper;
-import com.frontegg.sdk.middleware.authentication.IAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
 import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
@@ -11,12 +11,12 @@ import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class AuthenticationService implements IAuthenticationService {
+public class FronteggAuthenticationService implements IFronteggAuthenticationService {
 
     private FronteggAuthenticator authenticator;
     private IIdentityService identityService;
 
-    public AuthenticationService(FronteggAuthenticator authenticator, IIdentityService identityService) {
+    public FronteggAuthenticationService(FronteggAuthenticator authenticator, IIdentityService identityService) {
         this.authenticator = authenticator;
         this.identityService = identityService;
     }
