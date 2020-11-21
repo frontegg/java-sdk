@@ -1,25 +1,25 @@
-package com.frontegg.sdk.middleware.spring.service.impl;
+package com.frontegg.sdk.middleware.authentication.impl;
 
 import com.frontegg.sdk.common.util.StringHelper;
+import com.frontegg.sdk.middleware.authentication.IAuthenticationService;
 import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Service
-public class AuthenticationService {
+public class AuthenticationService implements IAuthenticationService {
 
-    @Autowired
     private FronteggAuthenticator authenticator;
-
-    @Autowired
     private IIdentityService identityService;
+
+    public AuthenticationService(FronteggAuthenticator authenticator, IIdentityService identityService) {
+        this.authenticator = authenticator;
+        this.identityService = identityService;
+    }
 
     public void withAuthentication(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("authorization");

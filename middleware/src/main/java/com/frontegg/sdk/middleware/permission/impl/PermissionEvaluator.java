@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.spring.service.impl;
+package com.frontegg.sdk.middleware.permission.impl;
 
 import com.frontegg.sdk.common.exception.InefficientAccessException;
 import com.frontegg.sdk.common.util.HttpUtil;
@@ -6,27 +6,27 @@ import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.WhiteListConfig;
 import com.frontegg.sdk.middleware.permission.IPermissionEvaluator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.model.Permission;
-import com.frontegg.sdk.middleware.model.FronteggPermissionEnum;
-import com.frontegg.sdk.middleware.model.PermissionActionEnum;
+import com.frontegg.sdk.middleware.permission.model.Permission;
+import com.frontegg.sdk.middleware.permission.model.FronteggPermissionEnum;
+import com.frontegg.sdk.middleware.permission.model.PermissionActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class PermissionEvaluator implements IPermissionEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(PermissionEvaluator.class);
 
     public static final String CONTEXT_MAIN_PATH = "/frontegg";
 
-    @Autowired
     private WhiteListConfig whiteListConfig;
+
+    public PermissionEvaluator(WhiteListConfig whiteListConfig) {
+        this.whiteListConfig = whiteListConfig;
+    }
 
     @Override
     public void validatePermissions(HttpServletRequest request, FronteggContext context) {

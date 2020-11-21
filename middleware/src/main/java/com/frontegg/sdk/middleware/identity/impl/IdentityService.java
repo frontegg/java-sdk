@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.spring.service.impl;
+package com.frontegg.sdk.middleware.identity.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -9,34 +9,32 @@ import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.config.FronteggConfig;
+import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
-import com.frontegg.sdk.middleware.spring.model.IdentityModel;
+import com.frontegg.sdk.middleware.identity.model.IdentityModel;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import sun.security.rsa.RSAPublicKeyImpl;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
 public class IdentityService implements IIdentityService {
     private static final Logger logger = LoggerFactory.getLogger(IdentityService.class);
 
-    @Autowired
     private FronteggAuthenticator authenticator;
-
-    @Autowired
     private IApiClient apiClient;
-
-    @Autowired
     private FronteggConfig fronteggConfig;
+
+    public IdentityService(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig fronteggConfig) {
+        this.authenticator = authenticator;
+        this.apiClient = apiClient;
+        this.fronteggConfig = fronteggConfig;
+    }
 
     @Override
     public void verifyToken(String token) {

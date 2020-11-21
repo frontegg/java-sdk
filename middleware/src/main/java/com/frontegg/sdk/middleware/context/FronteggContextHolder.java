@@ -1,6 +1,4 @@
-package com.frontegg.sdk.middleware.spring.context;
-
-import com.frontegg.sdk.middleware.context.FronteggContext;
+package com.frontegg.sdk.middleware.context;
 
 public class FronteggContextHolder {
     private static final ThreadLocal<FronteggContext> contextHolder = new ThreadLocal<>();

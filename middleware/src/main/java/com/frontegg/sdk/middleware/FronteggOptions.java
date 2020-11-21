@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.model;
+package com.frontegg.sdk.middleware;
 
 
 public class FronteggOptions {
@@ -7,7 +7,6 @@ public class FronteggOptions {
     private boolean disableCors;
     private String cookieDomainRewrite;
     private int maxRetries;
-
 
     public String getClientId() {
         return clientId;

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("com.frontegg.sdk")
-public class FronteggAutoconfiguration {
+public class FronteggAutoConfiguration {
 
     @Value("${frontegg.clientId}")
     private String clientID;

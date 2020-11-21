@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.model;
+package com.frontegg.sdk.middleware.permission.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

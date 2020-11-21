@@ -1,7 +1,7 @@
 package com.frontegg.sdk.middleware.spring.context;
 
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
+import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.spring.context.util.OnCommittedResponseWrapper;
 
 import javax.servlet.http.HttpServletResponse;
