@@ -15,6 +15,12 @@ public class HttpUtil {
     public static final String FRONTEGG_HEADER_VENDOR_HOST = "frontegg-vendor-host";
     public static final String FRONTEGG_HEADER_HOST = "host";
 
+    public static final String ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";
+    public static final String ACCESS_CONTROL_REQUEST_HEADERS = "Access-Control-Request-Headers";
+    public static final String ORIGIN = "Origin";
+    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+    public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
+
     public static String getRequestUrl(String path, String excludeContextPath) {
         return path.substring(excludeContextPath.length());
     }

@@ -2,6 +2,7 @@ package com.frontegg.sdk.middleware.spring.context;
 
 import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.context.FronteggContext;
+import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.WebUtils;

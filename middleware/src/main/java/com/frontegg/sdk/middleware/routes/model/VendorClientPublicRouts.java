@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.spring.routes;
+package com.frontegg.sdk.middleware.routes.model;
 
 import java.util.List;
 

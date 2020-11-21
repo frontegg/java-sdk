@@ -1,8 +1,8 @@
 package com.frontegg.sdk.middleware.spring.config;
 
-import com.frontegg.sdk.middleware.model.Permission;
-import com.frontegg.sdk.middleware.model.FronteggPermissionEnum;
-import com.frontegg.sdk.middleware.model.PermissionActionEnum;
+import com.frontegg.sdk.middleware.permission.model.Permission;
+import com.frontegg.sdk.middleware.permission.model.FronteggPermissionEnum;
+import com.frontegg.sdk.middleware.permission.model.PermissionActionEnum;
 import com.frontegg.sdk.middleware.spring.context.IPermissionResolver;
 import org.springframework.stereotype.Component;
 

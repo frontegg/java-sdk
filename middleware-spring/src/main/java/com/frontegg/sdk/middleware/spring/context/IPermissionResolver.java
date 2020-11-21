@@ -1,7 +1,7 @@
 package com.frontegg.sdk.middleware.spring.context;
 
 
-import com.frontegg.sdk.middleware.model.Permission;
+import com.frontegg.sdk.middleware.permission.model.Permission;
 
 import java.util.List;
 

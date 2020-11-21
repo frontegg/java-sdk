@@ -2,7 +2,7 @@ package com.frontegg.ws.sample;
 
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
-import com.frontegg.sdk.middleware.IFronteggService;
+import com.frontegg.sdk.middleware.IFronteggServiceDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.List;
 public class FronteggController {
 
     @Autowired
-    private IFronteggService fronteggMiddleware;
+    private IFronteggServiceDelegate fronteggServiceDelegate;
 
 
     @CrossOrigin()
@@ -35,7 +35,7 @@ public class FronteggController {
     public ResponseEntity<?> doProcess(HttpServletRequest request,
                                        HttpServletResponse response) {
 
-        FronteggHttpResponse<Object> fronteggHttpResponse = fronteggMiddleware.doProcess(request, response);
+        FronteggHttpResponse<Object> fronteggHttpResponse = fronteggServiceDelegate.doProcess(request, response);
         populateHeaders(fronteggHttpResponse.getHeaders(), response);
         return new ResponseEntity<>(
                 fronteggHttpResponse.getBody(),

@@ -1,7 +1,7 @@
 package com.frontegg.sdk.middleware.spring.filter;
 
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.spring.context.FronteggContextHolder;
+import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.spring.context.FronteggContextRepository;
 import com.frontegg.sdk.middleware.spring.context.FronteggHttpRequestResponseHolder;
 import com.frontegg.sdk.middleware.spring.context.HttpSessionFronteggContextRepository;
@@ -30,9 +30,9 @@ public class FronteggContextFilter extends GenericFilterBean {
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         if (request.getAttribute(FILTER_APPLIED) != null) {
             // ensure that filter is only applied once per request
@@ -50,7 +50,7 @@ public class FronteggContextFilter extends GenericFilterBean {
 
             chain.doFilter(holder.getRequest(), holder.getResponse());
 
-        }   finally {
+        } finally {
             FronteggContext contextAfterChainExecution = FronteggContextHolder.getContext();
             FronteggContextHolder.clearContext();
             repo.saveContext(contextAfterChainExecution, holder.getRequest(), holder.getResponse());

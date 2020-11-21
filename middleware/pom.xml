@@ -11,6 +11,10 @@
 
     <artifactId>middleware</artifactId>
 
+    <properties>
+        <auth0.jwt.version>3.2.0</auth0.jwt.version>
+    </properties>
+
 
     <dependencies>
         <dependency>
@@ -43,6 +47,12 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${auth0.jwt.version}</version>
         </dependency>
 
     </dependencies>

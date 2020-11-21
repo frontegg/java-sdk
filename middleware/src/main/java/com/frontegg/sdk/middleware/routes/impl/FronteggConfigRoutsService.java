@@ -1,27 +1,27 @@
-package com.frontegg.sdk.middleware.spring.service.impl;
+package com.frontegg.sdk.middleware.routes.impl;
 
 import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.spring.routes.KeyValPair;
-import com.frontegg.sdk.middleware.spring.routes.RoutesConfig;
-import com.frontegg.sdk.middleware.spring.routes.VendorClientPublicRouts;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.frontegg.sdk.middleware.routes.model.KeyValPair;
+import com.frontegg.sdk.middleware.routes.model.RoutesConfig;
+import com.frontegg.sdk.middleware.routes.model.VendorClientPublicRouts;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-@Service
 public class FronteggConfigRoutsService implements IFronteggRouteService {
 
-    @Autowired
     private IApiClient apiClient;
-    @Autowired
     private FronteggConfig fronteggConfig;
+
+    public FronteggConfigRoutsService(IApiClient apiClient, FronteggConfig fronteggConfig) {
+        this.apiClient = apiClient;
+        this.fronteggConfig = fronteggConfig;
+    }
 
     public boolean isFronteggPublicRoute(HttpServletRequest request) {
         RoutesConfig routesConfig = fetchRoutesConfig();
@@ -62,12 +62,11 @@ public class FronteggConfigRoutsService implements IFronteggRouteService {
 
             if (!hasAllQueryParams) return false;
         }
-         return hasAllQueryParams;
+        return hasAllQueryParams;
     }
 
     private RoutesConfig fetchRoutesConfig() {
         String url = fronteggConfig.getUrlConfig().getBaseUrl() + "/configs/routes";
         return apiClient.get(url, RoutesConfig.class).orElse(null);
     }
-
 }
