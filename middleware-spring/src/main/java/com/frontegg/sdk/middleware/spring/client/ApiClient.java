@@ -1,13 +1,18 @@
 package com.frontegg.sdk.middleware.spring.client;
 
 import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
+import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -60,9 +65,19 @@ public class ApiClient implements IApiClient {
         }
 
         HttpMethod method = HttpMethod.resolve(request.getMethod());
-        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), method, createHttpEntity(request, headers), clazz);
+        try {
+            ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), method, createHttpEntity(request, headers), clazz);
+            return convert(responseEntity);
+        } catch (RestClientException ex) {
 
-        return convert(responseEntity);
+            if (ex instanceof HttpStatusCodeException) {
+                if (((HttpStatusCodeException)ex).getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    throw new AuthenticationException(ex.getMessage(), ex);
+                }
+            }
+
+            throw new FronteggSDKException("frontegg sdk call fails with message : " + ex.getMessage(), ex);
+        }
     }
 
     private HttpEntity<Object> createHttpEntity() {
