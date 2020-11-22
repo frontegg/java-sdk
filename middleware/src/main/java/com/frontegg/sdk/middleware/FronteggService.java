@@ -67,11 +67,7 @@ public class FronteggService implements IFronteggService {
 
     private FronteggHttpResponse<Object> initiateRequest(String url, HttpServletRequest request, HttpServletResponse response, Map<String, String> headers){
         FronteggHttpResponse<Object> val;
-        try {
-            val = apiClient.service(url, request, response, headers, Object.class);
-        } catch (Exception ex) {
-            throw new FronteggSDKException(ex.getMessage(), ex);
-        }
+        val = apiClient.service(url, request, response, headers, Object.class);
 
         //UnAuthorized
         if (val.getStatusCode() == 401) {
