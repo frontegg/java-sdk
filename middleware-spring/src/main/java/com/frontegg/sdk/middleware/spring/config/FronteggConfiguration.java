@@ -42,6 +42,8 @@ public class FronteggConfiguration {
     private SpringFronteggConfigProvider springFronteggConfigProvider;
     @Autowired
     private SpringWhiteConfigProvider springWhiteConfigProvider;
+    @Autowired
+    private FronteggOptions fronteggOptions;
 
     @Bean
     public ConfigProvider configProvider() {
@@ -78,7 +80,12 @@ public class FronteggConfiguration {
 
     @Bean
     public FronteggAuthenticator fronteggAuthenticator() {
-        return new FronteggAuthenticator(clientID, apiKey, fronteggConfig(), apiClient());
+        return new FronteggAuthenticator(
+                fronteggOptions.getClientId(),
+                fronteggOptions.getApiKey(),
+                fronteggConfig(),
+                apiClient()
+        );
     }
 
     @Bean

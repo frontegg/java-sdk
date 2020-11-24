@@ -11,6 +11,8 @@ public class FronteggContext {
     private String userId;
     private List<Permission> permissions;
 
+    private String basePath;
+
     private Authentication authentication;
 
     public String getTenantId() {
@@ -44,4 +46,14 @@ public class FronteggContext {
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
     }
+
+    public void setFronteggBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public String getFronteggBasePath() {
+        return this.basePath;
+    }
+
+
 }

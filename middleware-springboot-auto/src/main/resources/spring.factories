@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.frontegg.sdk.middleware.config.FronteggAutoConfiguration

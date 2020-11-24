@@ -12,7 +12,8 @@ public interface IApiClient {
     <T> Optional<T> get(String url, Class<T> clazz);
     <T> Optional<T> get(String url, Map<String,String> headers, Class<T> clazz);
 
-    <T,R> Optional<T> post(String url, Class<T> clazz, R body);
+    <T,R> FronteggHttpResponse<T> post(String url, Class<T> clazz, R body);
+    <T,R> FronteggHttpResponse<T> post(String url, Class<T> clazz, Map<String, String> headers, R body);
 
     <T> FronteggHttpResponse<T> service(String url,
                                         HttpServletRequest request,

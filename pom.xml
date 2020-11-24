@@ -10,13 +10,13 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>middleware-spring</module>
-        <module>middleware-springboot-auto</module>
         <module>common</module>
         <module>authenticator</module>
         <module>middleware</module>
         <module>api-client</module>
         <module>config</module>
         <module>audit</module>
+        <module>sso</module>
     </modules>
 
     <properties>
