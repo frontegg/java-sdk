@@ -9,10 +9,10 @@ import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.context.FronteggContextHolder;
-import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
+import com.frontegg.sdk.middleware.context.FronteggContextHolder;
+import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.identity.model.IdentityModel;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
@@ -30,14 +30,22 @@ public class IdentityService implements IIdentityService {
     private IApiClient apiClient;
     private FronteggConfig fronteggConfig;
 
+    private RSAPublicKey publicKey;
+    private static final String PUBLIC_KEY_PATH = "/resources/configurations/v1";
+
     public IdentityService(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig fronteggConfig) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;
         this.fronteggConfig = fronteggConfig;
     }
 
+    private void init() {
+        publicKey = getPublicKey();
+    }
+
     @Override
     public void verifyToken(String token) {
+        init();
 
         logger.info("going to authenticate");
         authenticator.authenticate();
@@ -45,19 +53,9 @@ public class IdentityService implements IIdentityService {
 
         try {
 
-            logger.info("got identity service configuration");
-            IdentityModel identityModel = apiClient.get(
-                    fronteggConfig.getUrlConfig().getIdentityService() + "/resources/configurations/v1",
-                    withHeaders(),
-                    IdentityModel.class
-            ).get();
-
-
             // And save it as member of the class
-            logger.info("going to extract public key from response");
             DecodedJWT jwt = JWT.decode(token);
 
-            RSAPublicKey publicKey = new RSAPublicKeyImpl(Base64.decode(normalizedPublicKey(identityModel.getPublicKey())));
             JWTVerifier verifier = JWT.require(Algorithm.RSA256(publicKey, null)).build();
             verifier.verify(token);
 
@@ -72,12 +70,34 @@ public class IdentityService implements IIdentityService {
             FronteggContextHolder.setContext(fronteggContext);
 
         } catch (Exception e) {
+            logger.error("Unable to verify token", e);
             throw new FronteggSDKException("Unable to verify token", e);
         }
     }
 
+    private RSAPublicKey getPublicKey() {
+        if (publicKey != null) return publicKey;
+
+        logger.info("got identity service configuration");
+        String urlPath = fronteggConfig.getUrlConfig().getIdentityService() + PUBLIC_KEY_PATH;
+        try {
+            IdentityModel identityModel = apiClient.get(urlPath,
+                    withHeaders(),
+                    IdentityModel.class
+            ).get();
+
+            logger.info("going to extract public key from response");
+            return new RSAPublicKeyImpl(Base64.decode(normalizedPublicKey(identityModel.getPublicKey())));
+        } catch (Exception ex) {
+            logger.error("Unable to get frontegg public key from url = " + urlPath, ex);
+            throw new FronteggSDKException(ex.getMessage(), ex);
+        }
+    }
+
     private String normalizedPublicKey(String key) {
-        return key.replaceAll("\\n", "").replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "");
+        return key.replaceAll("\\n", "")
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("-----END PUBLIC KEY-----", "");
     }
 
     private Map<String, String> withHeaders() {

@@ -46,10 +46,19 @@ public class ApiClient implements IApiClient {
     }
 
     @Override
-    public <T, R> Optional<T> post(String url, Class<T> clazz, R body) {
+    public <T, R> FronteggHttpResponse<T> post(String url, Class<T> clazz, R body) {
+       return post(url, clazz, null, body);
+    }
+
+    @Override
+    public <T, R> FronteggHttpResponse<T> post(String url, Class<T> clazz, Map<String, String> headers, R body) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-        ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(null, body), clazz);
-        return Optional.of(responseEntity.getBody());
+        try {
+            ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(headers, body), clazz);
+            return convert(responseEntity);
+        } catch (RestClientException ex) {
+            throw new FronteggSDKException("frontegg sdk call fails with message : " + ex.getMessage(), ex);
+        }
     }
 
     @Override

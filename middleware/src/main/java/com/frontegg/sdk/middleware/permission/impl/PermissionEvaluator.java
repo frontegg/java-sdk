@@ -20,8 +20,6 @@ import java.util.Map;
 public class PermissionEvaluator implements IPermissionEvaluator {
     private static final Logger logger = LoggerFactory.getLogger(PermissionEvaluator.class);
 
-    public static final String CONTEXT_MAIN_PATH = "/frontegg";
-
     private WhiteListConfig whiteListConfig;
 
     public PermissionEvaluator(WhiteListConfig whiteListConfig) {
@@ -48,7 +46,7 @@ public class PermissionEvaluator implements IPermissionEvaluator {
             return;
         }
 
-        String url = HttpUtil.getRequestUrl(request.getRequestURI(), CONTEXT_MAIN_PATH);
+        String url = HttpUtil.getRequestUrl(request.getRequestURI(), context.getFronteggBasePath());
 
         if (isWhiteListUrl(url)) return;
 

@@ -4,14 +4,16 @@ import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.filter.GenericFilterBean;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class FronteggAuthenticationFilter extends GenericFilterBean {
+public class FronteggAuthenticationFilter extends FronteggBaseFilter {
     private static Logger logger = LoggerFactory.getLogger(FronteggAuthenticationFilter.class);
 
     private IFronteggAuthenticationService authenticationService;
@@ -27,16 +29,19 @@ public class FronteggAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        authenticationService.authenticateApp();
+        if (requestMatcher.matches(request)) {
 
-        if (request.getMethod().equals("OPTIONS")) {
-            response.setStatus(204);
-            return;
-        }
+            authenticationService.authenticateApp();
 
-        if (!isFronteggPublicRoute(request)) {
-            logger.debug("will pass request threw the auth middleware");
-            authenticationService.withAuthentication(request);
+            if (request.getMethod().equals("OPTIONS")) {
+                response.setStatus(204);
+                return;
+            }
+
+            if (!isFronteggPublicRoute(request)) {
+                logger.debug("will pass request threw the auth middleware");
+                authenticationService.withAuthentication(request);
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -45,5 +50,4 @@ public class FronteggAuthenticationFilter extends GenericFilterBean {
     private boolean isFronteggPublicRoute(HttpServletRequest request) {
         return fronteggRouteService.isFronteggPublicRoute(request);
     }
-
 }

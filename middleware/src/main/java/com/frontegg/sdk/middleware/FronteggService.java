@@ -25,7 +25,6 @@ import static com.frontegg.sdk.common.util.HttpUtil.*;
 public class FronteggService implements IFronteggService {
 
     private static final Logger logger = LoggerFactory.getLogger(FronteggService.class);
-    public static final String CONTEXT_MAIN_PATH = "/frontegg";
 
     private FronteggConfig config;
     private IApiClient apiClient;
@@ -49,7 +48,7 @@ public class FronteggService implements IFronteggService {
         logger.info("going to proxy request - " + request.getRequestURI() + " to  " + config.getUrlConfig().getBaseUrl());
         Map<String, String> headers = initHeaders(request, context);
 
-        String requestUrl = HttpUtil.getRequestUrl(request.getRequestURI(), CONTEXT_MAIN_PATH);
+        String requestUrl = HttpUtil.getRequestUrl(request.getRequestURI(), context.getFronteggBasePath());
         String url = config.getUrlConfig().getBaseUrl() + requestUrl;
 
         FronteggHttpResponse<Object> val = initiateRequest(url, request, response, headers);

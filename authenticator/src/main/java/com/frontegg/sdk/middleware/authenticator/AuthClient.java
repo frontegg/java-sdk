@@ -20,7 +20,7 @@ public class AuthClient {
         try {
             AuthRequest request = new AuthRequest(clientId, apiKey);
             Gson gson = new Gson();
-            authResponse = apiClient.post(config.getUrlConfig().getAuthenticationService(), AuthResponse.class, gson.toJson(request)).orElse(null);
+            authResponse = apiClient.post(config.getUrlConfig().getAuthenticationService(), AuthResponse.class, gson.toJson(request)).getBody();
         } catch (Exception ex) {
             logger.error("failed to authenticate with frontegg - " + ex.getMessage(), ex);
             throw new AuthenticationException("Failed to authenticate with frontegg", ex);
