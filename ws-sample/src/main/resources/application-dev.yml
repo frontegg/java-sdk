@@ -14,3 +14,7 @@ frontegg:
       identityService: /identity
   whitelist:
     - /metadata
+  settings:
+    disableCors: false
+    maxRetries: 3
+    cookieDomainRewrite:

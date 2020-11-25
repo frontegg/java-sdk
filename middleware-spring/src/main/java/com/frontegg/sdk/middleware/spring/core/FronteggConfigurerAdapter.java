@@ -37,11 +37,8 @@ public abstract class FronteggConfigurerAdapter implements FronteggConfigurer<Fi
 
         Map<Class<?>, Object> sharedObjects = createSharedObjects();
         frontegg = new Frontegg(objectPostProcessor, sharedObjects);
-        frontegg
-                .cors().disable()
-                .fronteggFilters()
-                    .filter(getPath(), context.getBean(FronteggFilter.class))
-                ;
+        frontegg.fronteggFilters()
+                    .filter(getPath(), context.getBean(FronteggFilter.class));
         configure(frontegg);
         return frontegg;
     }

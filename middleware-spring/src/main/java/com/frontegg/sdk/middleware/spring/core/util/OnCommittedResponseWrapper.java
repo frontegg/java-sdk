@@ -138,7 +138,7 @@ public abstract class OnCommittedResponseWrapper extends HttpServletResponseWrap
 
     private void trackContentLength(boolean content) {
         if (!this.disableOnCommitted) {
-            checkContentLength(content ? 4 : 5); // TODO Localization
+            checkContentLength(content ? 4 : 5);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.frontegg.sdk.middleware.spring.core;
 
+import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.IFronteggServiceDelegate;
 import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
@@ -123,11 +124,12 @@ public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware
     @Bean
     public FronteggFilter fronteggAppFilter(IFronteggAuthenticationService authenticationService,
                                             IFronteggRouteService fronteggRouteService,
-                                            IFronteggServiceDelegate fronteggServiceDelegate) {
+                                            IFronteggServiceDelegate fronteggServiceDelegate,
+                                            FronteggOptions options) {
         Assert.notNull(authenticationService, "authenticationService cannot be null");
         Assert.notNull(fronteggRouteService, "fronteggRouteService cannot be null");
         Assert.notNull(fronteggServiceDelegate, "delegate cannot be null");
 
-        return new FronteggFilter(authenticationService, fronteggRouteService, fronteggServiceDelegate);
+        return new FronteggFilter(authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
     }
 }
