@@ -8,7 +8,6 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.spring.core.EnableFrontegg;
 import com.frontegg.sdk.middleware.spring.core.FronteggConfigurerAdapter;
 import com.frontegg.sdk.middleware.spring.core.builders.Frontegg;
-import com.frontegg.sdk.middleware.spring.core.builders.FronteggConf;
 import com.frontegg.sdk.sso.ISsoClient;
 import com.frontegg.sdk.sso.SsoClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,8 +47,9 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
                 .cookieDomainRewrite(cookieDomainRewrite)
                 .maxRetries(maxRetries);
 
-        //TODO not working
-        if (!disableCors) {
+        if (disableCors) {
+            frontegg.cors().disable();
+        } else {
             frontegg.cors().configurationSource(corsConfigurationSource());
         }
     }
@@ -69,19 +69,12 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
         return new SsoClient(authenticator, apiClient, config);
     }
 
-    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "OPTION"));
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("Content-Type");
-        configuration.addAllowedHeader("Accept");
-        configuration.addAllowedHeader("remember-me");
-        configuration.addAllowedHeader("X-Requested-With");
-        configuration.addAllowedHeader("Authorization");
-        configuration.addAllowedHeader("x-frontegg-source");
+        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "x-frontegg-source"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
