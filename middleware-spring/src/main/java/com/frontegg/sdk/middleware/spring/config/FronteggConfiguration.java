@@ -2,6 +2,7 @@ package com.frontegg.sdk.middleware.spring.config;
 
 import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.config.*;
+import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.FronteggService;
 import com.frontegg.sdk.middleware.IFronteggService;
 import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
@@ -9,13 +10,11 @@ import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationSer
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.identity.IIdentityService;
 import com.frontegg.sdk.middleware.identity.impl.IdentityService;
-import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
 import com.frontegg.sdk.middleware.spring.FronteggListenerSupport;
 import com.frontegg.sdk.middleware.spring.client.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -26,17 +25,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class FronteggConfiguration {
-
-    @Value("${frontegg.settings.disableCors:#{true}}")
-    private boolean disableCors;
-    @Value("${frontegg.settings.maxRetries:#{3}}")
-    private int maxRetries;
-    @Value("${frontegg.settings.cookieDomainRewrite:#{''}}")
-    private String cookieDomainRewrite;
-    @Value("${frontegg.clientId}")
-    private String clientID;
-    @Value("${frontegg.apiKey}")
-    private String apiKey;
 
     @Autowired
     private SpringFronteggConfigProvider springFronteggConfigProvider;
@@ -113,22 +101,11 @@ public class FronteggConfiguration {
         retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
 
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts(maxRetries);
+        retryPolicy.setMaxAttempts(fronteggOptions.getMaxRetries());
         retryTemplate.setRetryPolicy(retryPolicy);
 
         retryTemplate.registerListener(new FronteggListenerSupport());
         return retryTemplate;
-    }
-
-    @Bean
-    public FronteggOptions fronteggOptions() {
-        FronteggOptions fronteggOptions = new FronteggOptions();
-        fronteggOptions.setMaxRetries(maxRetries);
-        fronteggOptions.setDisableCors(disableCors);
-        fronteggOptions.setCookieDomainRewrite(cookieDomainRewrite);
-        fronteggOptions.setClientId(clientID);
-        fronteggOptions.setApiKey(apiKey);
-        return fronteggOptions;
     }
 
     @Bean

@@ -4,6 +4,7 @@ import com.frontegg.sdk.api.client.IApiClient;
 import com.frontegg.sdk.audit.AuditClient;
 import com.frontegg.sdk.audit.IAuditClient;
 import com.frontegg.sdk.config.FronteggConfig;
+import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.spring.core.EnableFrontegg;
 import com.frontegg.sdk.middleware.spring.core.FronteggConfigurerAdapter;
@@ -67,6 +68,17 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
     @Bean
     public ISsoClient ssoClient(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig config) {
         return new SsoClient(authenticator, apiClient, config);
+    }
+
+    @Bean
+    public FronteggOptions fronteggOptions() {
+        FronteggOptions fronteggOptions = new FronteggOptions();
+        fronteggOptions.setMaxRetries(maxRetries);
+        fronteggOptions.setDisableCors(disableCors);
+        fronteggOptions.setCookieDomainRewrite(cookieDomainRewrite);
+        fronteggOptions.setClientId(clientID);
+        fronteggOptions.setApiKey(apiKey);
+        return fronteggOptions;
     }
 
     CorsConfigurationSource corsConfigurationSource() {

@@ -1,7 +1,6 @@
 package com.frontegg.sdk.middleware;
 
 import com.frontegg.sdk.api.client.IApiClient;
-import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
@@ -73,18 +72,6 @@ public class FronteggService implements IFronteggService {
             throw new AuthenticationException("Application is not authorized");
         }
 
-        //Cors header management
-        if (fronteggOptions.isDisableCors()) {
-            HttpUtil.deleteHeaders(response,
-                    ACCESS_CONTROL_REQUEST_METHOD,
-                    ACCESS_CONTROL_REQUEST_HEADERS,
-                    ACCESS_CONTROL_ALLOW_ORIGIN,
-                    ACCESS_CONTROL_ALLOW_CREDENTIALS
-            );
-        } else {
-            enableCors(val, response);
-        }
-
         //Rewrite Cookies
         if (!StringHelper.isBlank(fronteggOptions.getCookieDomainRewrite())) {
             cookieDomainRewrite(val, request, response);
@@ -95,7 +82,7 @@ public class FronteggService implements IFronteggService {
 
     private void cookieDomainRewrite(FronteggHttpResponse<Object> fronteggHttpResponse, HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
-        String host = HttpUtil.getHeader(request, "host");
+        String host = HttpUtil.getHeader(request, FRONTEGG_HEADER_HOST);
         if (!StringHelper.isBlank(host)) {
             for (Cookie cookie : cookies) {
                 if (cookie.getDomain().equals(host)) {
@@ -113,11 +100,5 @@ public class FronteggService implements IFronteggService {
         headers.put(FRONTEGG_HEADER_USER_ID, context.getUserId() == null  ? "" : context.getUserId());
         headers.put(FRONTEGG_HEADER_VENDOR_HOST, HttpUtil.getHostnameFromRequest(request));
         return headers;
-    }
-
-    void enableCors(FronteggHttpResponse<Object> fronteggHttpResponse, HttpServletResponse response) {
-        HttpUtil.replaceHeader(fronteggHttpResponse.getHeaders(), response, ACCESS_CONTROL_REQUEST_METHOD);
-        HttpUtil.replaceHeader(fronteggHttpResponse.getHeaders(), response, ACCESS_CONTROL_REQUEST_HEADERS);
-        HttpUtil.replaceHeader(fronteggHttpResponse.getHeaders(), response, ORIGIN, ACCESS_CONTROL_ALLOW_ORIGIN);
     }
 }
