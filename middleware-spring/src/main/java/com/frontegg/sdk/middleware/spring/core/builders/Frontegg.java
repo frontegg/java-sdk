@@ -31,18 +31,6 @@ public final class Frontegg extends
         }
     }
 
-    public Frontegg appConfiguration(String clientID, String apiKey) {
-        return this;
-    }
-
-    public Frontegg maxRetries(int maxRetries) {
-        return this;
-    }
-
-    public Frontegg cookieDomainRewrite(String cookieOverride) {
-        return this;
-    }
-
     public FronteggFilterConfigurer<Frontegg> fronteggFilters() throws Exception {
         return getOrApply(new FronteggFilterConfigurer<>());
     }

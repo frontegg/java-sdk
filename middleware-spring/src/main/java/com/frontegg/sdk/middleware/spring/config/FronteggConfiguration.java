@@ -28,8 +28,10 @@ public class FronteggConfiguration {
 
     @Autowired
     private SpringFronteggConfigProvider springFronteggConfigProvider;
+
     @Autowired
     private SpringWhiteConfigProvider springWhiteConfigProvider;
+
     @Autowired
     private FronteggOptions fronteggOptions;
 
