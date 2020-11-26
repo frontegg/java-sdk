@@ -6,25 +6,23 @@ import com.frontegg.sdk.audit.IAuditClient;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
-import com.frontegg.sdk.middleware.spring.core.EnableFrontegg;
+import com.frontegg.sdk.middleware.spring.config.FronteggConfiguration;
+import com.frontegg.sdk.middleware.spring.core.FronteggConfigurations;
 import com.frontegg.sdk.middleware.spring.core.FronteggConfigurerAdapter;
 import com.frontegg.sdk.middleware.spring.core.builders.Frontegg;
 import com.frontegg.sdk.sso.ISsoClient;
 import com.frontegg.sdk.sso.SsoClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-@EnableFrontegg
-@ComponentScan({
-        "com.frontegg.ws",
-        "com.frontegg.sdk.middleware.spring"})
+@Import({ FronteggConfiguration.class, FronteggConfigurations.class})
 @Configuration
 public class CustomConfiguration extends FronteggConfigurerAdapter {
 
@@ -43,11 +41,6 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
 
     @Override
     protected void configure(Frontegg frontegg) throws Exception {
-        frontegg
-                .appConfiguration(clientID, apiKey)
-                .cookieDomainRewrite(cookieDomainRewrite)
-                .maxRetries(maxRetries);
-
         if (disableCors) {
             frontegg.cors().disable();
         } else {

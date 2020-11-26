@@ -11,9 +11,7 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportAware;
+import org.springframework.context.annotation.*;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -24,7 +22,8 @@ import org.springframework.util.Assert;
 import javax.servlet.Filter;
 import java.util.List;
 
-@Configuration(proxyBeanMethods = false)
+@ComponentScan("com.frontegg.sdk.middleware.spring.config")
+@Configuration
 public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware {
 
     private ClassLoader beanClassLoader;
@@ -129,6 +128,7 @@ public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware
         Assert.notNull(authenticationService, "authenticationService cannot be null");
         Assert.notNull(fronteggRouteService, "fronteggRouteService cannot be null");
         Assert.notNull(fronteggServiceDelegate, "delegate cannot be null");
+        Assert.notNull(options, "frontegg options cannot be null");
 
         return new FronteggFilter(authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
     }

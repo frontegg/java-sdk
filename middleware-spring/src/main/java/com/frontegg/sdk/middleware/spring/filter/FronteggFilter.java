@@ -7,6 +7,7 @@ import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpUtil;
+import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.IFronteggServiceDelegate;
 import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
@@ -54,12 +55,21 @@ public class FronteggFilter extends FronteggBaseFilter {
                           IFronteggRouteService fronteggRouteService,
                           IFronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
+        validateOptions(options);
         this.repo = repo;
         this.authenticationService = authenticationService;
         this.fronteggRouteService = fronteggRouteService;
         this.fronteggServiceDelegate = fronteggServiceDelegate;
         this.options = options;
+    }
 
+    private void validateOptions(FronteggOptions options) {
+        if (StringHelper.isBlank(options.getClientId())) {
+            throw new FronteggSDKException("Missing client ID");
+        }
+        if (StringHelper.isBlank(options.getApiKey())) {
+            throw new FronteggSDKException("Missing api key");
+        }
     }
 
     @Override

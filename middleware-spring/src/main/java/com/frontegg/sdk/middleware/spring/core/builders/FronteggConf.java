@@ -45,11 +45,12 @@ public final class FronteggConf extends
     protected Filter performBuild() throws Exception {
         Assert.state(
                 !fronteggFilterChainBuilders.isEmpty(),
-                () -> "At least one FronteggBuilder<? extends FronteggFilterChain> needs to be specified. "
+                "At least one FronteggBuilder<? extends FronteggFilterChain> needs to be specified. "
                         + "Typically this done by adding a @Configuration that extends FronteggConfigurerAdapter. "
                         + "More advanced users can invoke "
                         + FronteggConf.class.getSimpleName()
                         + ".addFronteggFilterChainBuilder directly");
+
         int chainSize = fronteggFilterChainBuilders.size();
         List<FronteggFilterChain> fronteggFilterChains = new ArrayList<>(chainSize);
 
