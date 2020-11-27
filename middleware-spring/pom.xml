@@ -11,23 +11,6 @@
 
     <artifactId>middleware-spring</artifactId>
 
-    <properties>
-        <spring.framework.version>4.3.6.RELEASE</spring.framework.version>
-        <spring.retry.version>1.2.5.RELEASE</spring.retry.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.framework.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>

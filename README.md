@@ -57,7 +57,7 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "OPTION"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "x-frontegg-source"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "x-frontegg-source"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
@@ -75,3 +75,49 @@ default path is `/frontegg`.
     }
 ```
 
+### Configuration
+
+| Option Name       | Type   | Description
+|-------------------|:---:|---|
+| **maxRetries**    | int | max retries in case of fail the request to frontegg api | 
+| **disableCors**  | boolean | if cors enabled adds frontegg api appropriate headers to response |
+| **cookieDomainRewrite**   | string | overrides domain from coolies |
+
+#### Frontegg Urls and WhiteLists
+
+Frontegg Urls and Whitelist base configuration is defined in config modules readme file.
+For spring based application sdk provides `ConfigProvider` and `WhiteListProvider` beans for these configurations.
+To provide custom `configProviders` you need to create/override `configProvider` and  `whiteListProvider` beans.
+
+The order of configProvider loader is. 
+- yaml 
+- environment variables
+- system variables
+- default 
+
+example of yaml 
+```yaml
+frontegg:
+    config:
+        urls:
+          baseUrl: https://api.frontegg.com
+          authenticationService: /vendors/auth/token
+          auditsService: /audits/
+          notificationService: /notification/
+          tenantsService: /tenants/
+          metadataService: /metadata/
+          teamService: /team
+          eventService: /event
+          identityService: /identity
+```
+
+The order of whiteListProvider loader is.
+- yaml
+- default
+
+example of yaml:
+```yaml
+frontegg:
+  whitelist:
+    - /metadata
+```

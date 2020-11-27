@@ -11,7 +11,10 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -22,7 +25,7 @@ import org.springframework.util.Assert;
 import javax.servlet.Filter;
 import java.util.List;
 
-@ComponentScan("com.frontegg.sdk.middleware.spring.config")
+@ComponentScan("com.frontegg.sdk.middleware.spring")
 @Configuration
 public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware {
 

@@ -25,6 +25,8 @@
         <jackson.version>2.11.3</jackson.version>
         <servlet.version>3.1.0</servlet.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <spring.framework.version>4.3.6.RELEASE</spring.framework.version>
+        <spring.retry.version>1.2.5.RELEASE</spring.retry.version>
     </properties>
 
 
@@ -35,9 +37,15 @@
             <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
-
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
