@@ -121,3 +121,13 @@ frontegg:
   whitelist:
     - /metadata
 ```
+
+#### Version
+
+frontegg library version - `0.0.1`
+
+| Dependencies       | Version |
+|-------------------|:---:|
+| **spring-boot**    | 1.4.x | 
+| **spring framework version**    | 4.x.x | 
+| **java-servlet-api**  | 3.1.0 |
