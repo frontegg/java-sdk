@@ -89,6 +89,8 @@ public class ApiClient implements IApiClient {
         }
     }
 
+    //region request helper methods
+
     private HttpEntity<Object> createHttpEntity() {
         return new HttpEntity(buildHttpHeaders(null));
     }
@@ -166,7 +168,9 @@ public class ApiClient implements IApiClient {
         }
         return null;
     }
+    //endregion
 
+    //region response helper methods
     private <T> FronteggHttpResponse<T> convert(ResponseEntity<T> responseEntity) {
         FronteggHttpResponse<T> response = new FronteggHttpResponse<>();
         response.setBody(responseEntity.getBody());
@@ -185,4 +189,5 @@ public class ApiClient implements IApiClient {
         }
         return fronteggHttpHeaders;
     }
+    //endregion
 }
