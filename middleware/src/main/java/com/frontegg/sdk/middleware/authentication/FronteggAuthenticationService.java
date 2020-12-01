@@ -4,7 +4,13 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface FronteggAuthenticationService {
 
+    /**
+     * Validate request is authorized
+     */
     void withAuthentication(HttpServletRequest request);
 
-    void authenticateApp();
+    /**
+     * Authenticate Frontegg application If not authenticated yet.
+     */
+    void authenticateFronteggApplicationIfNeeded();
 }

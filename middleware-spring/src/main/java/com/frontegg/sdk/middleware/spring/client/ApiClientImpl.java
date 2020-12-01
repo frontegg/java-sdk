@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SpringApiClient implements ApiClient {
-    private static final Logger logger = LoggerFactory.getLogger(SpringApiClient.class);
+public class ApiClientImpl implements ApiClient {
+    private static final Logger logger = LoggerFactory.getLogger(ApiClientImpl.class);
 
     private RestTemplate restTemplate;
 
-    public SpringApiClient(RestTemplate restTemplate) {
+    public ApiClientImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -119,7 +119,7 @@ public class SpringApiClient implements ApiClient {
                 String strBody = gson.toJson(body);
                 return buildHttpEntity(headers, strBody);
             } catch (Exception ex) {
-                logger.error("unable to jsonify the request body of class -> " + body.getClass());
+                logger.error("unable to jsonify the request body of class -> {} ", body.getClass());
             }
         }
 
@@ -173,7 +173,7 @@ public class SpringApiClient implements ApiClient {
     private <T> FronteggHttpResponse<T> convert(ResponseEntity<T> responseEntity) {
         FronteggHttpResponse<T> response = new FronteggHttpResponse<>();
         response.setBody(responseEntity.getBody());
-        response.setStatusCode(responseEntity.getStatusCodeValue());
+        response.setStatusCode(responseEntity.getStatusCode().value());
         response.setHeaders(convertHeaders(responseEntity.getHeaders()));
         return response;
     }

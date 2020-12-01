@@ -1,6 +1,5 @@
 package com.frontegg.sdk.middleware.spring.core.context;
 
-import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import org.slf4j.Logger;
@@ -121,7 +120,6 @@ public class HttpSessionFronteggContextRepository implements FronteggContextRepo
         private final HttpServletRequest request;
         private final boolean httpSessionExistedAtStartOfRequest;
         private final FronteggContext contextBeforeExecution;
-        private final Authentication authBeforeExecution;
 
         /**
          * Takes the parameters required to call <code>saveContext()</code> successfully
@@ -142,32 +140,18 @@ public class HttpSessionFronteggContextRepository implements FronteggContextRepo
             this.request = request;
             this.httpSessionExistedAtStartOfRequest = httpSessionExistedAtStartOfRequest;
             this.contextBeforeExecution = context;
-            this.authBeforeExecution = context.getAuthentication();
         }
 
         @Override
         protected void saveContext(FronteggContext context) {
-            final Authentication authentication = context.getAuthentication();
             HttpSession httpSession = request.getSession(false);
-
-            if (authentication == null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("FronteggContext is empty or contents are anonymous - context will not be stored in HttpSession.");
-                }
-
-                if (httpSession != null && authBeforeExecution != null) {
-                    httpSession.removeAttribute(FRONTEGG_CONTEXT_KEY);
-                }
-                return;
-            }
 
             if (httpSession == null) {
                 httpSession = createNewSessionIfAllowed(context);
             }
 
             if (httpSession != null) {
-                if (contextChanged(context)
-                        || httpSession.getAttribute(FRONTEGG_CONTEXT_KEY) == null) {
+                if (contextChanged(context) || httpSession.getAttribute(FRONTEGG_CONTEXT_KEY) == null) {
                     httpSession.setAttribute(FRONTEGG_CONTEXT_KEY, context);
 
                     if (logger.isDebugEnabled()) {
@@ -178,7 +162,7 @@ public class HttpSessionFronteggContextRepository implements FronteggContextRepo
         }
 
         private boolean contextChanged(FronteggContext context) {
-            return context != contextBeforeExecution || context.getAuthentication() != authBeforeExecution;
+            return context != contextBeforeExecution;
         }
 
         private HttpSession createNewSessionIfAllowed(FronteggContext context) {

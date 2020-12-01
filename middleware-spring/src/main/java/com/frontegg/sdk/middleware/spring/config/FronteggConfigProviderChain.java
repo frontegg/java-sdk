@@ -34,16 +34,16 @@ public class FronteggConfigProviderChain implements ConfigProvider {
                 FronteggConfig config = provider.resolveConfigs();
 
                 if (config != null) {
-                    logger.debug("Loading config from " + provider.toString());
+                    logger.debug("Loading config from {}", provider.toString());
                     return config;
                 }
 
             } catch (Exception e) {
                 // Ignore any exceptions and move onto the next provider
                 String message = provider + ": " + e.getMessage();
-                logger.debug("Unable to load config from " + message);
+                logger.debug("Unable to load config from {}", message);
                 if (exceptionMessages == null) {
-                    exceptionMessages = new LinkedList<String>();
+                    exceptionMessages = new LinkedList<>();
                 }
                 exceptionMessages.add(message);
             }

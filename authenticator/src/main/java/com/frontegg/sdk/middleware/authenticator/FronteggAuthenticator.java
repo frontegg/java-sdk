@@ -25,11 +25,11 @@ public class FronteggAuthenticator {
         authClient = new AuthClient(client);
     }
 
-    public Authentication authenticate() {
+    public FronteggAuthentication authenticate() {
         return authenticate(false);
     }
 
-    private Authentication authenticate(boolean force) {
+    private FronteggAuthentication authenticate(boolean force) {
         if (!force && !StringHelper.isBlank(accessToken))
             return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
 
@@ -49,7 +49,7 @@ public class FronteggAuthenticator {
         return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
     }
 
-    public Authentication refreshAuthentication() {
+    public FronteggAuthentication refreshAuthentication() {
         return this.authenticate(true);
     }
 

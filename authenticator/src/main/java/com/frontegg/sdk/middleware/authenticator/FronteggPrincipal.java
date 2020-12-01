@@ -2,7 +2,7 @@ package com.frontegg.sdk.middleware.authenticator;
 
 import java.time.LocalDateTime;
 
-public class FronteggPrincipal implements Authentication {
+public class FronteggPrincipal implements FronteggAuthentication {
     private String accessToken;
     private LocalDateTime accessTokenExpiry;
 

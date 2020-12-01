@@ -28,7 +28,7 @@ public class AuditClient implements IAuditClient {
             logger.info("going to send audit");
             authenticator.validateAuthentication();
             FronteggHttpResponse<Object> optional = apiClient.post(config.getUrlConfig().getAuditsService(), Object.class, audits);
-            logger.info("sent audit successfully - " + optional.getBody());
+            logger.info("sent audit successfully {} ", optional.getBody());
 
         } catch (Exception e) {
             logger.error("failed to send audit to audits service - ", e);

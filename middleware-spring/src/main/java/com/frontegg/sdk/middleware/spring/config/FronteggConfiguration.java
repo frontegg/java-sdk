@@ -3,17 +3,16 @@ package com.frontegg.sdk.middleware.spring.config;
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.config.*;
 import com.frontegg.sdk.middleware.FronteggOptions;
-import com.frontegg.sdk.middleware.FronteggServiceImpl;
 import com.frontegg.sdk.middleware.FronteggService;
+import com.frontegg.sdk.middleware.FronteggServiceImpl;
 import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
 import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationServiceImpl;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
-import com.frontegg.sdk.middleware.identity.impl.FronteggIdentityServiceImpl;
+import com.frontegg.sdk.middleware.spring.identity.FronteggIdentityServiceImpl;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
-import com.frontegg.sdk.middleware.spring.FronteggListenerSupport;
-import com.frontegg.sdk.middleware.spring.client.SpringApiClient;
+import com.frontegg.sdk.middleware.spring.client.ApiClientImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +48,7 @@ public class FronteggConfiguration {
 
     @Bean
     public ApiClient apiClient() {
-        return new SpringApiClient(new RestTemplate());
+        return new ApiClientImpl(new RestTemplate());
     }
 
     @Bean
@@ -88,8 +87,6 @@ public class FronteggConfiguration {
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
         retryPolicy.setMaxAttempts(fronteggOptions.getMaxRetries());
         retryTemplate.setRetryPolicy(retryPolicy);
-
-        retryTemplate.registerListener(new FronteggListenerSupport());
         return retryTemplate;
     }
 

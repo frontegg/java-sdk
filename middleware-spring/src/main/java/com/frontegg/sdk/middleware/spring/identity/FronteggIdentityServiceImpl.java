@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.identity.impl;
+package com.frontegg.sdk.middleware.spring.identity;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -52,7 +52,6 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
         logger.info("going to get identity service configuration");
 
         try {
-
             // And save it as member of the class
             DecodedJWT jwt = JWT.decode(token);
 
@@ -86,10 +85,10 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
                     IdentityModel.class
             ).get();
 
-            logger.info("going to extract public key from response");
+            logger.debug("going to extract public key from response");
             return new RSAPublicKeyImpl(Base64.getDecoder().decode(normalizedPublicKey(identityModel.getPublicKey())));
         } catch (Exception ex) {
-            logger.error("Unable to get frontegg public key from url = " + urlPath, ex);
+            logger.error("Unable to get frontegg public key from url {} ", urlPath, ex);
             throw new FronteggSDKException(ex.getMessage(), ex);
         }
     }
