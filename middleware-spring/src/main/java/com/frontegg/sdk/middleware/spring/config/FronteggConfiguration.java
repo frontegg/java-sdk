@@ -1,19 +1,19 @@
 package com.frontegg.sdk.middleware.spring.config;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.config.*;
 import com.frontegg.sdk.middleware.FronteggOptions;
+import com.frontegg.sdk.middleware.FronteggServiceImpl;
 import com.frontegg.sdk.middleware.FronteggService;
-import com.frontegg.sdk.middleware.IFronteggService;
-import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
-import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationServiceImpl;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
-import com.frontegg.sdk.middleware.identity.IIdentityService;
-import com.frontegg.sdk.middleware.identity.impl.IdentityService;
+import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
+import com.frontegg.sdk.middleware.identity.impl.FronteggIdentityServiceImpl;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
 import com.frontegg.sdk.middleware.spring.FronteggListenerSupport;
-import com.frontegg.sdk.middleware.spring.client.ApiClient;
+import com.frontegg.sdk.middleware.spring.client.SpringApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,9 +30,6 @@ public class FronteggConfiguration {
     private SpringFronteggConfigProvider springFronteggConfigProvider;
 
     @Autowired
-    private SpringWhiteConfigProvider springWhiteConfigProvider;
-
-    @Autowired
     private FronteggOptions fronteggOptions;
 
     @Bean
@@ -46,26 +43,13 @@ public class FronteggConfiguration {
     }
 
     @Bean
-    public WhiteListProvider whiteListProvider() {
-        return new FronteggWhiteListProviderChain(
-                springWhiteConfigProvider,
-                new DefaultWhiteListProvider()
-        );
-    }
-
-    @Bean
     public FronteggConfig fronteggConfig() {
         return configProvider().resolveConfigs();
     }
 
     @Bean
-    public WhiteListConfig whiteListConfig() {
-        return whiteListProvider().resolveConfigs();
-    }
-
-    @Bean
-    public IApiClient apiClient() {
-        return new ApiClient(new RestTemplate());
+    public ApiClient apiClient() {
+        return new SpringApiClient(new RestTemplate());
     }
 
     @Bean
@@ -79,8 +63,8 @@ public class FronteggConfiguration {
     }
 
     @Bean
-    public IFronteggAuthenticationService authenticationService() {
-        return new FronteggAuthenticationService(fronteggAuthenticator(), identityService());
+    public FronteggAuthenticationService authenticationService() {
+        return new FronteggAuthenticationServiceImpl(fronteggAuthenticator(), fronteggIdentityService());
     }
 
     @Bean
@@ -89,14 +73,13 @@ public class FronteggConfiguration {
     }
 
     @Bean
-    public IIdentityService identityService() {
-        return new IdentityService(fronteggAuthenticator(), apiClient(), fronteggConfig());
+    public FronteggIdentityService fronteggIdentityService() {
+        return new FronteggIdentityServiceImpl(fronteggAuthenticator(), apiClient(), fronteggConfig());
     }
 
     @Bean
     public RetryTemplate retryTemplate() {
         RetryTemplate retryTemplate = new RetryTemplate();
-
 
         FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
         fixedBackOffPolicy.setBackOffPeriod(1000L);
@@ -111,12 +94,12 @@ public class FronteggConfiguration {
     }
 
     @Bean
-    public IFronteggService fronteggService(FronteggConfig config,
-                                            IApiClient apiClient,
-                                            FronteggAuthenticator authenticator,
-                                            FronteggOptions fronteggOptions) {
+    public FronteggService fronteggService(FronteggConfig config,
+                                           ApiClient apiClient,
+                                           FronteggAuthenticator authenticator,
+                                           FronteggOptions fronteggOptions) {
 
-        return new FronteggService(config, apiClient, authenticator, fronteggOptions);
+        return new FronteggServiceImpl(config, apiClient, authenticator, fronteggOptions);
     }
 
 }

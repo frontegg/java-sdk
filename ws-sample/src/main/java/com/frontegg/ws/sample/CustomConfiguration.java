@@ -1,6 +1,6 @@
 package com.frontegg.ws.sample;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.audit.AuditClient;
 import com.frontegg.sdk.audit.IAuditClient;
 import com.frontegg.sdk.config.FronteggConfig;
@@ -52,12 +52,12 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
     }
 
     @Bean
-    public IAuditClient auditClient(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig config) {
+    public IAuditClient auditClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig config) {
         return new AuditClient(authenticator, apiClient, config);
     }
 
     @Bean
-    public ISsoClient ssoClient(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig config) {
+    public ISsoClient ssoClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig config) {
         return new SsoClient(authenticator, apiClient, config);
     }
 
@@ -74,7 +74,7 @@ public class CustomConfiguration extends FronteggConfigurerAdapter {
 
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3001"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "OPTION"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "x-frontegg-source"));

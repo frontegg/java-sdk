@@ -1,25 +1,22 @@
 package com.frontegg.sdk.middleware.spring.core;
 
 import com.frontegg.sdk.middleware.FronteggOptions;
-import com.frontegg.sdk.middleware.IFronteggServiceDelegate;
-import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
+import com.frontegg.sdk.middleware.spring.FronteggServiceDelegate;
 import com.frontegg.sdk.middleware.spring.core.builders.FronteggConf;
 import com.frontegg.sdk.middleware.spring.core.configurers.FronteggConfigurer;
 import com.frontegg.sdk.middleware.spring.filter.FronteggFilter;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 
 import javax.servlet.Filter;
@@ -27,9 +24,7 @@ import java.util.List;
 
 @ComponentScan("com.frontegg.sdk.middleware.spring")
 @Configuration
-public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware {
-
-    private ClassLoader beanClassLoader;
+public class FronteggConfigurations {
 
     private FronteggConf fronteggConf;
     private List<FronteggConfigurer<Filter, FronteggConf>> fronteggConfigurers;
@@ -88,17 +83,6 @@ public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware
         return new AutowiredFronteggConfigurersIgnoreParents(beanFactory);
     }
 
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.beanClassLoader = classLoader;
-    }
-
-    @Override
-    public void setImportMetadata(AnnotationMetadata annotationMetadata) {
-        //Map<String, Object> enableFronteggAttrMap = annotationMetadata.getAnnotationAttributes(EnableFrontegg.class.getName());
-        //AnnotationAttributes enableFronteggAttrs = AnnotationAttributes.fromMap(enableFronteggAttrMap);
-        //if EnableFrontegg annotation has some properties apply to FronteggConf here
-    }
 
     private static class AnnotationAwareOrderComparator extends OrderComparator {
         private static final AnnotationAwareOrderComparator INSTANCE = new AnnotationAwareOrderComparator();
@@ -124,9 +108,9 @@ public class FronteggConfigurations implements ImportAware, BeanClassLoaderAware
     }
 
     @Bean
-    public FronteggFilter fronteggAppFilter(IFronteggAuthenticationService authenticationService,
+    public FronteggFilter fronteggAppFilter(FronteggAuthenticationService authenticationService,
                                             IFronteggRouteService fronteggRouteService,
-                                            IFronteggServiceDelegate fronteggServiceDelegate,
+                                            FronteggServiceDelegate fronteggServiceDelegate,
                                             FronteggOptions options) {
         Assert.notNull(authenticationService, "authenticationService cannot be null");
         Assert.notNull(fronteggRouteService, "fronteggRouteService cannot be null");

@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.authenticator;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ public class FronteggAuthenticator {
     private AuthClient authClient;
     private FronteggConfig config;
 
-    public FronteggAuthenticator(String clientID, String apiKey, FronteggConfig config, IApiClient client) {
+    public FronteggAuthenticator(String clientID, String apiKey, FronteggConfig config, ApiClient client) {
         this.clientId = clientID;
         this.apiKey = apiKey;
         this.config = config;
