@@ -3,10 +3,10 @@ package com.frontegg.sdk.config;
 public class FronteggUrlConfig {
     public static final String DEFAULT_BASE_URL = "https://api.frontegg.com";
     public static final String DEFAULT_AUTH_SERVICE_URL = DEFAULT_BASE_URL + "/vendors/auth/token";
-    public static final String DEFAULT_AUDIT_URL = DEFAULT_BASE_URL + "/audits/";
-    public static final String DEFAULT_NOTIFICATION_SERVICE_URL = DEFAULT_BASE_URL + "/notification/";
-    public static final String DEFAULT_TENANT_SERVICE_URL = DEFAULT_BASE_URL + "/tenants/";
-    public static final String DEFAULT_METADATA_SERVICE_URL = DEFAULT_BASE_URL + "/metadata/";
+    public static final String DEFAULT_AUDIT_URL = DEFAULT_BASE_URL + "/audits";
+    public static final String DEFAULT_NOTIFICATION_SERVICE_URL = DEFAULT_BASE_URL + "/notification";
+    public static final String DEFAULT_TENANT_SERVICE_URL = DEFAULT_BASE_URL + "/tenants";
+    public static final String DEFAULT_METADATA_SERVICE_URL = DEFAULT_BASE_URL + "/metadata";
     public static final String DEFAULT_TEAM_SERVICE_URL = DEFAULT_BASE_URL + "/team";
     public static final String DEFAULT_EVENT_SERVICE_URL = DEFAULT_BASE_URL + "/event";
     public static final String DEFAULT_IDENTITY_SERVICE_URL = DEFAULT_BASE_URL + "/identity";

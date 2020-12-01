@@ -5,35 +5,35 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
-import com.frontegg.sdk.middleware.identity.IIdentityService;
+import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
 import com.frontegg.sdk.middleware.identity.model.IdentityModel;
-import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.security.rsa.RSAPublicKeyImpl;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IdentityService implements IIdentityService {
-    private static final Logger logger = LoggerFactory.getLogger(IdentityService.class);
+public class FronteggIdentityServiceImpl implements FronteggIdentityService {
+    private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityServiceImpl.class);
 
     private FronteggAuthenticator authenticator;
-    private IApiClient apiClient;
+    private ApiClient apiClient;
     private FronteggConfig fronteggConfig;
 
     private RSAPublicKey publicKey;
     private static final String PUBLIC_KEY_PATH = "/resources/configurations/v1";
 
-    public IdentityService(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig fronteggConfig) {
+    public FronteggIdentityServiceImpl(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;
         this.fronteggConfig = fronteggConfig;
@@ -87,7 +87,7 @@ public class IdentityService implements IIdentityService {
             ).get();
 
             logger.info("going to extract public key from response");
-            return new RSAPublicKeyImpl(Base64.decode(normalizedPublicKey(identityModel.getPublicKey())));
+            return new RSAPublicKeyImpl(Base64.getDecoder().decode(normalizedPublicKey(identityModel.getPublicKey())));
         } catch (Exception ex) {
             logger.error("Unable to get frontegg public key from url = " + urlPath, ex);
             throw new FronteggSDKException(ex.getMessage(), ex);

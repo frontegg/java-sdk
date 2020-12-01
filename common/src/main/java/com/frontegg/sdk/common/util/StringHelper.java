@@ -14,7 +14,10 @@ public class StringHelper {
     }
 
     public static String stringValueOf(Object o) {
-        if (o instanceof String) return (String)o;
+        if (o instanceof String) {
+            return (String)o;
+        }
+
         if (o instanceof Object[]) {
             Object[] array = (Object[])o;
             if (array.length > 1) {

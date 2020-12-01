@@ -1,6 +1,6 @@
 package com.frontegg.sdk.sso;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
@@ -16,10 +16,10 @@ public class SsoClient implements ISsoClient {
     private static final String POST_LOGIN_PATH = "/resources/sso/v1/postlogin";
 
     private FronteggAuthenticator authenticator;
-    private IApiClient apiClient;
+    private ApiClient apiClient;
     private FronteggConfig fronteggConfig;
 
-    public SsoClient(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig fronteggConfig) {
+    public SsoClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;
         this.fronteggConfig = fronteggConfig;

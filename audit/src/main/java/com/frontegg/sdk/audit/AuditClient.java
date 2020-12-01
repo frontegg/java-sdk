@@ -1,6 +1,6 @@
 package com.frontegg.sdk.audit;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.audit.model.AuditFilter;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.config.FronteggConfig;
@@ -13,10 +13,10 @@ import java.util.List;
 public class AuditClient implements IAuditClient {
     private static final Logger logger = LoggerFactory.getLogger(AuditClient.class);
     private FronteggAuthenticator authenticator;
-    private IApiClient apiClient;
+    private ApiClient apiClient;
     private FronteggConfig config;
 
-    public AuditClient(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig config) {
+    public AuditClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig config) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;
         this.config = config;

@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.identity;
 
-public interface IIdentityService {
+public interface FronteggIdentityService {
 
     void verifyToken(String token);
 }

@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.routes.impl;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
@@ -16,13 +16,13 @@ import java.util.Map;
 
 public class FronteggConfigRoutsService implements IFronteggRouteService {
 
-    private IApiClient apiClient;
+    private ApiClient apiClient;
     private FronteggConfig fronteggConfig;
     private RoutesConfig routesConfig;
 
     private static final String ROUT_PATH = "/configs/routes";
 
-    public FronteggConfigRoutsService(IApiClient apiClient, FronteggConfig fronteggConfig) {
+    public FronteggConfigRoutsService(ApiClient apiClient, FronteggConfig fronteggConfig) {
         this.apiClient = apiClient;
         this.fronteggConfig = fronteggConfig;
     }

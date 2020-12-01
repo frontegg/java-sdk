@@ -1,7 +1,6 @@
 package com.frontegg.sdk.middleware.spring.core.builders;
 
 import com.frontegg.sdk.middleware.spring.filter.FronteggFilter;
-import com.frontegg.sdk.middleware.spring.filter.FronteggPermissionCheckerFilter;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.Filter;
@@ -20,7 +19,6 @@ public class FronteggFilterComparator implements Comparator<Filter>, Serializabl
         Step order = new Step(INITIAL_ORDER, ORDER_STEP);
         put(CorsFilter.class, order.next());
         put(FronteggFilter.class, order.next());
-        put(FronteggPermissionCheckerFilter.class, order.next());
     }
 
     public int compare(Filter lhs, Filter rhs) {

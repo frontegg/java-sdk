@@ -2,19 +2,19 @@ package com.frontegg.sdk.middleware.spring.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
-import com.frontegg.sdk.common.exception.InefficientAccessException;
+import com.frontegg.sdk.common.exception.InsufficientAccessException;
 import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.FronteggOptions;
-import com.frontegg.sdk.middleware.IFronteggServiceDelegate;
-import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
+import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
+import com.frontegg.sdk.middleware.spring.FronteggServiceDelegate;
 import com.frontegg.sdk.middleware.spring.core.context.FronteggContextRepository;
 import com.frontegg.sdk.middleware.spring.core.context.FronteggHttpRequestResponseHolder;
 import com.frontegg.sdk.middleware.spring.core.context.HttpSessionFronteggContextRepository;
@@ -37,23 +37,23 @@ public class FronteggFilter extends FronteggBaseFilter {
     static final String FILTER_APPLIED = "__frontegg_feggf_applied";
 
     private FronteggContextRepository repo;
-    private IFronteggAuthenticationService authenticationService;
+    private FronteggAuthenticationService authenticationService;
     private IFronteggRouteService fronteggRouteService;
-    private IFronteggServiceDelegate fronteggServiceDelegate;
+    private FronteggServiceDelegate fronteggServiceDelegate;
     private FronteggOptions options;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public FronteggFilter(IFronteggAuthenticationService authenticationService,
+    public FronteggFilter(FronteggAuthenticationService authenticationService,
                           IFronteggRouteService fronteggRouteService,
-                          IFronteggServiceDelegate fronteggServiceDelegate,
+                          FronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
         this(new HttpSessionFronteggContextRepository(), authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
     }
 
     public FronteggFilter(FronteggContextRepository repo,
-                          IFronteggAuthenticationService authenticationService,
+                          FronteggAuthenticationService authenticationService,
                           IFronteggRouteService fronteggRouteService,
-                          IFronteggServiceDelegate fronteggServiceDelegate,
+                          FronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
         validateOptions(options);
         this.repo = repo;
@@ -103,7 +103,9 @@ public class FronteggFilter extends FronteggBaseFilter {
                 }
 
                 if (!isFronteggPublicRoute(request)) {
-                    logger.debug("will pass request threw the auth middleware");
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("will pass request threw the auth middleware");
+                    }
                     authenticationService.withAuthentication(request);
                 }
 
@@ -156,7 +158,7 @@ public class FronteggFilter extends FronteggBaseFilter {
         if (ex instanceof AuthenticationException) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             printWriter.write(objectMapper.writeValueAsString(new Error("Unauthorized")));
-        } if (ex instanceof InefficientAccessException) {
+        } if (ex instanceof InsufficientAccessException) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             printWriter.write(objectMapper.writeValueAsString(new Error("Permission Denied")));
         } if (ex instanceof InvalidParameterException) {

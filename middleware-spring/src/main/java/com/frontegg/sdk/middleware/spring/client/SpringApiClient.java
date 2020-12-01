@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.spring.client;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -22,12 +21,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ApiClient implements IApiClient {
-    private static final Logger logger = LoggerFactory.getLogger(ApiClient.class);
+public class SpringApiClient implements ApiClient {
+    private static final Logger logger = LoggerFactory.getLogger(SpringApiClient.class);
 
     private RestTemplate restTemplate;
 
-    public ApiClient(RestTemplate restTemplate) {
+    public SpringApiClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -57,7 +56,7 @@ public class ApiClient implements IApiClient {
             ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(headers, body), clazz);
             return convert(responseEntity);
         } catch (RestClientException ex) {
-            throw new FronteggSDKException("frontegg sdk call fails with message : " + ex.getMessage(), ex);
+            throw new FronteggSDKException("frontegg sdk call fails with message", ex);
         }
     }
 
@@ -85,7 +84,7 @@ public class ApiClient implements IApiClient {
                 }
             }
 
-            throw new FronteggSDKException("frontegg sdk call fails with message : " + ex.getMessage(), ex);
+            throw new FronteggSDKException("frontegg sdk call fails with message", ex);
         }
     }
 

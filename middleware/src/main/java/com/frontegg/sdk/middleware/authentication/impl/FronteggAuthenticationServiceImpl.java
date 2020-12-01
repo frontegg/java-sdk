@@ -1,8 +1,8 @@
 package com.frontegg.sdk.middleware.authentication.impl;
 
 import com.frontegg.sdk.common.util.StringHelper;
-import com.frontegg.sdk.middleware.authentication.IFronteggAuthenticationService;
-import com.frontegg.sdk.middleware.identity.IIdentityService;
+import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
+import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
 import com.frontegg.sdk.middleware.authenticator.Authentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
@@ -11,14 +11,14 @@ import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class FronteggAuthenticationService implements IFronteggAuthenticationService {
+public class FronteggAuthenticationServiceImpl implements FronteggAuthenticationService {
 
     private FronteggAuthenticator authenticator;
-    private IIdentityService identityService;
+    private FronteggIdentityService fronteggIdentityService;
 
-    public FronteggAuthenticationService(FronteggAuthenticator authenticator, IIdentityService identityService) {
+    public FronteggAuthenticationServiceImpl(FronteggAuthenticator authenticator, FronteggIdentityService fronteggIdentityService) {
         this.authenticator = authenticator;
-        this.identityService = identityService;
+        this.fronteggIdentityService = fronteggIdentityService;
     }
 
     public void withAuthentication(HttpServletRequest request) {
@@ -29,7 +29,7 @@ public class FronteggAuthenticationService implements IFronteggAuthenticationSer
 
         String token = authorizationHeader.replace("Bearer ", "");
 
-        identityService.verifyToken(token);
+        fronteggIdentityService.verifyToken(token);
      }
 
     public void authenticateApp() {
