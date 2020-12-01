@@ -25,6 +25,8 @@ public class FronteggServiceDelegate {
         return retryTemplate.execute(
                 context -> {
                     if (context.getLastThrowable() instanceof AuthenticationException) {
+                        logger.warn("Application is not authorized. " +
+                                "trying to authorize and then retry to perform the request.");
                         fronteggService.authorizeApplication();
                     }
                     return fronteggService.doProcess(request, response);

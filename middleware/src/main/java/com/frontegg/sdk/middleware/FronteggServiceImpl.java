@@ -5,7 +5,7 @@ import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.authenticator.Authentication;
+import com.frontegg.sdk.middleware.authenticator.FronteggAuthentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
@@ -92,9 +92,8 @@ public class FronteggServiceImpl implements FronteggService {
     }
 
     private Map<String, String> initHeaders(HttpServletRequest request, FronteggContext context) {
-        Authentication authentication = FronteggContextHolder.getContext().getAuthentication();
         Map<String, String> headers = new HashMap<>();
-        headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, authentication.getAccessToken());
+        headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
         headers.put(FRONTEGG_HEADER_TENANT_ID, context.getTenantId() == null  ? "" : context.getTenantId());
         headers.put(FRONTEGG_HEADER_USER_ID, context.getUserId() == null  ? "" : context.getUserId());
         headers.put(FRONTEGG_HEADER_VENDOR_HOST, HttpUtil.getHostnameFromRequest(request));

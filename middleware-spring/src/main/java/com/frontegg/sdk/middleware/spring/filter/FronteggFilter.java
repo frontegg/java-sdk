@@ -18,7 +18,11 @@ import com.frontegg.sdk.middleware.spring.FronteggServiceDelegate;
 import com.frontegg.sdk.middleware.spring.core.context.FronteggContextRepository;
 import com.frontegg.sdk.middleware.spring.core.context.FronteggHttpRequestResponseHolder;
 import com.frontegg.sdk.middleware.spring.core.context.HttpSessionFronteggContextRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -32,31 +36,36 @@ import java.util.List;
 
 import static com.frontegg.sdk.common.util.HttpUtil.*;
 
-public class FronteggFilter extends FronteggBaseFilter {
+public class FronteggFilter extends GenericFilterBean {
 
     static final String FILTER_APPLIED = "__frontegg_feggf_applied";
-
+    private static final Logger logger = LoggerFactory.getLogger(FronteggFilter.class);
     private FronteggContextRepository repo;
     private FronteggAuthenticationService authenticationService;
     private IFronteggRouteService fronteggRouteService;
     private FronteggServiceDelegate fronteggServiceDelegate;
     private FronteggOptions options;
     private ObjectMapper objectMapper = new ObjectMapper();
+    private String basePath;
 
-    public FronteggFilter(FronteggAuthenticationService authenticationService,
+
+    public FronteggFilter(String basePath,
+                          FronteggAuthenticationService authenticationService,
                           IFronteggRouteService fronteggRouteService,
                           FronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
-        this(new HttpSessionFronteggContextRepository(), authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
+        this(basePath, new HttpSessionFronteggContextRepository(), authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
     }
 
-    public FronteggFilter(FronteggContextRepository repo,
+    public FronteggFilter(String basePath,
+                          FronteggContextRepository repo,
                           FronteggAuthenticationService authenticationService,
                           IFronteggRouteService fronteggRouteService,
                           FronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
         validateOptions(options);
         this.repo = repo;
+        this.basePath = basePath;
         this.authenticationService = authenticationService;
         this.fronteggRouteService = fronteggRouteService;
         this.fronteggServiceDelegate = fronteggServiceDelegate;
@@ -65,10 +74,10 @@ public class FronteggFilter extends FronteggBaseFilter {
 
     private void validateOptions(FronteggOptions options) {
         if (StringHelper.isBlank(options.getClientId())) {
-            throw new FronteggSDKException("Missing client ID");
+            throw new InvalidParameterException("Missing client ID");
         }
         if (StringHelper.isBlank(options.getApiKey())) {
-            throw new FronteggSDKException("Missing api key");
+            throw new InvalidParameterException("Missing api key");
         }
     }
 
@@ -77,7 +86,10 @@ public class FronteggFilter extends FronteggBaseFilter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        if (requestMatcher.matches(request)) {
+        AntPathMatcher matcher = new AntPathMatcher();
+        boolean isRequestMatches = matcher.match(getBasePath() + "/**", request.getRequestURI());
+
+        if (isRequestMatches) {
 
 
             if (request.getAttribute(FILTER_APPLIED) != null) {
@@ -95,7 +107,7 @@ public class FronteggFilter extends FronteggBaseFilter {
                 contextBeforeChainExecution.setFronteggBasePath(basePath);
                 FronteggContextHolder.setContext(contextBeforeChainExecution);
 
-                authenticationService.authenticateApp();
+                authenticationService.authenticateFronteggApplicationIfNeeded();
 
                 if (request.getMethod().equals("OPTIONS")) {
                     response.setStatus(204);
@@ -103,9 +115,7 @@ public class FronteggFilter extends FronteggBaseFilter {
                 }
 
                 if (!isFronteggPublicRoute(request)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("will pass request threw the auth middleware");
-                    }
+                    logger.debug("will pass request threw the auth middleware");
                     authenticationService.withAuthentication(request);
                 }
 
@@ -123,7 +133,6 @@ public class FronteggFilter extends FronteggBaseFilter {
                     response.getWriter().write(objectMapper.writeValueAsString(object));
                 }
 
-                response.getWriter().flush();
                 return;
 
             } catch (Exception ex) {
@@ -134,6 +143,7 @@ public class FronteggFilter extends FronteggBaseFilter {
                 FronteggContextHolder.clearContext();
                 repo.saveContext(contextAfterChainExecution, holder.getRequest(), holder.getResponse());
                 request.removeAttribute(FILTER_APPLIED);
+                response.getWriter().flush();
             }
         }
 
@@ -207,4 +217,7 @@ public class FronteggFilter extends FronteggBaseFilter {
         }
     }
 
+    public String getBasePath() {
+        return basePath;
+    }
 }
