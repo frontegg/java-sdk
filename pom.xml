@@ -18,6 +18,7 @@
         <module>config</module>
         <module>audit</module>
         <module>sso</module>
+        <module>middleware-springboot-autoconfigure</module>
     </modules>
 
     <properties>
