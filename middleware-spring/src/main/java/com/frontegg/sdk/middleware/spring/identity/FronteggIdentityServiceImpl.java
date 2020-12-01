@@ -47,10 +47,6 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
     public void verifyToken(String token) {
         init();
 
-        logger.info("going to authenticate");
-        authenticator.authenticate();
-        logger.info("going to get identity service configuration");
-
         try {
             // And save it as member of the class
             DecodedJWT jwt = JWT.decode(token);
@@ -75,15 +71,21 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
     }
 
     private RSAPublicKey getPublicKey() {
-        if (publicKey != null) return publicKey;
+        if (publicKey != null) {
+            return publicKey;
+        }
 
-        logger.info("got identity service configuration");
+        logger.info("going to authenticate");
+        authenticator.authenticate();
+        logger.info("going to get identity service configuration");
+
         String urlPath = fronteggConfig.getUrlConfig().getIdentityService() + PUBLIC_KEY_PATH;
         try {
             IdentityModel identityModel = apiClient.get(urlPath,
                     withHeaders(),
                     IdentityModel.class
             ).get();
+            logger.info("got identity service configuration");
 
             logger.debug("going to extract public key from response");
             return new RSAPublicKeyImpl(Base64.getDecoder().decode(normalizedPublicKey(identityModel.getPublicKey())));
