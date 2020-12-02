@@ -29,6 +29,7 @@
         <spring.framework.version>4.2.6.RELEASE</spring.framework.version>
         <spring.retry.version>1.2.5.RELEASE</spring.retry.version>
         <junit.version>4.12</junit.version>
+        <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
     </properties>
 
 
@@ -49,9 +50,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-bom</artifactId>
-                <version>${spring.framework.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

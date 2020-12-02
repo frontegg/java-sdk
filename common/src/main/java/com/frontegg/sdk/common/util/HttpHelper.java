@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
-public class HttpUtil {
+public class HttpHelper {
 
     public static final String FRONTEGG_HEADER_ACCESS_TOKEN = "x-access-token";
     public static final String FRONTEGG_HEADER_TENANT_ID = "frontegg-tenant-id";
@@ -20,10 +20,6 @@ public class HttpUtil {
     public static final String ORIGIN = "Origin";
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
-
-    public static String getRequestUrl(String path, String excludeContextPath) {
-        return path.substring(excludeContextPath.length());
-    }
 
     public static String getHostnameFromRequest(HttpServletRequest request){
         String hostHeader = getHeader(request, FRONTEGG_HEADER_HOST, "");

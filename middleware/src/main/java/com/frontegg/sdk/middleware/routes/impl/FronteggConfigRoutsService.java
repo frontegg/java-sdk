@@ -1,7 +1,6 @@
 package com.frontegg.sdk.middleware.routes.impl;
 
 import com.frontegg.sdk.api.client.ApiClient;
-import com.frontegg.sdk.common.util.HttpUtil;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
@@ -36,8 +35,8 @@ public class FronteggConfigRoutsService implements IFronteggRouteService {
 
         if (routesConfig == null || routesConfig.getVendorClientPublicRoutes() == null) return false;
 
-        String path = HttpUtil.getRequestUrl(
-                request.getRequestURI(), FronteggContextHolder.getContext().getFronteggBasePath())
+        String path = request.getRequestURI()
+                .substring(FronteggContextHolder.getContext().getFronteggBasePath().length())
                 .replaceFirst("/", ""
         );
 
@@ -62,18 +61,20 @@ public class FronteggConfigRoutsService implements IFronteggRouteService {
 
     private boolean isValidateQueryParams(HttpServletRequest request, List<KeyValPair> withQueryParams) {
         Map<String, String[]> queryMap = request.getParameterMap();
-        boolean hasAllQueryParams = true;
 
         for (KeyValPair keyValPair : withQueryParams) {
             String key = keyValPair.getKey();
             String val = keyValPair.getValue();
-            if (!queryMap.keySet().contains(key)) hasAllQueryParams =  false;
-            if (!StringHelper.stringValueOf(queryMap.get(key)).equals(val)) hasAllQueryParams = false;
 
+            if (!queryMap.keySet().contains(key)) {
+                return false;
+            }
 
-            if (!hasAllQueryParams) return false;
+            if (!StringHelper.stringValueOf(queryMap.get(key)).equals(val)) {
+                return false;
+            }
         }
-        return hasAllQueryParams;
+        return true;
     }
 
     private RoutesConfig getRoutesConfig() {

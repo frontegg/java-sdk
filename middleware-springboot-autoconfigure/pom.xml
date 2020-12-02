@@ -15,7 +15,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>1.4.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>

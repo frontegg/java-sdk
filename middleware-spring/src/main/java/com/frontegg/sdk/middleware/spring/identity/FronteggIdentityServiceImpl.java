@@ -7,7 +7,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
-import com.frontegg.sdk.common.util.HttpUtil;
+import com.frontegg.sdk.common.util.HttpHelper;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
@@ -103,7 +103,7 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
 
     private Map<String, String> withHeaders() {
         Map<String, String> headers = new HashMap<>();
-        headers.put(HttpUtil.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
+        headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
         return headers;
     }
 }

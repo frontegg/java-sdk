@@ -6,7 +6,7 @@ import com.frontegg.sdk.common.exception.InsufficientAccessException;
 import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
-import com.frontegg.sdk.common.util.HttpUtil;
+import com.frontegg.sdk.common.util.HttpHelper;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import static com.frontegg.sdk.common.util.HttpUtil.*;
+import static com.frontegg.sdk.common.util.HttpHelper.*;
 
 public class FronteggFilter extends GenericFilterBean {
 
@@ -77,7 +77,6 @@ public class FronteggFilter extends GenericFilterBean {
         boolean isRequestMatches = matcher.match(getBasePath() + "/**", request.getRequestURI());
 
         if (isRequestMatches) {
-
 
             if (request.getAttribute(FILTER_APPLIED) != null) {
                 // ensure that filter is only applied once per request
@@ -181,7 +180,7 @@ public class FronteggFilter extends GenericFilterBean {
 
     private void manageCorsHeaders(HttpServletResponse response, FronteggHttpResponse<Object> fronteggHttpResponse) {
         if (options.isDisableCors()) {
-            HttpUtil.deleteHeaders(response,
+            HttpHelper.deleteHeaders(response,
                     ACCESS_CONTROL_REQUEST_METHOD,
                     ACCESS_CONTROL_REQUEST_HEADERS,
                     ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -215,9 +214,9 @@ public class FronteggFilter extends GenericFilterBean {
     }
 
     void enableCors(FronteggHttpResponse<Object> fronteggHttpResponse, HttpServletResponse response) {
-        HttpUtil.replaceHeader(fronteggHttpResponse.getHeaders(), response, ACCESS_CONTROL_REQUEST_METHOD);
-        HttpUtil.replaceHeader(fronteggHttpResponse.getHeaders(), response, ACCESS_CONTROL_REQUEST_HEADERS);
-        HttpUtil.replaceHeader(fronteggHttpResponse.getHeaders(), response, ORIGIN, ACCESS_CONTROL_ALLOW_ORIGIN);
+        HttpHelper.replaceHeader(fronteggHttpResponse.getHeaders(), response, ACCESS_CONTROL_REQUEST_METHOD);
+        HttpHelper.replaceHeader(fronteggHttpResponse.getHeaders(), response, ACCESS_CONTROL_REQUEST_HEADERS);
+        HttpHelper.replaceHeader(fronteggHttpResponse.getHeaders(), response, ORIGIN, ACCESS_CONTROL_ALLOW_ORIGIN);
     }
 
     class Error {
