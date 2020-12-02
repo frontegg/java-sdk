@@ -15,9 +15,6 @@ import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.spring.FronteggServiceDelegate;
-import com.frontegg.sdk.middleware.spring.core.context.FronteggContextRepository;
-import com.frontegg.sdk.middleware.spring.core.context.FronteggHttpRequestResponseHolder;
-import com.frontegg.sdk.middleware.spring.core.context.HttpSessionFronteggContextRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,6 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -38,9 +36,9 @@ import static com.frontegg.sdk.common.util.HttpUtil.*;
 
 public class FronteggFilter extends GenericFilterBean {
 
+    private static final String FRONTEGG_CONTEXT_KEY = "FRONTEGG_CONTEXT";
     static final String FILTER_APPLIED = "__frontegg_feggf_applied";
     private static final Logger logger = LoggerFactory.getLogger(FronteggFilter.class);
-    private FronteggContextRepository repo;
     private FronteggAuthenticationService authenticationService;
     private IFronteggRouteService fronteggRouteService;
     private FronteggServiceDelegate fronteggServiceDelegate;
@@ -48,23 +46,12 @@ public class FronteggFilter extends GenericFilterBean {
     private ObjectMapper objectMapper = new ObjectMapper();
     private String basePath;
 
-
     public FronteggFilter(String basePath,
-                          FronteggAuthenticationService authenticationService,
-                          IFronteggRouteService fronteggRouteService,
-                          FronteggServiceDelegate fronteggServiceDelegate,
-                          FronteggOptions options) {
-        this(basePath, new HttpSessionFronteggContextRepository(), authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
-    }
-
-    public FronteggFilter(String basePath,
-                          FronteggContextRepository repo,
                           FronteggAuthenticationService authenticationService,
                           IFronteggRouteService fronteggRouteService,
                           FronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
         validateOptions(options);
-        this.repo = repo;
         this.basePath = basePath;
         this.authenticationService = authenticationService;
         this.fronteggRouteService = fronteggRouteService;
@@ -100,13 +87,15 @@ public class FronteggFilter extends GenericFilterBean {
 
             request.setAttribute(FILTER_APPLIED, Boolean.TRUE);
 
-            FronteggHttpRequestResponseHolder holder = new FronteggHttpRequestResponseHolder(request, response);
-            FronteggContext contextBeforeChainExecution = repo.loadContext(holder);
+            HttpSession httpSession = request.getSession(false);
+
+            FronteggContext context = loadContextFromSession(request, httpSession);
+            if (context == null) context = FronteggContextHolder.createEmptyContext();
+
+            context.setFronteggBasePath(basePath);
+            FronteggContextHolder.setContext(context);
 
             try {
-                contextBeforeChainExecution.setFronteggBasePath(basePath);
-                FronteggContextHolder.setContext(contextBeforeChainExecution);
-
                 authenticationService.authenticateFronteggApplicationIfNeeded();
 
                 if (request.getMethod().equals("OPTIONS")) {
@@ -141,13 +130,53 @@ public class FronteggFilter extends GenericFilterBean {
             } finally {
                 FronteggContext contextAfterChainExecution = FronteggContextHolder.getContext();
                 FronteggContextHolder.clearContext();
-                repo.saveContext(contextAfterChainExecution, holder.getRequest(), holder.getResponse());
+                saveContextToSession(httpSession, contextAfterChainExecution);
                 request.removeAttribute(FILTER_APPLIED);
                 response.getWriter().flush();
             }
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void saveContextToSession(HttpSession httpSession, FronteggContext context) {
+        if (httpSession != null) {
+            httpSession.setAttribute(FRONTEGG_CONTEXT_KEY, context);
+        }
+    }
+
+    private HttpSession createNewSessionIfAllowed(HttpServletRequest request) {
+        try {
+            logger.info("HttpSession being created as FronteggContext is non-default");
+            return request.getSession(true);
+        } catch (IllegalStateException e) {
+            logger.warn("Failed to create a session, as response has been committed. Unable to store FronteggContext.");
+        }
+
+        return null;
+    }
+
+    private FronteggContext loadContextFromSession(HttpServletRequest request, HttpSession httpSession) {
+        if (httpSession == null) {
+            httpSession = createNewSessionIfAllowed(request);
+        }
+
+        Object contextFromSession = httpSession.getAttribute(FRONTEGG_CONTEXT_KEY);
+
+        if (!(contextFromSession instanceof FronteggContext)) {
+            if (logger.isWarnEnabled()) {
+                logger.warn(FRONTEGG_CONTEXT_KEY
+                        + " did not contain a FronteggContext but contained: '"
+                        + contextFromSession
+                        + "'; are you improperly modifying the HttpSession directly "
+                        + "(you should always use FronteggContextHolder) or using the HttpSession attribute "
+                        + "reserved for this class?");
+            }
+
+            return null;
+        }
+
+        return (FronteggContext) contextFromSession;
     }
 
     private void manageCorsHeaders(HttpServletResponse response, FronteggHttpResponse<Object> fronteggHttpResponse) {

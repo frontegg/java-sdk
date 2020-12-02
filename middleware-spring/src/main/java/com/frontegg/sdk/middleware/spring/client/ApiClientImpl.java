@@ -1,12 +1,12 @@
 package com.frontegg.sdk.middleware.spring.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -25,6 +25,7 @@ public class ApiClientImpl implements ApiClient {
     private static final Logger logger = LoggerFactory.getLogger(ApiClientImpl.class);
 
     private RestTemplate restTemplate;
+    private ObjectMapper mapper = new ObjectMapper();
 
     public ApiClientImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -115,8 +116,7 @@ public class ApiClientImpl implements ApiClient {
             }
         } else {
             try {
-                Gson gson = new Gson();
-                String strBody = gson.toJson(body);
+                String strBody = mapper.writeValueAsString(body);
                 return buildHttpEntity(headers, strBody);
             } catch (Exception ex) {
                 logger.error("unable to jsonify the request body of class -> {} ", body.getClass());
