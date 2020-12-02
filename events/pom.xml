@@ -16,11 +16,25 @@
             <groupId>com.frontegg</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.frontegg</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.frontegg</groupId>
+            <artifactId>api-client</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>
             <artifactId>authenticator</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

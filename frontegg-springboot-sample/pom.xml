@@ -36,6 +36,11 @@
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>
+            <artifactId>events</artifactId>
+            <version>${frontegg.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.frontegg</groupId>
             <artifactId>sso</artifactId>
             <version>${frontegg.version}</version>
         </dependency>

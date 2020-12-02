@@ -1,6 +1,6 @@
 package com.frontegg.sdk.events;
 
-import com.frontegg.sdk.api.client.IApiClient;
+import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
@@ -17,15 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.frontegg.sdk.common.util.HttpUtil.FRONTEGG_HEADER_ACCESS_TOKEN;
-import static com.frontegg.sdk.common.util.HttpUtil.FRONTEGG_HEADER_TENANT_ID;
+import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN;
+import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_TENANT_ID;
 
 public class EventClientImpl implements EventsClient {
 
     private static final Logger logger = LoggerFactory.getLogger(EventClientImpl.class);
 
     private FronteggAuthenticator authenticator;
-    private IApiClient apiClient;
+    private ApiClient apiClient;
     private FronteggConfig config;
 
     private static final int POLLING_LIMIT = 20;
@@ -34,7 +34,7 @@ public class EventClientImpl implements EventsClient {
     private static final String TRIGGER_PATH = "/resources/triggers/v2";
     private static final String TRIGGER_STATUSES_PATH = "/resources/triggers/v2/statuses/";
 
-    public EventClientImpl(FronteggAuthenticator authenticator, IApiClient apiClient, FronteggConfig config) {
+    public EventClientImpl(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig config) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;
         this.config = config;
