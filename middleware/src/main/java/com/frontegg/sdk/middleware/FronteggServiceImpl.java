@@ -2,10 +2,9 @@ package com.frontegg.sdk.middleware;
 
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
-import com.frontegg.sdk.common.util.HttpUtil;
+import com.frontegg.sdk.common.util.HttpHelper;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.authenticator.FronteggAuthentication;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.frontegg.sdk.common.util.HttpUtil.*;
+import static com.frontegg.sdk.common.util.HttpHelper.*;
 
 public class FronteggServiceImpl implements FronteggService {
 
@@ -47,7 +46,7 @@ public class FronteggServiceImpl implements FronteggService {
         logger.debug("going to proxy request - {} to  {} ", request.getRequestURI(), config.getUrlConfig().getBaseUrl());
         Map<String, String> headers = initHeaders(request, context);
 
-        String requestUrl = HttpUtil.getRequestUrl(request.getRequestURI(), context.getFronteggBasePath());
+        String requestUrl = request.getRequestURI().substring(context.getFronteggBasePath().length());
         String url = config.getUrlConfig().getBaseUrl() + requestUrl;
 
         FronteggHttpResponse<Object> val = initiateRequest(url, request, response, headers);
@@ -81,7 +80,7 @@ public class FronteggServiceImpl implements FronteggService {
 
     private void cookieDomainRewrite(FronteggHttpResponse<Object> fronteggHttpResponse, HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
-        String host = HttpUtil.getHeader(request, FRONTEGG_HEADER_HOST);
+        String host = HttpHelper.getHeader(request, FRONTEGG_HEADER_HOST);
         if (!StringHelper.isBlank(host)) {
             for (Cookie cookie : cookies) {
                 if (cookie.getDomain().equals(host)) {
@@ -96,7 +95,7 @@ public class FronteggServiceImpl implements FronteggService {
         headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
         headers.put(FRONTEGG_HEADER_TENANT_ID, context.getTenantId() == null  ? "" : context.getTenantId());
         headers.put(FRONTEGG_HEADER_USER_ID, context.getUserId() == null  ? "" : context.getUserId());
-        headers.put(FRONTEGG_HEADER_VENDOR_HOST, HttpUtil.getHostnameFromRequest(request));
+        headers.put(FRONTEGG_HEADER_VENDOR_HOST, HttpHelper.getHostnameFromRequest(request));
         return headers;
     }
 }

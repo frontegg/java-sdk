@@ -17,10 +17,6 @@ Config module is designed to have ability to load FrontEgg specific configuratio
 | **identityService**   | string | https://api.frontegg.com/identity | 
 
 
-#### Whitelist Url
-
-`List<String> urls` will be populated from middleware with appropriate `ConfigurationProviderChain`
-
 #### Custom Provider
 There is also ability to provide your custom configuration providers.
 
