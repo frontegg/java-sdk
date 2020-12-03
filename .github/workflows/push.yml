@@ -32,8 +32,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: echo branch
-        run: echo ${GITHUB_REF}
+      - name: Get branch name
+        run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
       - name: Cancel previous runs
         uses: n1hility/cancel-previous-runs@v2
         with:
@@ -43,11 +43,6 @@ jobs:
         run: |
           echo "::set-output name=date::$(/bin/date -u "+%Y-%m")"
         shell: bash
-      - id: cache-maven
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: m2repo-${{ steps.get-date.outputs.date }}
       - name: Build
         run: |
           mvn -e -B -DskipTests -DskipITs -Dno-format clean install
