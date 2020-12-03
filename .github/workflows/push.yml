@@ -1,0 +1,50 @@
+name: Frontegg Java SDK CI
+
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+    paths-ignore:
+      - ".gitignore"
+      - "*.md"
+      - "*.adoc"
+      - "*.txt"
+      - ".github/ISSUE_TEMPLATE/**"
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - ".gitignore"
+      - "*.md"
+      - ".github/ISSUE_TEMPLATE/**"
+env:
+  LANG: en_US.UTF-8
+  JVM_TEST_MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
+  NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+  NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    if: github.repository == 'frontegg/java-sdk'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - uses: n1hility/cancel-previous-runs@v2
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Date for cache
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y-%m")"
+        shell: bash
+      - id: cache-maven
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: m2repo-${{ steps.get-date.outputs.date }}
+      - name: Build
+        run: |
+          mvn -e -B -DskipTests -DskipITs -Dno-format clean install
+  
+      
