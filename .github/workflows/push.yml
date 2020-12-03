@@ -27,10 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'frontegg/java-sdk'
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repo
+        uses: actions/checkout@v2
         with:
           ref: master
-      - uses: n1hility/cancel-previous-runs@v2
+      - name: Cancel previous runs
+        uses: n1hility/cancel-previous-runs@v2
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Date for cache
