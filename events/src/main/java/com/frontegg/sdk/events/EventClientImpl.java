@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN;
 import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_TENANT_ID;
@@ -27,6 +29,7 @@ public class EventClientImpl implements EventsClient {
     private FronteggAuthenticator authenticator;
     private ApiClient apiClient;
     private FronteggConfig config;
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     private static final int POLLING_LIMIT = 20;
     private static final int POLLING_START_TIMEOUT = 3 * 1000;
@@ -62,71 +65,45 @@ public class EventClientImpl implements EventsClient {
         }
     }
 
-
     @Override
     public EventStatuses getEventStatus(String eventId) {
         return getStatus(eventId);
     }
 
-//    @Override
-//    public EventStatuses getEventStatus(boolean wait, String eventId) {
-//        int intervalCounter = 0;
-//        long time = POLLING_START_TIMEOUT;
-//        try {
-//
-//            EventStatuses eventStatus = getStatus(eventId);
-//
-//            if (wait) {
-//                while (intervalCounter <= 20) {
-//                    Thread.sleep(time);
-//                    time = (long) (time * POLLING_INCREASE_PERCENTAGE);
-//                    intervalCounter++;
-//                }
-//            } else {
-//                return eventStatus;
-//            }
-//
-//
-//            boolean isThereStatusPending  = eventStatus.isThereStatusEqualTo(EventChannelStatus.PENDING);
-//
-//            if (isThereStatusPending) {
-//                logger.info("there are still channels with pending status");
-//                intervalCounter++;
-//            } else {
-//                logger.info("all channels statuses are not pending, will call callback");
-//
-//                boolean allSucceeded = eventStatus.isAllStatusesEqualTo(EventChannelStatus.SUCCEEDED);
-//
-//                  const callbackResponse: IEventStatusesResponse = {
-//                        ...response.data,
-//                        generalStatus: allSucceeded ? 'SUCCEEDED' : 'FAILED',
-//                  };
-//                callback(undefined, callbackResponse);
-//                break;
-//            }
-//
-//            if (intervalCounter >= POLLING_LIMIT) {
-//                logger.info("there are still channels with pending status, but we passed the limit of the polling");
-//                    const callbackResponse: IEventStatusesResponse = {
-//                    ...response.data, generalStatus: 'FAILED',
-//                     };
-//                callback(undefined, callbackResponse);
-//                break;
-//            }
-//
-//        } catch (Exception e) {
-//            logger.error("could not get event status", e);
-//            callback(e, undefined);
-//            break;
-//        }
-//
-//
-//
-//        EventStatuses eventStatus = getStatus(eventId);
-//
-//
-//        return null;
-//    }
+    @Override
+    public CompletableFuture<EventChannelStatus> waitForEventStatus(String eventId) {
+        CompletableFuture<EventChannelStatus> completableFuture = new CompletableFuture<>();
+        AtomicInteger pollRetryCount = new AtomicInteger();
+        ScheduledFuture checkFuture = executor.scheduleAtFixedRate(() -> {
+            try {
+                pollRetryCount.getAndIncrement();
+                EventStatuses eventStatuses = getEventStatus(eventId);
+                boolean isThereStatusPending = eventStatuses.isThereStatusEqualTo(EventChannelStatus.PENDING);
+
+                if (!isThereStatusPending) {
+                    logger.info("all channels statuses are not pending, will complete the task");
+                    boolean allSucceeded = eventStatuses.isAllStatusesEqualTo(EventChannelStatus.SUCCEEDED);
+                    completableFuture.complete(allSucceeded ? EventChannelStatus.SUCCEEDED : EventChannelStatus.FAILED);
+                }
+
+                if (pollRetryCount.get() >= POLLING_LIMIT) {
+                    logger.info("there are still channels with pending status, but we passed the limit of the polling");
+                    completableFuture.complete(EventChannelStatus.FAILED);
+                }
+
+                logger.info("there are still channels with pending status");
+            } catch (Exception ex) {
+                logger.error("could not get event status", ex);
+                completableFuture.complete(EventChannelStatus.FAILED);
+            }
+
+        }, POLLING_START_TIMEOUT, (long) (POLLING_START_TIMEOUT * POLLING_INCREASE_PERCENTAGE), TimeUnit.MILLISECONDS);
+
+        completableFuture.whenComplete((result, thrown) -> {
+            checkFuture.cancel(true);
+        });
+        return completableFuture;
+    }
 
     private EventStatuses getStatus(String eventId) {
         authenticator.validateAuthentication();
