@@ -30,6 +30,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           ref: master
       - name: Cancel previous runs
         uses: n1hility/cancel-previous-runs@v2
