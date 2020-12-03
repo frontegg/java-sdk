@@ -51,5 +51,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Build
+        with:
+          java-version: ${{ matrix.java }}
         run: |
           mvn -e -B -DskipTests -DskipITs -Dno-format clean install
