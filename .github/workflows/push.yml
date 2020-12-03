@@ -3,7 +3,8 @@ name: Frontegg Java SDK CI
 on:
   push:
     branches-ignore:
-      - 'dependabot/**'
+      - "main"
+      - "dependabot/**"
     paths-ignore:
       - ".gitignore"
       - "*.md"
@@ -31,10 +32,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          ref: main
+      - id: echo branch
+        run: echo ${GITHUB_REF}
       - name: Cancel previous runs
         uses: n1hility/cancel-previous-runs@v2
-        with: 
+        with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Date for cache
         id: get-date
@@ -49,5 +51,3 @@ jobs:
       - name: Build
         run: |
           mvn -e -B -DskipTests -DskipITs -Dno-format clean install
-  
-      
