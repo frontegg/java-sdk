@@ -1,68 +1,24 @@
 package com.frontegg.sdk.audit;
 
-import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.audit.model.AuditFilter;
-import com.frontegg.sdk.common.model.FronteggHttpResponse;
-import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.frontegg.sdk.audit.model.Auditable;
+import com.frontegg.sdk.audit.model.MetadataObject;
 
 import java.util.List;
 
-public class AuditClient implements IAuditClient {
-    private static final Logger logger = LoggerFactory.getLogger(AuditClient.class);
-    private FronteggAuthenticator authenticator;
-    private ApiClient apiClient;
-    private FronteggConfig config;
+public interface AuditClient {
 
-    public AuditClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig config) {
-        this.authenticator = authenticator;
-        this.apiClient = apiClient;
-        this.config = config;
-    }
+    void sendAudit(Auditable audit);
 
-    @Override
-    public void sendAudit(Object audits) {
-        try {
-            logger.info("going to send audit");
-            authenticator.validateAuthentication();
-            FronteggHttpResponse<Object> optional = apiClient.post(config.getUrlConfig().getAuditsService(), Object.class, audits);
-            logger.info("sent audit successfully {} ", optional.getBody());
+    List<Object> getAudits(AuditFilter auditFilter);
 
-        } catch (Exception e) {
-            logger.error("failed to send audit to audits service - ", e);
-            throw e;
-        }
-    }
+    Object getAuditsStats(String tenantId);
 
-    @Override
-    public List<Object> getAudits(AuditFilter auditFilter) {
-        return null;
-    }
+    Object getAuditsMetadata();
 
-    @Override
-    public Object getAuditsStats(String tenantId) {
-        return null;
-    }
+    Object setAuditsMetadata(MetadataObject metadata);
 
-    @Override
-    public Object getAuditsMetadata() {
-        return null;
-    }
+    Object exportPdf(AuditFilter auditFilter, String[] properties);
 
-    @Override
-    public Object setAuditsMetadata(Object metadata) {
-        return null;
-    }
-
-    @Override
-    public Object exportPdf(AuditFilter auditFilter, String[] properties) {
-        return null;
-    }
-
-    @Override
-    public Object exportCsv(AuditFilter auditFilter, String[] properties) {
-        return null;
-    }
+    Object exportCsv(AuditFilter auditFilter, String[] properties);
 }
