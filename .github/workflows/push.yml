@@ -62,4 +62,4 @@ jobs:
     steps:
       - name: Echo
         run: |
-          echo "ls -la ./middleware/spring/target"
+          echo "ls -laR"
