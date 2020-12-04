@@ -47,9 +47,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       - name: Build
         run: |
-          mvn -e -B -DskipTests -DskipITs -Dno-format clean install
-      - name: Test
+          mvn -e -B -DskipTests -DskipITs -Dno-format clean package
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    if: github.repository == 'frontegg/java-sdk'
+    steps:
+      - name: Echo
         run: |
-          mvn test
+          echo "ls -la ./middleware/spring/target"
