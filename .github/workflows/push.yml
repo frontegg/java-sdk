@@ -50,3 +50,6 @@ jobs:
       - name: Build
         run: |
           mvn -e -B -DskipTests -DskipITs -Dno-format clean install
+      - name: Test
+        run: |
+          mvn test
