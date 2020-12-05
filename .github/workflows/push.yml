@@ -70,6 +70,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java.java-version }}
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       - name: Test
         run: |
           mvn -e -B test
