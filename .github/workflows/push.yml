@@ -60,6 +60,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'frontegg/java-sdk'
     steps:
-      - name: Echo
+      - name: Test
         run: |
-          echo "ls -laR ."
+          mvn -e test
