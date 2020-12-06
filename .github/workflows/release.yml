@@ -2,8 +2,7 @@ name: Frontegg Java SDK - create release
 
 on:
   push:
-    branches:
-      - "release/*"
+    - "*"
 env:
   LANG: en_US.UTF-8
   JVM_TEST_MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
@@ -35,6 +34,13 @@ jobs:
       - name: Build
         run: |
           mvn -e -B clean install
+      - name: Import gpg
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+        run: |
+          mkdir -p ~/.gnupg/
+          printf "$GPG_SIGNING_KEY" | base64 --decode > ~/.gnupg/private.key
+          gpg --import ~/.gnupg/private.key
       - name: Preapare release
         run: |
           mvn -Prelease release:prepare -DdryRun=true
