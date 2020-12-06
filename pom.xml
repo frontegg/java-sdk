@@ -214,8 +214,9 @@
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
-                                </goals>
+								</goals>
                                 <configuration>
+                                    <useAgent>false</useAgent>
                                     <gpgArguments>
 										<gpgArguments>--no-tty</gpgArguments>
                                         <gpgArguments>--pinentry-mode</gpgArguments>
