@@ -6,12 +6,12 @@
 			<username>${env.NEXUS_USERNAME}</username>
 			<password>${env.NEXUS_PASSWORD}</password>
 		</server>
-		<server>
-			<id>gpg.passphrase</id>
-			<passphrase>${env.GPG_SIGNING_KEY}</passphrase>
-		</server>
+<!--		<server>-->
+<!--			<id>gpg.passphrase</id>-->
+<!--			<passphrase>${env.GPG_SIGNING_KEY}</passphrase>-->
+<!--		</server>-->
 	</servers>
-	<activeProfiles>
-		<activeProfile>gpg.passphrase</activeProfile>
-	</activeProfiles>
+<!--	<activeProfiles>-->
+<!--		<activeProfile>gpg.passphrase</activeProfile>-->
+<!--	</activeProfiles>-->
 </settings>
