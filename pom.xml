@@ -217,7 +217,8 @@
                                 </goals>
                                 <configuration>
                                     <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
+										<gpgArguments>--no-tty</gpgArguments>
+                                        <gpgArguments>--pinentry-mode</gpgArguments>
                                         <arg>loopback</arg>
                                     </gpgArguments>
                                 </configuration>
