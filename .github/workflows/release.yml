@@ -3,7 +3,7 @@ name: Frontegg Java SDK - create release
 on:
   push:
     branches:
-      - *
+      - "*"
 env:
   LANG: en_US.UTF-8
   JVM_TEST_MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
