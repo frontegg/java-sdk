@@ -44,4 +44,4 @@ jobs:
           gpg --batch --import ~/.gnupg/private.key
       - name: Preapare release
         run: |
-          mvn -Prelease release:prepare -DdryRun=true
+          mvn -e -B -Prelease release:prepare -DdryRun=true
