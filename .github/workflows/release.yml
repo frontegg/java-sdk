@@ -6,7 +6,7 @@ on:
       - "*"
 env:
   LANG: en_US.UTF-8
-  JVM_TEST_MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
+  MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
 jobs:
   build:
     name: Build JDK 8
@@ -44,4 +44,4 @@ jobs:
           gpg --batch --import ~/.gnupg/private.key
       - name: Preapare release
         run: |
-          mvn -e -B -Prelease release:prepare -DdryRun=true
+          mvn ${MAVEN_OPTS} -Prelease release:prepare -DdryRun=true
