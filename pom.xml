@@ -216,7 +216,7 @@
                                     <goal>sign</goal>
 								</goals>
                                 <configuration>
-                                    <useAgent>false</useAgent>
+                                    <useAgent>true</useAgent>
                                     <gpgArguments>
 										<gpgArguments>--no-tty</gpgArguments>
                                         <gpgArguments>--pinentry-mode</gpgArguments>
