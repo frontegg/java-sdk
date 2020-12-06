@@ -1,0 +1,14 @@
+name: Push Workflow
+
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  init:
+    name: 'Test Action'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Logger
+        run: |
+          echo "TEST ME"
