@@ -3,6 +3,7 @@
 # build
 target
 dependency_tree.txt
+release.properties
 
 # IDEs
 *.iml
