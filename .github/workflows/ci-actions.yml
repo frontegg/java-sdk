@@ -12,14 +12,19 @@ on:
       - "*.txt"
       - ".github/ISSUE_TEMPLATE/**"
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     paths-ignore:
       - ".gitignore"
       - "*.md"
+      - "*.adoc"
+      - "*.txt"
       - ".github/ISSUE_TEMPLATE/**"
 env:
   LANG: en_US.UTF-8
-  JVM_TEST_MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
 jobs:
   build-and-cache-deps:
     name: Build JDK 8
