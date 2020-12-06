@@ -3,7 +3,7 @@ name: Frontegg Java SDK - create release
 on:
   push:
     branches:
-      - main
+      - "release/*"
 env:
   LANG: en_US.UTF-8
   JVM_TEST_MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
@@ -30,9 +30,11 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Build
         run: |
           mvn -e -B clean install
       - name: Preapare release
         run: |
-          mvn -Prelease release:prepare
+          mvn -Prelease release:prepare -DdryRun=true
