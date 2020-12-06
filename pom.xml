@@ -215,7 +215,7 @@
                                     <goal>sign</goal>
 								</goals>
                                 <configuration>
-                                    <useAgent>false</useAgent>
+                                    <!-- <useAgent>false</useAgent> -->
                                     <passphrase>${env.GPG_SIGNING_KEY}</passphrase>
                                     <gpgArguments>
 										<!-- <arg>- -no-tty</arg>  remove space between -->
