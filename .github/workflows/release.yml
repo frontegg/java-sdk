@@ -41,4 +41,4 @@ jobs:
           printf "$GPG_SIGNING_KEY" | base64 --decode > ~/.gnupg/private.key
           gpg --batch --import ~/.gnupg/private.key
       - name: Preapare release
-        run: mvn -e -B -Prelease release:prepare -DdryRun=true -Darguments="-Dgpg.passphrase=$GPG_SIGNING_KEY"
+        run: mvn -e -B -Prelease release:prepare -DdryRun=true
