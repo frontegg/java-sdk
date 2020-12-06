@@ -6,7 +6,7 @@ on:
       - "*"
 env:
   LANG: en_US.UTF-8
-  MAVEN_OPTS: "-B --settings .github/mvn-settings.xml"
+  MAVEN_OPTS: "-e -B --settings .github/mvn-settings.xml"
 jobs:
   build:
     name: Build JDK 8
@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: |
-          mvn $MAVEN_OPTS clean install
+          mvn -e -B --settings .github/mvn-settings.xml clean install
       - name: Import gpg
         env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
@@ -44,4 +44,4 @@ jobs:
           gpg --batch --import ~/.gnupg/private.key
       - name: Preapare release
         run: |
-          mvn $MAVEN_OPTS -Prelease release:prepare -DdryRun=true
+          mvn -e -B --settings .github/mvn-settings.xml -Prelease release:prepare -DdryRun=true
