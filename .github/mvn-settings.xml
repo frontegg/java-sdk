@@ -7,7 +7,7 @@
 			<password>${env.NEXUS_PASSWORD}</password>
 		</server>
 		<server>
-			<id>gpg.passphrase</id>
+			<id>gpg-keyname</id>
 			<passphrase>${env.GPG_SIGNING_KEY}</passphrase>
 		</server>
 	</servers>
