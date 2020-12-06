@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: |
-          mvn -e -B clean install
+          mvn ${MAVEN_OPTS} clean install
       - name: Import gpg
         env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
