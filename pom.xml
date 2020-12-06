@@ -220,8 +220,8 @@
                                     <useAgent>false</useAgent>
                                     <passphrase>${env.GPG_SIGNING_KEY}</passphrase>
                                     <gpgArguments>
-										<gpgArguments>--no-tty</gpgArguments>
-                                        <gpgArguments>--pinentry-mode</gpgArguments>
+										<arg>--no-tty</arg>
+                                        <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
                                     </gpgArguments>
                                 </configuration>
