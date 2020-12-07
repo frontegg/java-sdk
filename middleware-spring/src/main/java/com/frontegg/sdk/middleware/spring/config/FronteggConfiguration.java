@@ -9,11 +9,9 @@ import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
 import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationServiceImpl;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
-import com.frontegg.sdk.middleware.spring.identity.FronteggIdentityServiceImpl;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
 import com.frontegg.sdk.middleware.spring.client.ApiClientImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -23,80 +21,82 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Configuration
-public class FronteggConfiguration {
+public class FronteggConfiguration
+{
 
-    @Autowired
-    private SpringFronteggConfigProvider springFronteggConfigProvider;
+	@Bean
+	public ConfigProvider configProvider(SpringFronteggConfigProvider springFronteggConfigProvider)
+	{
+		return new FronteggConfigProviderChain(springFronteggConfigProvider,
+											   new EnvironmentVariableConfigProvider(),
+											   new SystemPropertiesConfigProvider(),
+											   new DefaultConfigProvider());
+	}
 
-    @Autowired
-    private FronteggOptions fronteggOptions;
+	@Bean
+	public FronteggConfig fronteggConfig(ConfigProvider configProvider)
+	{
+		return configProvider.resolveConfigs();
+	}
 
-    @Bean
-    public ConfigProvider configProvider() {
-        return new FronteggConfigProviderChain(
-                springFronteggConfigProvider,
-                new EnvironmentVariableConfigProvider(),
-                new SystemPropertiesConfigProvider(),
-                new DefaultConfigProvider()
-        );
-    }
+	@Bean
+	public ApiClient apiClient()
+	{
+		return new ApiClientImpl(new RestTemplate());
+	}
 
-    @Bean
-    public FronteggConfig fronteggConfig() {
-        return configProvider().resolveConfigs();
-    }
+	@Bean
+	public FronteggAuthenticator fronteggAuthenticator(
+			ApiClient apiClient,
+			FronteggConfig config,
+			FronteggOptions options
+	)
+	{
+		FronteggAuthenticator authenticator = new FronteggAuthenticator(options.getClientId(), options.getApiKey(), config, apiClient);
+		authenticator.authenticate();
+		return authenticator;
+	}
 
-    @Bean
-    public ApiClient apiClient() {
-        return new ApiClientImpl(new RestTemplate());
-    }
+	@Bean
+	public FronteggAuthenticationService authenticationService(
+			FronteggAuthenticator authenticator,
+			FronteggIdentityService identityService
+	)
+	{
+		return new FronteggAuthenticationServiceImpl(authenticator, identityService);
+	}
 
-    @Bean
-    public FronteggAuthenticator fronteggAuthenticator() {
-        return new FronteggAuthenticator(
-                fronteggOptions.getClientId(),
-                fronteggOptions.getApiKey(),
-                fronteggConfig(),
-                apiClient()
-        );
-    }
+	@Bean
+	public IFronteggRouteService fronteggRouteService(ApiClient apiClient, FronteggConfig config)
+	{
+		return new FronteggConfigRoutsService(apiClient, config);
+	}
 
-    @Bean
-    public FronteggAuthenticationService authenticationService() {
-        return new FronteggAuthenticationServiceImpl(fronteggAuthenticator(), fronteggIdentityService());
-    }
+	@Bean
+	public RetryTemplate retryTemplate(FronteggOptions options)
+	{
+		RetryTemplate retryTemplate = new RetryTemplate();
 
-    @Bean
-    public IFronteggRouteService fronteggRouteService() {
-        return new FronteggConfigRoutsService(apiClient(), fronteggConfig());
-    }
+		FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+		fixedBackOffPolicy.setBackOffPeriod(1000L);
+		retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
 
-    @Bean
-    public FronteggIdentityService fronteggIdentityService() {
-        return new FronteggIdentityServiceImpl(fronteggAuthenticator(), apiClient(), fronteggConfig());
-    }
+		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+		retryPolicy.setMaxAttempts(options.getMaxRetries());
+		retryTemplate.setRetryPolicy(retryPolicy);
+		return retryTemplate;
+	}
 
-    @Bean
-    public RetryTemplate retryTemplate() {
-        RetryTemplate retryTemplate = new RetryTemplate();
+	@Bean
+	public FronteggService fronteggService(
+			FronteggConfig config,
+			ApiClient apiClient,
+			FronteggAuthenticator authenticator,
+			FronteggOptions fronteggOptions
+	)
+	{
 
-        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
-        fixedBackOffPolicy.setBackOffPeriod(1000L);
-        retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
-
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts(fronteggOptions.getMaxRetries());
-        retryTemplate.setRetryPolicy(retryPolicy);
-        return retryTemplate;
-    }
-
-    @Bean
-    public FronteggService fronteggService(FronteggConfig config,
-                                           ApiClient apiClient,
-                                           FronteggAuthenticator authenticator,
-                                           FronteggOptions fronteggOptions) {
-
-        return new FronteggServiceImpl(config, apiClient, authenticator, fronteggOptions);
-    }
+		return new FronteggServiceImpl(config, apiClient, authenticator, fronteggOptions);
+	}
 
 }
