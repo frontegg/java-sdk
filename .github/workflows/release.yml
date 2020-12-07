@@ -40,13 +40,6 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: mvn -e -B clean install
-#      - name: Import gpg
-#        env:
-#          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-#        run: |
-#          mkdir -p ~/.gnupg/
-#          printf "$GPG_SIGNING_KEY" | base64 --decode > ~/.gnupg/private.key
-#          gpg --batch --import ~/.gnupg/private.key
       - name: Preapare release
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
