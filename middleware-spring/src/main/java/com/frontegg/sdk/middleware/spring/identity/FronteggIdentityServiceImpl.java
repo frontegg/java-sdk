@@ -23,8 +23,11 @@ import com.frontegg.sdk.middleware.identity.model.IdentityModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sun.security.rsa.RSAPublicKeyImpl;
 
+@Component
 public class FronteggIdentityServiceImpl implements FronteggIdentityService {
     private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityServiceImpl.class);
 
@@ -35,6 +38,7 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
     private RSAPublicKey publicKey;
     private static final String PUBLIC_KEY_PATH = "/resources/configurations/v1";
 
+    @Autowired
     public FronteggIdentityServiceImpl(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;

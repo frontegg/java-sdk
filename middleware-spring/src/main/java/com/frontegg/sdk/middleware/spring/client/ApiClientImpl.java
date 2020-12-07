@@ -54,7 +54,9 @@ public class ApiClientImpl implements ApiClient {
     public <T, R> FronteggHttpResponse<T> post(String url, Class<T> clazz, Map<String, String> headers, R body) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         try {
-            ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, createHttpEntity(headers, body), clazz);
+            HttpEntity<Object> httpEntity = createHttpEntity(headers, body);
+            ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST,
+                                                                     httpEntity, clazz);
             return convert(responseEntity);
         } catch (RestClientException ex) {
             throw new FronteggSDKException("frontegg sdk call fails with message", ex);
@@ -75,7 +77,9 @@ public class ApiClientImpl implements ApiClient {
 
         HttpMethod method = HttpMethod.resolve(request.getMethod());
         try {
-            ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), method, createHttpEntity(request, headers), clazz);
+            HttpEntity<Object> httpEntity = createHttpEntity(request, headers);
+            ResponseEntity<T> responseEntity = restTemplate.exchange(builder.toUriString(), method,
+                                                                     httpEntity, clazz);
             return convert(responseEntity);
         } catch (RestClientException ex) {
 
