@@ -22,18 +22,15 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup JDK 8
         uses: actions/setup-java@v1
-        env:
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         with:
           java-version: 8
-          server-id: sonatype-nexus-release
+          server-id: ossrh
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
           gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }} # Value of the GPG private key to import
           gpg-passphrase: GPG_PASSPHRASE
-
+      - name: asd
+        -
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
@@ -43,12 +40,16 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: mvn -e -B clean install
-      - name: Import gpg
-        env:
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-        run: |
-          mkdir -p ~/.gnupg/
-          printf "$GPG_SIGNING_KEY" | base64 --decode > ~/.gnupg/private.key
-          gpg --batch --import ~/.gnupg/private.key
+#      - name: Import gpg
+#        env:
+#          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+#        run: |
+#          mkdir -p ~/.gnupg/
+#          printf "$GPG_SIGNING_KEY" | base64 --decode > ~/.gnupg/private.key
+#          gpg --batch --import ~/.gnupg/private.key
       - name: Preapare release
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -e -B -Prelease release:prepare -DdryRun=true
