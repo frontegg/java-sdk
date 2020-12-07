@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.repository == 'frontegg/java-sdk' &&
-      !startsWith(github.event.head_commit.message, '[maven-release-plugin] prepare for next development')
+      !startsWith(github.event.head_commit.message, '[maven-release-plugin] prepare for next development') &&
+      !startsWith(github.event.head_commit.message, '[maven-release-plugin] prepare release')
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
