@@ -54,7 +54,7 @@
         <spring.retry.version>1.2.5.RELEASE</spring.retry.version>
         <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
 
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
 
         <version.plugins.maven-deploy>2.8.2</version.plugins.maven-deploy>
         <version.plugins.maven-source>3.2.1</version.plugins.maven-source>
