@@ -1,12 +1,17 @@
 .DS_Store
 
 # build
-target
+target/
+dependency_tree.txt
+release.properties
+pom.xml.releaseBackup
+pom.xml.tag
+
 
 # IDEs
 *.iml
-.idea
-.settings
+.idea/
+.settings/
 .project
 .classpath
 .vscode/
