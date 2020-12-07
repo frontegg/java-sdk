@@ -1,5 +1,10 @@
 package com.frontegg.sdk.middleware.spring.identity;
 
+import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -14,14 +19,11 @@ import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
 import com.frontegg.sdk.middleware.identity.model.IdentityModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.rsa.RSAPublicKeyImpl;
 
-import java.security.interfaces.RSAPublicKey;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import sun.security.rsa.RSAPublicKeyImpl;
 
 public class FronteggIdentityServiceImpl implements FronteggIdentityService {
     private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityServiceImpl.class);
@@ -87,8 +89,8 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
             ).get();
             logger.info("got identity service configuration");
 
-            logger.debug("going to extract public key from response");
-            return new RSAPublicKeyImpl(Base64.getDecoder().decode(normalizedPublicKey(identityModel.getPublicKey())));
+			logger.debug("going to extract public key from response");
+            return RSAPublicKeyImpl.newKey(Base64.getDecoder().decode(normalizedPublicKey(identityModel.getPublicKey())));
         } catch (Exception ex) {
             logger.error("Unable to get frontegg public key from url {} ", urlPath, ex);
             throw new FronteggSDKException(ex.getMessage(), ex);
