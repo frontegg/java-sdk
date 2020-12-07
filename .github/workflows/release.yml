@@ -15,12 +15,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets }}
           fetch-depth: 0
       - name: Set git config
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name 'Royi Freifeld'
-          git config --global user.email 'royi@frontegg.com'
+          git config --global user.name 'frontegg'
+          git config --global user.email 'frontegg@users.noreply.github.com'
       - name: Cancel previous runs
         uses: n1hility/cancel-previous-runs@v2
         with:
