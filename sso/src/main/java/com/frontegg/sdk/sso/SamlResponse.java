@@ -2,22 +2,22 @@ package com.frontegg.sdk.sso;
 
 public class SamlResponse {
 
-    private String relayState;
-    private String sAMLResponse;
+    private String RelayState;
+    private String SAMLResponse;
 
     public String getRelayState() {
-        return relayState;
+        return this.RelayState;
     }
 
     public void setRelayState(String relayState) {
-        this.relayState = relayState;
+        this.RelayState = relayState;
     }
 
-    public String getsAMLResponse() {
-        return sAMLResponse;
+    public String getSAMLResponse() {
+        return this.SAMLResponse;
     }
 
-    public void setsAMLResponse(String sAMLResponse) {
-        this.sAMLResponse = sAMLResponse;
+    public void setSAMLResponse(String SAMLResponse) {
+        this.SAMLResponse = SAMLResponse;
     }
 }
