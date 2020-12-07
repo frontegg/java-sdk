@@ -6,7 +6,11 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.sso.SamlResponse;
 import com.frontegg.sdk.sso.SsoClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,15 +34,18 @@ public class SSO
 		this.ssoClient = new SsoClient(this.authenticator, this.apiClient, this.config);
 	}
 
-	@PostMapping("/login")
-	public void login(@RequestParam("email") String email, HttpServletResponse response) throws IOException
+	@RequestMapping(value = "/login",
+					method = RequestMethod.POST)
+	public void login(@RequestBody SamlRequest request, HttpServletResponse response) throws IOException
 	{
-		String location = this.ssoClient.preLogin(email);
+		String location = this.ssoClient.preLogin(request.getPayload());
 		response.sendRedirect(location);
 	}
 
-	@PostMapping("/auth/saml/callback")
-	public Object samlCallback(@RequestBody() SamlResponse samlResponse)
+	@RequestMapping(value = "/auth/saml/callback",
+					method = RequestMethod.POST,
+					consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public Object samlCallback(SamlResponse samlResponse)
 	{
 		return this.ssoClient.postLogin(samlResponse);
 	}
