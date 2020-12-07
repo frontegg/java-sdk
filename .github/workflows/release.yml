@@ -39,6 +39,10 @@ jobs:
       - name: Build
         run: mvn -e -B clean install
       - name: prepare release
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -e -B -Prelease release:prepare
   release:
     name: Release new version
