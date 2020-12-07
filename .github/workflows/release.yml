@@ -15,11 +15,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - name: Set git config
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
