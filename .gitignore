@@ -7,6 +7,7 @@ release.properties
 pom.xml.releaseBackup
 pom.xml.tag
 
+
 # IDEs
 *.iml
 .idea/
