@@ -5,7 +5,7 @@
     <parent>
         <artifactId>java-sdk</artifactId>
         <groupId>com.frontegg</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>frontegg-springboot-sample</artifactId>
