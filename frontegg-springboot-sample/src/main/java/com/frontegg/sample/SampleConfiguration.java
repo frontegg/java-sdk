@@ -5,6 +5,7 @@ import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.events.EventClientImpl;
 import com.frontegg.sdk.events.EventsClient;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
+import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,5 +17,13 @@ public class SampleConfiguration {
                                      ApiClient apiClient,
                                      FronteggConfig config) {
         return new EventClientImpl(fronteggAuthenticator, apiClient, config);
+    }
+
+    @Bean
+    public FronteggContextResolver contextResolver() {
+        return new FronteggStaticContextResolver(
+                "<your tenant id>",
+                "<your user id>"
+        );
     }
 }
