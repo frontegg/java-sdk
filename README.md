@@ -109,11 +109,11 @@ frontegg:
 | **disableCors**  | boolean | if cors enabled adds frontegg api appropriate headers to response |
 | **cookieDomainRewrite**   | string | overrides domain from coolies |
 
-#### Frontegg Urls and WhiteLists
+#### Frontegg Urls
 
 Frontegg Urls and Whitelist base configuration is defined in config modules readme file.
-For spring based application sdk provides `ConfigProvider` and `WhiteListProvider` beans for these configurations.
-To provide custom `configProviders` you need to create/override `configProvider` and  `whiteListProvider` beans.
+For spring based application sdk provides `ConfigProvider` bean for this configuration.
+To provide custom `configProviders` you need to create/override `configProvider` bean.
 
 The order of configProvider loader is. 
 - yaml 
