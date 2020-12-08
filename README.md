@@ -11,8 +11,8 @@ Frontegg is a web platform where SaaS companies can set up their fully managed, 
 add maven dependency 
 ```xml
 <dependency>
-    <groupId>com.frontegg</groupId>
-    <artifactId>middleware-spring</artifactId>
+    <groupId>com.frontegg.sdk.spring</groupId>
+    <artifactId>spring-middleware</artifactId>
     <version>x.x.x</version>
 </dependency>
 ```
