@@ -17,6 +17,7 @@ import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import sun.security.rsa.RSAPublicKeyImpl;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,16 +26,17 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FronteggIdentityServiceImpl implements FronteggContextResolver
+@Component
+public class FronteggIdentityContextResolver implements FronteggContextResolver
 {
-	private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityContextResolver.class);
 	private static final String PUBLIC_KEY_PATH = "/resources/configurations/v1";
 	private FronteggAuthenticator authenticator;
 	private ApiClient apiClient;
 	private FronteggConfig fronteggConfig;
 	private RSAPublicKey publicKey;
 
-	public FronteggIdentityServiceImpl(
+	public FronteggIdentityContextResolver(
 			FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig
 	)
 	{

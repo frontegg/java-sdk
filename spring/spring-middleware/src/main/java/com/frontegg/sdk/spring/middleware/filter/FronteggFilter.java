@@ -200,13 +200,13 @@ public class FronteggFilter extends GenericFilterBean {
         if (ex instanceof AuthenticationException) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             printWriter.write(objectMapper.writeValueAsString(new Error("Unauthorized")));
-        } if (ex instanceof InsufficientAccessException) {
+        } else if (ex instanceof InsufficientAccessException) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             printWriter.write(objectMapper.writeValueAsString(new Error("Permission Denied")));
-        } if (ex instanceof InvalidParameterException) {
+        } else if (ex instanceof InvalidParameterException) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             printWriter.write(objectMapper.writeValueAsString(new Error(ex.getMessage())));
-        } if (ex instanceof FronteggSDKException) {
+        } else if (ex instanceof FronteggSDKException) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             printWriter.write(objectMapper.writeValueAsString(new Error("Something went wrong, please try again.")));
         } else {
