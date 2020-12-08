@@ -5,10 +5,7 @@ import com.frontegg.sdk.config.*;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.FronteggService;
 import com.frontegg.sdk.middleware.FronteggServiceImpl;
-import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
-import com.frontegg.sdk.middleware.authentication.impl.FronteggAuthenticationServiceImpl;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
-import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
 import com.frontegg.sdk.middleware.spring.client.ApiClientImpl;
@@ -55,15 +52,6 @@ public class FronteggConfiguration
 		FronteggAuthenticator authenticator = new FronteggAuthenticator(options.getClientId(), options.getApiKey(), config, apiClient);
 		authenticator.authenticate();
 		return authenticator;
-	}
-
-	@Bean
-	public FronteggAuthenticationService authenticationService(
-			FronteggAuthenticator authenticator,
-			FronteggIdentityService identityService
-	)
-	{
-		return new FronteggAuthenticationServiceImpl(authenticator, identityService);
 	}
 
 	@Bean

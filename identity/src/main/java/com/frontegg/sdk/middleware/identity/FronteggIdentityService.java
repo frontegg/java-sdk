@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.spring.identity;
+package com.frontegg.sdk.middleware.identity;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
@@ -13,23 +13,22 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.util.HttpHelper;
+import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
+import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
+
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
-import com.frontegg.sdk.middleware.identity.FronteggIdentityService;
-import com.frontegg.sdk.middleware.identity.model.IdentityModel;
-
+import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import sun.security.rsa.RSAPublicKeyImpl;
 
-@Component
-public class FronteggIdentityServiceImpl implements FronteggIdentityService {
-    private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityServiceImpl.class);
+import javax.servlet.http.HttpServletRequest;
+
+public class FronteggIdentityService implements FronteggContextResolver {
+    private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityService.class);
 
     private FronteggAuthenticator authenticator;
     private ApiClient apiClient;
@@ -38,8 +37,9 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
     private RSAPublicKey publicKey;
     private static final String PUBLIC_KEY_PATH = "/resources/configurations/v1";
 
-    @Autowired
-    public FronteggIdentityServiceImpl(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig) {
+    public FronteggIdentityService(FronteggAuthenticator authenticator,
+                                   ApiClient apiClient,
+                                   FronteggConfig fronteggConfig) {
         this.authenticator = authenticator;
         this.apiClient = apiClient;
         this.fronteggConfig = fronteggConfig;
@@ -49,8 +49,7 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
         publicKey = getPublicKey();
     }
 
-    @Override
-    public void verifyToken(String token) {
+    private Map<String, Claim> verifyToken(String token) {
         init();
 
         try {
@@ -61,15 +60,8 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
             verifier.verify(token);
 
             Map<String, Claim> claimMap = jwt.getClaims();
-            String userID = claimMap.get("sub").asString();
-            String tenantID = claimMap.get("tenantId").asString();
 
-            FronteggContext fronteggContext = FronteggContextHolder.getContext();
-            fronteggContext.setUserId(userID);
-            fronteggContext.setTenantId(tenantID);
-            //fronteggContext.setUser(claimMap);
-            FronteggContextHolder.setContext(fronteggContext);
-
+            return claimMap;
         } catch (Exception e) {
             logger.error("Unable to verify token", e);
             throw new FronteggSDKException("Unable to verify token", e);
@@ -111,5 +103,25 @@ public class FronteggIdentityServiceImpl implements FronteggIdentityService {
         Map<String, String> headers = new HashMap<>();
         headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
         return headers;
+    }
+
+    @Override
+    public void resolveContext(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("authorization");
+        if (StringHelper.isBlank(authorizationHeader)) {
+            throw new AuthenticationException("FronteggAuthentication is required URL - " + request.getRequestURI());
+        }
+
+        String token = authorizationHeader.replace("Bearer ", "");
+
+        Map<String, Claim> claimMap = verifyToken(token);
+
+        String userID = claimMap.get("sub").asString();
+        String tenantID = claimMap.get("tenantId").asString();
+
+        FronteggContext fronteggContext = FronteggContextHolder.getContext();
+        fronteggContext.setTenantId(tenantID);
+        fronteggContext.setUserId(userID);
+        FronteggContextHolder.setContext(fronteggContext);
     }
 }

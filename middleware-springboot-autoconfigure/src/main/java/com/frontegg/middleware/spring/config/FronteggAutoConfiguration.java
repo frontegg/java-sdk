@@ -1,7 +1,9 @@
 package com.frontegg.middleware.spring.config;
 
 import com.frontegg.sdk.middleware.FronteggOptions;
-import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
+import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
+import com.frontegg.sdk.middleware.context.FronteggContextResolver;
+import com.frontegg.sdk.middleware.context.NoOpContextResolver;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.spring.FronteggServiceDelegate;
 import com.frontegg.sdk.middleware.spring.filter.FronteggFilter;
@@ -32,6 +34,12 @@ public class FronteggAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    public FronteggContextResolver fronteggContextResolver() {
+        return new NoOpContextResolver();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public FronteggOptions fronteggOptions() {
         FronteggOptions fronteggOptions = new FronteggOptions();
         fronteggOptions.setMaxRetries(maxRetries);
@@ -44,15 +52,16 @@ public class FronteggAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public FronteggFilter fronteggFilter(FronteggAuthenticationService authenticationService,
+    public FronteggFilter fronteggFilter(FronteggContextResolver fronteggContextResolver,
+                                         FronteggAuthenticator authenticator,
                                          IFronteggRouteService fronteggRouteService,
                                          FronteggServiceDelegate fronteggServiceDelegate,
                                          FronteggOptions options) {
-        Assert.notNull(authenticationService, "authenticationService cannot be null");
+        Assert.notNull(fronteggContextResolver, "fronteggContextResolver cannot be null");
         Assert.notNull(fronteggRouteService, "fronteggRouteService cannot be null");
         Assert.notNull(fronteggServiceDelegate, "delegate cannot be null");
         Assert.notNull(options, "frontegg options cannot be null");
 
-        return new FronteggFilter(basePath, authenticationService, fronteggRouteService, fronteggServiceDelegate, options);
+        return new FronteggFilter(basePath, authenticator, fronteggContextResolver, fronteggRouteService, fronteggServiceDelegate, options);
     }
 }

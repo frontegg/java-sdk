@@ -75,7 +75,7 @@
         <module>sso</module>
         <module>events</module>
         <module>middleware-springboot-autoconfigure</module>
-        <module>frontegg-springboot-sample</module>
+        <module>identity</module>
     </modules>
 
     <distributionManagement>

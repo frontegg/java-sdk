@@ -3,9 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>java-sdk</artifactId>
-        <groupId>com.frontegg</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.4.RELEASE</version>
+        <relativePath/>
     </parent>
 
     <artifactId>frontegg-springboot-sample</artifactId>
@@ -25,29 +26,29 @@
             <version>${version.spring-boot}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-            <version>${version.spring-boot}</version>
-        </dependency>
-        <dependency>
             <groupId>com.frontegg</groupId>
             <artifactId>middleware-springboot-autoconfigure</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>
             <artifactId>audit</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.frontegg</groupId>
+            <artifactId>identity</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>
             <artifactId>events</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>
             <artifactId>sso</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

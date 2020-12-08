@@ -1,4 +1,4 @@
-package com.frontegg.sdk.middleware.identity.model;
+package com.frontegg.sdk.middleware.identity;
 
 public class IdentityModel {
     private String id;

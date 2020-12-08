@@ -9,10 +9,11 @@ import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpHelper;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.FronteggOptions;
-import com.frontegg.sdk.middleware.authentication.FronteggAuthenticationService;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
+import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextHolder;
+import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.spring.FronteggServiceDelegate;
 import org.slf4j.Logger;
@@ -39,7 +40,8 @@ public class FronteggFilter extends GenericFilterBean {
     private static final String FRONTEGG_CONTEXT_KEY = "FRONTEGG_CONTEXT";
     static final String FILTER_APPLIED = "__frontegg_feggf_applied";
     private static final Logger logger = LoggerFactory.getLogger(FronteggFilter.class);
-    private FronteggAuthenticationService authenticationService;
+    private FronteggContextResolver fronteggContextResolver;
+    private FronteggAuthenticator fronteggAuthenticator;
     private IFronteggRouteService fronteggRouteService;
     private FronteggServiceDelegate fronteggServiceDelegate;
     private FronteggOptions options;
@@ -47,13 +49,15 @@ public class FronteggFilter extends GenericFilterBean {
     private String basePath;
 
     public FronteggFilter(String basePath,
-                          FronteggAuthenticationService authenticationService,
+                          FronteggAuthenticator fronteggAuthenticator,
+                          FronteggContextResolver fronteggContextResolver,
                           IFronteggRouteService fronteggRouteService,
                           FronteggServiceDelegate fronteggServiceDelegate,
                           FronteggOptions options) {
         validateOptions(options);
         this.basePath = basePath;
-        this.authenticationService = authenticationService;
+        this.fronteggAuthenticator = fronteggAuthenticator;
+        this.fronteggContextResolver = fronteggContextResolver;
         this.fronteggRouteService = fronteggRouteService;
         this.fronteggServiceDelegate = fronteggServiceDelegate;
         this.options = options;
@@ -95,7 +99,7 @@ public class FronteggFilter extends GenericFilterBean {
             FronteggContextHolder.setContext(context);
 
             try {
-                authenticationService.authenticateFronteggApplicationIfNeeded();
+                fronteggAuthenticator.authenticate();
 
                 if (request.getMethod().equals("OPTIONS")) {
                     response.setStatus(204);
@@ -104,7 +108,7 @@ public class FronteggFilter extends GenericFilterBean {
 
                 if (!isFronteggPublicRoute(request)) {
                     logger.debug("will pass request threw the auth middleware");
-                    authenticationService.withAuthentication(request);
+                    fronteggContextResolver.resolveContext(request);
                 }
 
 
@@ -124,6 +128,7 @@ public class FronteggFilter extends GenericFilterBean {
                 return;
 
             } catch (Exception ex) {
+                ex.printStackTrace();
                 resolverException(ex, response);
                 return;
             } finally {
