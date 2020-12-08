@@ -49,7 +49,8 @@ public class FronteggConfigRoutsService implements IFronteggRouteService {
                 continue;
             }
 
-            if (vendorClientPublicRouts.getWithQueryParams() != null && !isValidateQueryParams(request, vendorClientPublicRouts.getWithQueryParams())) {
+            if (vendorClientPublicRouts.getWithQueryParams() != null &&
+                    !isValidateQueryParams(request, vendorClientPublicRouts.getWithQueryParams())) {
                 continue;
             }
 

@@ -13,7 +13,8 @@ public class FronteggAuthenticationServiceImpl implements FronteggAuthentication
     private FronteggAuthenticator authenticator;
     private FronteggIdentityService fronteggIdentityService;
 
-    public FronteggAuthenticationServiceImpl(FronteggAuthenticator authenticator, FronteggIdentityService fronteggIdentityService) {
+    public FronteggAuthenticationServiceImpl(FronteggAuthenticator authenticator,
+                                             FronteggIdentityService fronteggIdentityService) {
         this.authenticator = authenticator;
         this.fronteggIdentityService = fronteggIdentityService;
     }
