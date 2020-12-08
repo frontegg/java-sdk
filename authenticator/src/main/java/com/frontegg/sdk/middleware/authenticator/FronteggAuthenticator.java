@@ -6,13 +6,14 @@ import com.frontegg.sdk.config.FronteggConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class FronteggAuthenticator {
 
     private static final Logger logger = LoggerFactory.getLogger(FronteggAuthenticator.class);
     private String accessToken;
-    private LocalDateTime accessTokenExpiry = LocalDateTime.now();
+    private Instant accessTokenExpiry = Instant.now();
     private String clientId;
     private String  apiKey;
     private AuthClient authClient;
@@ -25,13 +26,15 @@ public class FronteggAuthenticator {
         authClient = new AuthClient(client);
     }
 
-    public FronteggAuthentication authenticate() {
-        return authenticate(false);
+    public void authenticate() {
+        authenticate(false);
     }
 
-    private FronteggAuthentication authenticate(boolean force) {
-        if (!force && !StringHelper.isBlank(accessToken))
-            return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
+    private void authenticate(boolean force) {
+        if (!force && !StringHelper.isBlank(accessToken)) {
+            logger.info("accessToken is already exists");
+            return;
+        }
 
         logger.info("posting authentication request");
 
@@ -44,17 +47,15 @@ public class FronteggAuthenticator {
         this.accessToken = response.getToken();
         // Next refresh is when we have only 20% of the sliding window remaining
         long nextRefresh = (long) ((response.getExpiresIn() * 1000) * 0.8);
-        this.accessTokenExpiry = LocalDateTime.now().plusSeconds(nextRefresh);
-
-        return new FronteggPrincipal(this.accessToken, this.accessTokenExpiry);
+        this.accessTokenExpiry = Instant.now().plusSeconds(nextRefresh);
     }
 
-    public FronteggAuthentication refreshAuthentication() {
-        return this.authenticate(true);
+    public void refreshAuthentication() {
+        this.authenticate(true);
     }
 
     public void validateAuthentication() {
-        if (StringHelper.isBlank(this.accessToken) || this.accessTokenExpiry == null || LocalDateTime.now().isAfter(this.accessTokenExpiry)) {
+        if (StringHelper.isBlank(this.accessToken) || this.accessTokenExpiry == null || Instant.now().isAfter(this.accessTokenExpiry)) {
             logger.info("authentication token needs refresh - going to refresh it");
             refreshAuthentication();
         }
