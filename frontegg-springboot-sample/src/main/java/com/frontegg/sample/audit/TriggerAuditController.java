@@ -4,6 +4,7 @@ import com.frontegg.sdk.audit.AuditClient;
 import com.frontegg.sdk.audit.model.AuditFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,31 +17,41 @@ public class TriggerAuditController {
     @Autowired
     private AuditClient auditClient;
 
-    @PostMapping("/")
+    @RequestMapping(value = "/",
+                    method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> sendAudit(@RequestBody AuditModel auditModel) {
 
         auditClient.sendAudit(auditModel);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/metadata")
+    @RequestMapping(value = "/metadata",
+                    method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> setMetadata(@RequestBody AuditMetadata metadata) {
 
         auditClient.setAuditsMetadata(metadata);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/metadata")
+    @RequestMapping(value = "/metadata",
+                    method = RequestMethod.GET,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> getMetadata() {
         return new ResponseEntity<>(auditClient.getAuditsMetadata(), HttpStatus.OK);
     }
 
-    @GetMapping("/stats/{tenantId}")
+    @RequestMapping(value = "/stats/{tenantId}",
+                    method = RequestMethod.GET,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> getStats(@PathVariable String tenantId) {
         return new ResponseEntity<>(auditClient.getAuditsStats(tenantId), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
+    @RequestMapping(value = "/search",
+                    method = RequestMethod.GET,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<List> search(@RequestParam String tenantId,
                                        @RequestParam String filter,
                                        @RequestParam String sortBy,
@@ -57,7 +68,9 @@ public class TriggerAuditController {
         return new ResponseEntity<>(auditClient.getAudits(auditFilter), HttpStatus.OK);
     }
 
-    @GetMapping("/export/csv")
+    @RequestMapping(value = "/export/csv",
+                    method = RequestMethod.GET,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> exportCsv(@RequestParam String tenantId,
                                            @RequestParam String filter,
                                            @RequestParam String sortBy,
@@ -74,7 +87,9 @@ public class TriggerAuditController {
         return new ResponseEntity<>(auditClient.exportCsv(auditFilter, new String[]{}), HttpStatus.OK);
     }
 
-    @GetMapping("/export/pdf")
+    @RequestMapping(value = "/export/pdf",
+                    method = RequestMethod.GET,
+                    consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<?> exportPdf(@RequestParam String tenantId,
                                        @RequestParam String filter,
                                        @RequestParam String sortBy,
