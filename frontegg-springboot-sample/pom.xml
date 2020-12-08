@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.frontegg</groupId>
             <artifactId>events</artifactId>
-            <version>${frontegg.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.frontegg</groupId>

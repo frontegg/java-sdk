@@ -73,8 +73,8 @@
         <module>config</module>
         <module>audit</module>
         <module>sso</module>
-        <module>middleware-springboot-autoconfigure</module>
         <module>events</module>
+        <module>middleware-springboot-autoconfigure</module>
         <module>frontegg-springboot-sample</module>
     </modules>
 
