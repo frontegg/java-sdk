@@ -11,45 +11,63 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SsoClient implements ISsoClient {
-    private static final String PRE_LOGIN_PATH = "/resources/sso/v1/prelogin";
-    private static final String POST_LOGIN_PATH = "/resources/sso/v1/postlogin";
+public class SsoClient implements ISsoClient
+{
+	private static final String PRE_LOGIN_PATH = "/resources/sso/v1/prelogin";
+	private static final String POST_LOGIN_PATH = "/resources/sso/v1/postlogin";
 
-    private FronteggAuthenticator authenticator;
-    private ApiClient apiClient;
-    private FronteggConfig fronteggConfig;
+	private final FronteggAuthenticator authenticator;
+	private final ApiClient apiClient;
+	private final FronteggConfig fronteggConfig;
 
-    public SsoClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig) {
-        this.authenticator = authenticator;
-        this.apiClient = apiClient;
-        this.fronteggConfig = fronteggConfig;
-    }
+	public SsoClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig fronteggConfig)
+	{
+		this.authenticator = authenticator;
+		this.apiClient = apiClient;
+		this.fronteggConfig = fronteggConfig;
+	}
 
-    @Override
-    public String preLogin(String payload) {
-        String urlPath = fronteggConfig.getUrlConfig().getTeamService() + PRE_LOGIN_PATH;
-        FronteggHttpResponse<Object> response = apiClient.post(urlPath, Object.class, withHeaders(), payload);
-        validateStatus(urlPath, response);
-        FronteggHttpHeader locationHeader = response.getHeaders().stream().filter(fh -> fh.getName().equals("location")).findFirst().orElse(null);
-        return locationHeader != null ? locationHeader.getValue() : null;
-    }
+	@Override
+	public String preLogin(String payload)
+	{
+		String urlPath = fronteggConfig.getUrlConfig().getTeamService() + PRE_LOGIN_PATH;
+		FronteggHttpResponse<Object> response = apiClient.post(urlPath,
+															   Object.class,
+															   withHeaders(),
+															   new SsoRequest(payload));
+		validateStatus(urlPath, response);
+		FronteggHttpHeader locationHeader = response.getHeaders()
+													.stream()
+													.filter(fh -> fh.getName().equals("location"))
+													.findFirst()
+													.orElse(null);
+		return locationHeader != null ? locationHeader.getValue() : null;
+	}
 
-    @Override
-    public Object postLogin(SamlResponse samlResponse) {
-        String urlPath = fronteggConfig.getUrlConfig().getTeamService() + POST_LOGIN_PATH;
-        FronteggHttpResponse<Object> response = apiClient.post(urlPath, Object.class, withHeaders(), samlResponse);
-        validateStatus(urlPath, response);
-        return response.getBody();
-    }
+	@Override
+	public Object postLogin(SamlResponse samlResponse)
+	{
+		String urlPath = fronteggConfig.getUrlConfig().getTeamService() + POST_LOGIN_PATH;
+		Map<String, String> explicitValues = new HashMap<>();
+		explicitValues.put("SAMLResponse", samlResponse.getSAMLResponse());
+		explicitValues.put("RelayState", samlResponse.getRelayState());
+		FronteggHttpResponse<Object> response = apiClient.post(urlPath, Object.class, withHeaders(), explicitValues);
+		validateStatus(urlPath, response);
+		return response.getBody();
+	}
 
-    private Map<String, String> withHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
-        return headers;
-    }
+	private Map<String, String> withHeaders()
+	{
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
+		return headers;
+	}
 
-    private void validateStatus(String url, FronteggHttpResponse<?> response) {
+	private void validateStatus(String url, FronteggHttpResponse<?> response)
+	{
         if (response.getStatusCode() < 200 || response.getStatusCode() >= 400)
+        {
             throw new FronteggSDKException("SSO request to " + url + " fails. invalid response status  = " + response.getStatusCode());
-    }
+        }
+	}
 }

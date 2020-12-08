@@ -16,3 +16,7 @@ pom.xml.tag
 .classpath
 .vscode/
 .history/
+
+# other
+keystore*
+*.junk
