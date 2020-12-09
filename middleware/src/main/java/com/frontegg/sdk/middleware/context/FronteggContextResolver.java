@@ -1,6 +1,8 @@
 package com.frontegg.sdk.middleware.context;
 
-public interface FronteggContextResolver {
+import javax.servlet.http.HttpServletRequest;
 
-    FronteggContext resolveContext();
+public interface FronteggContextResolver
+{
+	void resolveContext(HttpServletRequest request);
 }

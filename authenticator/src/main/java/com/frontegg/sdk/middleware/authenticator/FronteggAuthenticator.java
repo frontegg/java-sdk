@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public class FronteggAuthenticator {
 
@@ -18,10 +19,7 @@ public class FronteggAuthenticator {
     private AuthClient authClient;
     private FronteggConfig config;
 
-    public FronteggAuthenticator(String clientID,
-                                 String apiKey,
-                                 FronteggConfig config,
-                                 ApiClient client) {
+    public FronteggAuthenticator(String clientID, String apiKey, FronteggConfig config, ApiClient client) {
         this.clientId = clientID;
         this.apiKey = apiKey;
         this.config = config;
@@ -57,9 +55,7 @@ public class FronteggAuthenticator {
     }
 
     public void validateAuthentication() {
-        if (StringHelper.isBlank(this.accessToken) ||
-                this.accessTokenExpiry == null ||
-                Instant.now().isAfter(this.accessTokenExpiry)) {
+        if (StringHelper.isBlank(this.accessToken) || this.accessTokenExpiry == null || Instant.now().isAfter(this.accessTokenExpiry)) {
             logger.info("authentication token needs refresh - going to refresh it");
             refreshAuthentication();
         }
