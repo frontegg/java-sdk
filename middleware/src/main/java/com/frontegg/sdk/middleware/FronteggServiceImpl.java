@@ -61,7 +61,10 @@ public class FronteggServiceImpl implements FronteggService {
         logger.warn("refreshed authentication");
     }
 
-    private FronteggHttpResponse<Object> initiateRequest(String url, HttpServletRequest request, HttpServletResponse response, Map<String, String> headers){
+    private FronteggHttpResponse<Object> initiateRequest(String url,
+                                                         HttpServletRequest request,
+                                                         HttpServletResponse response,
+                                                         Map<String, String> headers){
         FronteggHttpResponse<Object> val;
         val = apiClient.service(url, request, response, headers, Object.class);
 
