@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.frontegg</groupId>
+    <groupId>com.frontegg.sdk</groupId>
     <artifactId>java-sdk</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -46,15 +46,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <jackson.version>2.11.3</jackson.version>
-        <servlet.version>3.1.0</servlet.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <spring.framework.version>4.2.6.RELEASE</spring.framework.version>
-        <spring.retry.version>1.2.5.RELEASE</spring.retry.version>
-        <spring-boot.version>1.4.4.RELEASE</spring-boot.version>
-        <mockito.version>1.10.19</mockito.version>
-
-        <junit.version>4.12</junit.version>
+        <version.javax.servlet-api>3.1.0</version.javax.servlet-api>
+        <version.slf4j>1.7.30</version.slf4j>
 
         <version.plugins.maven-deploy>2.8.2</version.plugins.maven-deploy>
         <version.plugins.maven-source>3.2.1</version.plugins.maven-source>
@@ -65,7 +58,6 @@
     </properties>
 
     <modules>
-        <module>middleware-spring</module>
         <module>common</module>
         <module>authenticator</module>
         <module>middleware</module>
@@ -73,8 +65,7 @@
         <module>config</module>
         <module>audit</module>
         <module>sso</module>
-        <module>middleware-springboot-autoconfigure</module>
-        <module>frontegg-springboot-sample</module>
+        <module>spring</module>
     </modules>
 
     <distributionManagement>
@@ -95,66 +86,24 @@
             <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.framework.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
+            <version>${version.slf4j}</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${version.javax.servlet-api}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <profiles>
         <profile>
