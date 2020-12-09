@@ -8,7 +8,7 @@ import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.events.model.EventRequest;
 import com.frontegg.sdk.events.model.EventResponse;
 import com.frontegg.sdk.events.model.EventStatuses;
-import com.frontegg.sdk.events.types.*;
+import com.frontegg.sdk.events.types.TriggerOptions;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN;
 import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_TENANT_ID;
@@ -29,11 +27,7 @@ public class EventClientImpl implements EventsClient {
     private FronteggAuthenticator authenticator;
     private ApiClient apiClient;
     private FronteggConfig config;
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    private static final int POLLING_LIMIT = 20;
-    private static final int POLLING_START_TIMEOUT = 3 * 1000;
-    private static final double POLLING_INCREASE_PERCENTAGE = 1.2;
     private static final String TRIGGER_PATH = "/resources/triggers/v2";
     private static final String TRIGGER_STATUSES_PATH = "/resources/triggers/v2/statuses/";
 
@@ -67,45 +61,6 @@ public class EventClientImpl implements EventsClient {
 
     @Override
     public EventStatuses getEventStatus(String eventId) {
-        return getStatus(eventId);
-    }
-
-    @Override
-    public CompletableFuture<EventChannelStatus> waitForEventStatus(String eventId) {
-        CompletableFuture<EventChannelStatus> completableFuture = new CompletableFuture<>();
-        AtomicInteger pollRetryCount = new AtomicInteger();
-        ScheduledFuture checkFuture = executor.scheduleAtFixedRate(() -> {
-            try {
-                pollRetryCount.getAndIncrement();
-                EventStatuses eventStatuses = getEventStatus(eventId);
-                boolean isThereStatusPending = eventStatuses.isThereStatusEqualTo(EventChannelStatus.PENDING);
-
-                if (!isThereStatusPending) {
-                    logger.info("all channels statuses are not pending, will complete the task");
-                    boolean allSucceeded = eventStatuses.isAllStatusesEqualTo(EventChannelStatus.SUCCEEDED);
-                    completableFuture.complete(allSucceeded ? EventChannelStatus.SUCCEEDED : EventChannelStatus.FAILED);
-                }
-
-                if (pollRetryCount.get() >= POLLING_LIMIT) {
-                    logger.info("there are still channels with pending status, but we passed the limit of the polling");
-                    completableFuture.complete(EventChannelStatus.FAILED);
-                }
-
-                logger.info("there are still channels with pending status");
-            } catch (Exception ex) {
-                logger.error("could not get event status", ex);
-                completableFuture.complete(EventChannelStatus.FAILED);
-            }
-
-        }, POLLING_START_TIMEOUT, (long) (POLLING_START_TIMEOUT * POLLING_INCREASE_PERCENTAGE), TimeUnit.MILLISECONDS);
-
-        completableFuture.whenComplete((result, thrown) -> {
-            checkFuture.cancel(true);
-        });
-        return completableFuture;
-    }
-
-    private EventStatuses getStatus(String eventId) {
         authenticator.validateAuthentication();
         Map<String, String> headers = resolveHeaders();
         Optional<EventStatuses> eventStatuses = apiClient.get(
