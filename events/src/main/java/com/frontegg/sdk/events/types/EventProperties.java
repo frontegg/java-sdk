@@ -1,8 +1,8 @@
 package com.frontegg.sdk.events.types;
 
-public interface EventProperties {
+public interface EventProperties
+{
+	String getTitle();
 
-    String getTitle();
-
-    String getDescription();
+	String getDescription();
 }

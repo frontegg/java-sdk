@@ -1,56 +1,64 @@
 package com.frontegg.sdk.events.types;
 
-public class TriggerOptions<T extends EventProperties> {
+public class TriggerOptions<T extends EventProperties>
+{
+	/**
+	 * Event key to trigger channel configuration by.
+	 */
+	private String eventKey;
 
-    /**
-     * Event key to trigger channel configuration by.
-     */
-    private String eventKey;
+	/**
+	 * Default properties for all the channels - can be override in the channel configuration.
+	 */
+	private T properties;
 
-    /**
-     * Default properties for all the channels - can be override in the channel configuration.
-     */
-    private T properties;
+	/**
+	 * trigger the event for a specific tenantId.
+	 */
+	private String tenantId;
 
-    /**
-     * trigger the event for a specific tenantId.
-     */
-    private String tenantId;
+	/**
+	 * configuration of the channels the event will be sent to.
+	 */
+	private ChannelsConfiguration channels;
 
-    /**
-     * configuration of the channels the event will be sent to.
-     */
-    private ChannelsConfiguration channels;
+	public String getEventKey()
+	{
+		return this.eventKey;
+	}
 
-    public String getEventKey() {
-        return eventKey;
-    }
+	public void setEventKey(String eventKey)
+	{
+		this.eventKey = eventKey;
+	}
 
-    public void setEventKey(String eventKey) {
-        this.eventKey = eventKey;
-    }
+	public EventProperties getProperties()
+	{
+		return this.properties;
+	}
 
-    public EventProperties getProperties() {
-        return properties;
-    }
+	public void setProperties(T properties)
+	{
+		this.properties = properties;
+	}
 
-    public void setProperties(T properties) {
-        this.properties = properties;
-    }
+	public String getTenantId()
+	{
+		return this.tenantId;
+	}
 
-    public String getTenantId() {
-        return tenantId;
-    }
+	public void setTenantId(String tenantId)
+	{
+		this.tenantId = tenantId;
+	}
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+	public ChannelsConfiguration getChannels()
+	{
+		return this.channels;
+	}
 
-    public ChannelsConfiguration getChannels() {
-        return channels;
-    }
-
-    public void setChannels(ChannelsConfiguration channels) {
-        this.channels = channels;
-    }
+	public void setChannels(ChannelsConfiguration channels)
+	{
+		this.channels = channels;
+	}
 }
