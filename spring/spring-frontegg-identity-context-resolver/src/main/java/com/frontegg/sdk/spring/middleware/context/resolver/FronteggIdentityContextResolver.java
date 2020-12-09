@@ -18,10 +18,11 @@ import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import sun.security.rsa.RSAPublicKeyImpl;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,8 +112,12 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 			logger.info("got identity service configuration");
 
 			logger.debug("going to extract public key from response");
-			return RSAPublicKeyImpl.newKey(Base64.getDecoder()
-												 .decode(normalizedPublicKey(identityModel.getPublicKey())));
+			byte[] decoded = Base64.getDecoder().decode(normalizedPublicKey(identityModel.getPublicKey()));
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
+
+			return (RSAPublicKey) kf.generatePublic(spec);
+
 		}
 		catch (Exception ex)
 		{
