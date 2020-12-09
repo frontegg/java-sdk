@@ -18,10 +18,10 @@ public class BellAction
 	 */
 	private String method;
 
-	/**
-	 * Determent how to render the action.
-	 */
-	private Visualization visualization;
+    /**
+     *  Determent how to render the action.
+     */
+    private Visualization visualization;
 
 	public String getName()
 	{
