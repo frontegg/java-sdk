@@ -89,7 +89,7 @@ public class EventClientImpl implements EventsClient {
             throw new InvalidParameterException("eventKey is required");
         }
 
-        if (options.getChannels() == null || options.getChannels().hasValidConfiguration() ) {
+        if (options.getChannels() == null || !options.getChannels().hasValidConfiguration() ) {
             logger.warn("At least one channel should be configured");
             throw new Error("At least one channel should be configured");
         }

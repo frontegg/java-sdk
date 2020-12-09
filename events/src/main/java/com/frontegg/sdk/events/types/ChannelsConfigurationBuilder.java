@@ -9,6 +9,12 @@ public class ChannelsConfigurationBuilder {
     private AuditProperties audit;
     private BellProperties bell;
 
+    private ChannelsConfigurationBuilder() {}
+
+    public static ChannelsConfigurationBuilder getInstance() {
+        return new ChannelsConfigurationBuilder();
+    }
+
     public ChannelsConfigurationBuilder defaultSlack() {
         slack = new DefaultSlackProperties();
         return this;
