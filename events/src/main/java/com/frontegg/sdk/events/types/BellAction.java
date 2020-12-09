@@ -20,7 +20,7 @@ public class BellAction {
     /**
      *  Determent how to render the action.
      */
-    private Visualization Visualization;
+    private Visualization visualization;
 
     public String getName() {
         return name;
@@ -46,11 +46,11 @@ public class BellAction {
         this.method = method;
     }
 
-    public com.frontegg.sdk.events.types.Visualization getVisualization() {
-        return Visualization;
+    public Visualization getVisualization() {
+        return visualization;
     }
 
-    public void setVisualization(com.frontegg.sdk.events.types.Visualization visualization) {
-        Visualization = visualization;
+    public void setVisualization(Visualization visualization) {
+        this.visualization = visualization;
     }
 }
