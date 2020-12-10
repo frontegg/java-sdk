@@ -1,6 +1,7 @@
 package com.frontegg.sdk.audit.model;
 
-public class AuditFilter {
+public class AuditsFilter
+{
 
     private String tenantId;
     private String filter;
@@ -10,15 +11,18 @@ public class AuditFilter {
     private int count;
     private Object filters;
 
-    public String getTenantId() {
+    public String getTenantId()
+    {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(String tenantId)
+    {
         this.tenantId = tenantId;
     }
 
-    public String getFilter() {
+    public String getFilter()
+    {
         return filter;
     }
 

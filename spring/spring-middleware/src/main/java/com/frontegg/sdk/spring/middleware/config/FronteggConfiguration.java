@@ -4,11 +4,10 @@ import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.config.*;
 import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.FronteggService;
-import com.frontegg.sdk.middleware.FronteggServiceImpl;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
-import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutsService;
-import com.frontegg.sdk.spring.middleware.client.ApiClientImpl;
+import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutesService;
+import com.frontegg.sdk.spring.middleware.client.SpringApiClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -38,7 +37,7 @@ public class FronteggConfiguration
 	@Bean
 	public ApiClient apiClient()
 	{
-		return new ApiClientImpl(new RestTemplate());
+		return new SpringApiClient(new RestTemplate());
 	}
 
 	@Bean
@@ -54,9 +53,9 @@ public class FronteggConfiguration
 	}
 
 	@Bean
-	public IFronteggRouteService fronteggRouteService(ApiClient apiClient, FronteggConfig config)
+	public IFronteggRouteService fronteggRouteService(ApiClient apiClient, FronteggConfig config, FronteggOptions options)
 	{
-		return new FronteggConfigRoutsService(apiClient, config);
+		return new FronteggConfigRoutesService(apiClient, config, options);
 	}
 
 	@Bean
@@ -83,7 +82,7 @@ public class FronteggConfiguration
 	)
 	{
 
-		return new FronteggServiceImpl(config, apiClient, authenticator, fronteggOptions);
+		return new FronteggService(config, apiClient, authenticator, fronteggOptions);
 	}
 
 }

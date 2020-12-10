@@ -4,14 +4,16 @@ import java.util.List;
 
 public class RoutesConfig {
 
-    private List<VendorClientPublicRouts> vendorClientPublicRoutes;
+    private List<VendorClientPublicRoutes> vendorClientPublicRoutes;
 
 
-    public List<VendorClientPublicRouts> getVendorClientPublicRoutes() {
-        return vendorClientPublicRoutes;
+    public List<VendorClientPublicRoutes> getVendorClientPublicRoutes()
+    {
+        return this.vendorClientPublicRoutes;
     }
 
-    public void setVendorClientPublicRoutes(List<VendorClientPublicRouts> vendorClientPublicRoutes) {
+    public void setVendorClientPublicRoutes(List<VendorClientPublicRoutes> vendorClientPublicRoutes)
+    {
         this.vendorClientPublicRoutes = vendorClientPublicRoutes;
     }
 }
