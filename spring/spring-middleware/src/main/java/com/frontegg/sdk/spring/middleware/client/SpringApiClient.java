@@ -2,13 +2,16 @@ package com.frontegg.sdk.spring.middleware.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frontegg.sdk.api.client.ApiClient;
+import com.frontegg.sdk.common.exception.FronteggHttpException;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
+import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -87,17 +90,31 @@ public class SpringApiClient implements ApiClient
 			Class<T> clazz
 	)
 	{
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+			if (!StringHelper.isBlank(request.getQueryString())) {
+				builder.query(request.getQueryString());
+			}
 
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-		if (!StringHelper.isBlank(request.getQueryString()))
-		{
-			builder.query(request.getQueryString());
+			HttpMethod method = HttpMethod.resolve(request.getMethod());
+			HttpEntity<Object> httpEntity = createHttpEntity(request, headers);
+			ResponseEntity<T> responseEntity = this.restTemplate.exchange(builder.toUriString(), method, httpEntity, clazz);
+			return convert(responseEntity);
+		} catch (RestClientException ex) {
+			if (ex instanceof HttpStatusCodeException) {
+
+				if (((HttpStatusCodeException)ex).getStatusCode() == HttpStatus.UNAUTHORIZED) {
+					throw new AuthenticationException(ex.getMessage(), ex);
+				}
+
+				throw new FronteggHttpException(
+						((HttpStatusCodeException)ex).getStatusCode().value(),
+						"frontegg sdk call fails with message",
+						ex
+				);
+			}
+			throw ex;
 		}
-
-		HttpMethod method = HttpMethod.resolve(request.getMethod());
-		HttpEntity<Object> httpEntity = createHttpEntity(request, headers);
-		ResponseEntity<T> responseEntity = this.restTemplate.exchange(builder.toUriString(), method, httpEntity, clazz);
-		return convert(responseEntity);
 	}
 
 	//region request helper methods

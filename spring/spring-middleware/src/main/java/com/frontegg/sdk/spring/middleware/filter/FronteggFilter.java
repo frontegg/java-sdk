@@ -1,14 +1,12 @@
 package com.frontegg.sdk.spring.middleware.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.frontegg.sdk.common.exception.FronteggSDKException;
+import com.frontegg.sdk.common.exception.FronteggHttpException;
 import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpHelper;
-import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.middleware.FronteggOptions;
-import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextResolver;
@@ -55,24 +53,11 @@ public class FronteggFilter extends GenericFilterBean
 			FronteggOptions options
 	)
 	{
-		validateOptions(options);
 		this.fronteggAuthenticator = fronteggAuthenticator;
 		this.fronteggContextResolver = fronteggContextResolver;
 		this.fronteggRouteService = fronteggRouteService;
 		this.fronteggServiceDelegate = fronteggServiceDelegate;
 		this.options = options;
-	}
-
-	private void validateOptions(FronteggOptions options)
-	{
-		if (StringHelper.isBlank(options.getClientId()))
-		{
-			throw new InvalidParameterException("Missing client ID");
-		}
-		if (StringHelper.isBlank(options.getApiKey()))
-		{
-			throw new InvalidParameterException("Missing api key");
-		}
 	}
 
 	@Override
@@ -167,20 +152,16 @@ public class FronteggFilter extends GenericFilterBean
 	private void resolverException(Exception ex, HttpServletResponse response) throws IOException
 	{
 		PrintWriter printWriter = response.getWriter();
-		if (ex instanceof AuthenticationException)
-		{
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			printWriter.write(this.objectMapper.writeValueAsString(new FronteggExternalizedException("Unauthorized")));
-		}
-		else if (ex instanceof InvalidParameterException)
+		if (ex instanceof InvalidParameterException)
 		{
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 			printWriter.write(this.objectMapper.writeValueAsString(new FronteggExternalizedException(ex.getMessage())));
 		}
-		else if (ex instanceof FronteggSDKException)
+		else if (ex instanceof FronteggHttpException)
 		{
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			printWriter.write(this.objectMapper.writeValueAsString(new FronteggExternalizedException("Something went wrong, please try again.")));
+			FronteggHttpException exception = (FronteggHttpException) ex;
+			response.setStatus(exception.getStatus());
+			printWriter.write(exception.getMessage());
 		}
 		else if (ex instanceof HttpClientErrorException)
 		{

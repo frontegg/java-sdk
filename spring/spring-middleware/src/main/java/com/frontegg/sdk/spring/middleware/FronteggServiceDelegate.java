@@ -1,5 +1,6 @@
 package com.frontegg.sdk.spring.middleware;
 
+import com.frontegg.sdk.common.exception.FronteggHttpException;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.middleware.FronteggService;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
@@ -28,6 +29,13 @@ public class FronteggServiceDelegate
 			{
 				logger.warn("Application is not authorized. Trying to authorize and then retry to perform the request.");
 				this.fronteggService.authorizeApplication();
+			}
+			else if (context.getLastThrowable() instanceof FronteggHttpException)
+			{
+				FronteggHttpException fronteggHttpException = (FronteggHttpException) context.getLastThrowable();
+				if (!fronteggHttpException.shouldRetry()) {
+					throw fronteggHttpException;
+				}
 			}
 			return this.fronteggService.doProcess(request, response);
 		});
