@@ -15,7 +15,8 @@ public class DefaultFronteggConfigProviderChain extends FronteggConfigProviderCh
 			  new DefaultConfigProvider());
 	}
 
-	public static DefaultFronteggConfigProviderChain getInstance() {
+	public static DefaultFronteggConfigProviderChain getInstance()
+	{
 		return INSTANCE;
 	}
 }

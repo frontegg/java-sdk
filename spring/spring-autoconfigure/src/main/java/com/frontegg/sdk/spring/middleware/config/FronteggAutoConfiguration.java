@@ -5,6 +5,7 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import com.frontegg.sdk.middleware.context.NoOpContextResolver;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
+import com.frontegg.sdk.spring.middleware.FronteggServiceDelegate;
 import com.frontegg.sdk.spring.middleware.filter.FronteggFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -12,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
-import com.frontegg.sdk.spring.middleware.FronteggServiceDelegate;
 
 @Configuration
 @ComponentScan("com/frontegg/sdk/spring")
@@ -20,16 +20,21 @@ public class FronteggAutoConfiguration
 {
 
 	@Value("${frontegg.clientId}") private String clientID;
+
 	@Value("${frontegg.apiKey}") private String apiKey;
+
 	@Value("${frontegg.basePath:/frontegg}") private String basePath;
 
 	@Value("${frontegg.settings.disableCors:true}") private boolean disableCors;
+
 	@Value("${frontegg.settings.maxRetries:3}") private int maxRetries;
+
 	@Value("${frontegg.settings.cookieDomainRewrite:}") private String cookieDomainRewrite;
 
 	@Bean
 	@ConditionalOnMissingBean
-	public FronteggContextResolver fronteggContextResolver() {
+	public FronteggContextResolver fronteggContextResolver()
+	{
 		return new NoOpContextResolver();
 	}
 
@@ -37,13 +42,12 @@ public class FronteggAutoConfiguration
 	@ConditionalOnMissingBean
 	public FronteggOptions fronteggOptions()
 	{
-		FronteggOptions fronteggOptions = new FronteggOptions();
-		fronteggOptions.setMaxRetries(maxRetries);
-		fronteggOptions.setDisableCors(disableCors);
-		fronteggOptions.setCookieDomainRewrite(cookieDomainRewrite);
-		fronteggOptions.setClientId(clientID);
-		fronteggOptions.setApiKey(apiKey);
-		return fronteggOptions;
+		return new FronteggOptions(this.clientID,
+								   this.apiKey,
+								   this.disableCors,
+								   this.cookieDomainRewrite,
+								   this.maxRetries,
+								   this.basePath);
 	}
 
 	@Bean
@@ -61,8 +65,7 @@ public class FronteggAutoConfiguration
 		Assert.notNull(fronteggServiceDelegate, "delegate cannot be null");
 		Assert.notNull(options, "frontegg options cannot be null");
 
-		return new FronteggFilter(basePath,
-								  authenticator,
+		return new FronteggFilter(authenticator,
 								  fronteggContextResolver,
 								  fronteggRouteService,
 								  fronteggServiceDelegate,

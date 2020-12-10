@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 public class NoOpContextResolver implements FronteggContextResolver
 {
 	@Override
-	public void resolveContext(HttpServletRequest request)
+	public FronteggContext resolveContext(HttpServletRequest request)
 	{
 		throw new FronteggSDKException("You should provide context resolver");
 	}

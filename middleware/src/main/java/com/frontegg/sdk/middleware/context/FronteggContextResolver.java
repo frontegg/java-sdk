@@ -4,5 +4,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface FronteggContextResolver
 {
-	void resolveContext(HttpServletRequest request);
+	FronteggContext resolveContext(HttpServletRequest request);
 }

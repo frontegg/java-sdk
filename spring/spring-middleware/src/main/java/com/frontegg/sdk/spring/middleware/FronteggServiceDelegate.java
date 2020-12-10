@@ -13,23 +13,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
-public class FronteggServiceDelegate {
-    private static final Logger logger = LoggerFactory.getLogger(FronteggServiceDelegate.class);
+public class FronteggServiceDelegate
+{
+	private static final Logger logger = LoggerFactory.getLogger(FronteggServiceDelegate.class);
 
-    @Autowired
-    private FronteggService fronteggService;
-    @Autowired
-    private RetryTemplate retryTemplate;
+	@Autowired private FronteggService fronteggService;
 
-    public FronteggHttpResponse<Object> doProcess(HttpServletRequest request, HttpServletResponse response) {
-        return retryTemplate.execute(
-                context -> {
-                    if (context.getLastThrowable() instanceof AuthenticationException) {
-                        logger.warn("Application is not authorized. " +
-                                "trying to authorize and then retry to perform the request.");
-                        fronteggService.authorizeApplication();
-                    }
-                    return fronteggService.doProcess(request, response);
-                });
-    }
+	@Autowired private RetryTemplate retryTemplate;
+
+	public FronteggHttpResponse<Object> doProcess(HttpServletRequest request, HttpServletResponse response)
+	{
+		return this.retryTemplate.execute(context -> {
+			if (context.getLastThrowable() instanceof AuthenticationException)
+			{
+				logger.warn("Application is not authorized. Trying to authorize and then retry to perform the request.");
+				this.fronteggService.authorizeApplication();
+			}
+			return this.fronteggService.doProcess(request, response);
+		});
+	}
 }
