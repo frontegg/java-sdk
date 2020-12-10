@@ -70,12 +70,6 @@ public class FronteggService
 		FronteggHttpResponse<Object> val;
 		val = this.apiClient.service(url, request, response, headers, Object.class);
 
-		//UnAuthorized
-		if (val.getStatusCode() == 401)
-		{
-			throw new AuthenticationException("Application is not authorized");
-		}
-
 		//Rewrite Cookies
 		if (!StringHelper.isBlank(this.fronteggOptions.getCookieDomainRewrite()))
 		{

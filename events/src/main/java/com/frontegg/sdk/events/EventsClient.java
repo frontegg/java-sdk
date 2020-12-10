@@ -2,7 +2,6 @@ package com.frontegg.sdk.events;
 
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggSDKException;
-import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
 import com.frontegg.sdk.config.FronteggConfig;
@@ -86,7 +85,7 @@ public class EventsClient
 		if (StringHelper.isBlank(options.getEventKey()))
 		{
 			logger.warn("eventKey is required");
-			throw new InvalidParameterException("eventKey is required");
+			throw new FronteggSDKException("eventKey is required");
 		}
 
 		if (options.getChannels() == null || !options.getChannels().hasValidConfiguration())

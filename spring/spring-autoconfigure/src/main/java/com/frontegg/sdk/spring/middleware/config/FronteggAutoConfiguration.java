@@ -42,6 +42,8 @@ public class FronteggAutoConfiguration
 	@ConditionalOnMissingBean
 	public FronteggOptions fronteggOptions()
 	{
+		Assert.notNull(clientID, "clientID cannot be null");
+		Assert.notNull(apiKey, "apiKey cannot be null");
 		return new FronteggOptions(this.clientID,
 								   this.apiKey,
 								   this.disableCors,

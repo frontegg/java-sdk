@@ -1,15 +1,14 @@
 package com.frontegg.sdk.middleware.authenticator;
 
-public class AuthenticationException extends RuntimeException {
+import com.frontegg.sdk.common.exception.FronteggHttpException;
 
-    public AuthenticationException() {
-    }
-
+public class AuthenticationException extends FronteggHttpException {
+    private static final int UNAUTHORIZED = 401;
     public AuthenticationException(String message) {
-        super(message);
+        super(UNAUTHORIZED, message);
     }
 
     public AuthenticationException(String message, Throwable cause) {
-        super(message, cause);
+        super(UNAUTHORIZED, message, cause);
     }
 }

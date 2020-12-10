@@ -98,34 +98,6 @@ public class FronteggServiceTest
 	}
 
 	@Test
-	public void doProcess_notAuthorized_detectedFromStatus()
-	{
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		HttpServletResponse response = mock(HttpServletResponse.class);
-		String url = BASE_URL + REQUEST_TEST_ENDPOINT;
-		FronteggHttpResponse<Object> expectedResponse = new FronteggHttpResponse<>();
-		expectedResponse.setStatusCode(401);
-
-		when(request.getRequestURI()).thenReturn(BASE_PATH + REQUEST_TEST_ENDPOINT);
-		when(this.apiClient.service(eq(url),
-									any(HttpServletRequest.class),
-									any(HttpServletResponse.class),
-									anyMap(),
-									eq(Object.class))).thenReturn(expectedResponse);
-		when(request.getAttribute(FRONTEGG_CONTEXT_KEY)).thenReturn(this.context);
-
-		try
-		{
-			this.fronteggService.doProcess(request, response);
-			fail("Expected AuthenticationException exception");
-		}
-		catch (AuthenticationException ex)
-		{
-			assertEquals("Application is not authorized", ex.getMessage());
-		}
-	}
-
-	@Test
 	public void doProcess_sdkInternalProblem()
 	{
 		HttpServletRequest request = mock(HttpServletRequest.class);
