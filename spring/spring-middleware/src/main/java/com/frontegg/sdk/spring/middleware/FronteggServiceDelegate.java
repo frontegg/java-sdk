@@ -7,6 +7,7 @@ import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class FronteggServiceDelegate
 			else if (context.getLastThrowable() instanceof FronteggHttpException)
 			{
 				FronteggHttpException fronteggHttpException = (FronteggHttpException) context.getLastThrowable();
-				if (!fronteggHttpException.shouldRetry()) {
+				if (!HttpStatus.valueOf(fronteggHttpException.getStatus()).is5xxServerError()) {
 					throw fronteggHttpException;
 				}
 			}

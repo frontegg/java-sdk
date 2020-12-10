@@ -2,7 +2,6 @@ package com.frontegg.sdk.spring.middleware.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frontegg.sdk.common.exception.FronteggHttpException;
-import com.frontegg.sdk.common.exception.InvalidParameterException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpHelper;
@@ -152,12 +151,7 @@ public class FronteggFilter extends GenericFilterBean
 	private void resolverException(Exception ex, HttpServletResponse response) throws IOException
 	{
 		PrintWriter printWriter = response.getWriter();
-		if (ex instanceof InvalidParameterException)
-		{
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
-			printWriter.write(this.objectMapper.writeValueAsString(new FronteggExternalizedException(ex.getMessage())));
-		}
-		else if (ex instanceof FronteggHttpException)
+		if (ex instanceof FronteggHttpException)
 		{
 			FronteggHttpException exception = (FronteggHttpException) ex;
 			response.setStatus(exception.getStatus());
