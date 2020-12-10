@@ -11,7 +11,7 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SsoClient implements ISsoClient
+public class SsoClient
 {
 	private static final String PRE_LOGIN_PATH = "/resources/sso/v1/prelogin";
 	private static final String POST_LOGIN_PATH = "/resources/sso/v1/postlogin";
@@ -27,14 +27,13 @@ public class SsoClient implements ISsoClient
 		this.fronteggConfig = fronteggConfig;
 	}
 
-	@Override
 	public String preLogin(String payload)
 	{
-		String urlPath = fronteggConfig.getUrlConfig().getTeamService() + PRE_LOGIN_PATH;
-		FronteggHttpResponse<Object> response = apiClient.post(urlPath,
-															   Object.class,
-															   withHeaders(),
-															   new SsoRequest(payload));
+		String urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + PRE_LOGIN_PATH;
+		FronteggHttpResponse<Object> response = this.apiClient.post(urlPath,
+																	Object.class,
+																	withHeaders(),
+																	new SsoRequest(payload));
 		validateStatus(urlPath, response);
 		FronteggHttpHeader locationHeader = response.getHeaders()
 													.stream()
@@ -44,14 +43,16 @@ public class SsoClient implements ISsoClient
 		return locationHeader != null ? locationHeader.getValue() : null;
 	}
 
-	@Override
 	public Object postLogin(SamlResponse samlResponse)
 	{
-		String urlPath = fronteggConfig.getUrlConfig().getTeamService() + POST_LOGIN_PATH;
+		String urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + POST_LOGIN_PATH;
 		Map<String, String> explicitValues = new HashMap<>();
 		explicitValues.put("SAMLResponse", samlResponse.getSAMLResponse());
 		explicitValues.put("RelayState", samlResponse.getRelayState());
-		FronteggHttpResponse<Object> response = apiClient.post(urlPath, Object.class, withHeaders(), explicitValues);
+		FronteggHttpResponse<Object> response = this.apiClient.post(urlPath,
+																	Object.class,
+																	withHeaders(),
+																	explicitValues);
 		validateStatus(urlPath, response);
 		return response.getBody();
 	}
@@ -59,15 +60,15 @@ public class SsoClient implements ISsoClient
 	private Map<String, String> withHeaders()
 	{
 		Map<String, String> headers = new HashMap<>();
-		headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
+		headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, this.authenticator.getAccessToken());
 		return headers;
 	}
 
 	private void validateStatus(String url, FronteggHttpResponse<?> response)
 	{
-        if (response.getStatusCode() < 200 || response.getStatusCode() >= 400)
-        {
-            throw new FronteggSDKException("SSO request to " + url + " fails. invalid response status  = " + response.getStatusCode());
-        }
+		if (response.getStatusCode() < 200 || response.getStatusCode() >= 400)
+		{
+			throw new FronteggSDKException("SSO request to " + url + " fails. invalid response status  = " + response.getStatusCode());
+		}
 	}
 }

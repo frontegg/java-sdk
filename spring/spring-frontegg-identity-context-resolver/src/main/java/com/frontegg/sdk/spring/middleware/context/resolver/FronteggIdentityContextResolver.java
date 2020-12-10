@@ -13,7 +13,6 @@ import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import com.frontegg.sdk.middleware.context.FronteggContextHolder;
 import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +31,9 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 {
 	private static final Logger logger = LoggerFactory.getLogger(FronteggIdentityContextResolver.class);
 	private static final String PUBLIC_KEY_PATH = "/resources/configurations/v1";
-	private FronteggAuthenticator authenticator;
-	private ApiClient apiClient;
-	private FronteggConfig fronteggConfig;
+	private final FronteggAuthenticator authenticator;
+	private final ApiClient apiClient;
+	private final FronteggConfig fronteggConfig;
 	private RSAPublicKey publicKey;
 
 	public FronteggIdentityContextResolver(
@@ -48,7 +47,7 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 
 	private void init()
 	{
-		publicKey = getPublicKey();
+		this.publicKey = getPublicKey();
 	}
 
 	public Map<String, Claim> verifyToken(String token)
@@ -60,7 +59,7 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 			// And save it as member of the class
 			DecodedJWT jwt = JWT.decode(token);
 
-			JWTVerifier verifier = JWT.require(Algorithm.RSA256(publicKey, null)).build();
+			JWTVerifier verifier = JWT.require(Algorithm.RSA256(this.publicKey, null)).build();
 			verifier.verify(token);
 
 			return jwt.getClaims();
@@ -73,7 +72,7 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 	}
 
 	@Override
-	public void resolveContext(HttpServletRequest request)
+	public FronteggContext resolveContext(HttpServletRequest request)
 	{
 		String authorizationHeader = request.getHeader("authorization");
 		if (StringHelper.isBlank(authorizationHeader))
@@ -85,30 +84,26 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 
 		Map<String, Claim> claimMap = verifyToken(token);
 
-		String userID = claimMap.get("sub").asString();
-		String tenantID = claimMap.get("tenantId").asString();
-
-		FronteggContext fronteggContext = FronteggContextHolder.getContext();
-		fronteggContext.setTenantId(tenantID);
-		fronteggContext.setUserId(userID);
-		FronteggContextHolder.setContext(fronteggContext);
+		String userId = claimMap.get("sub").asString();
+		String tenantId = claimMap.get("tenantId").asString();
+		return new FronteggContext(tenantId, userId);
 	}
 
 	private RSAPublicKey getPublicKey()
 	{
-		if (publicKey != null)
+		if (this.publicKey != null)
 		{
-			return publicKey;
+			return this.publicKey;
 		}
 
 		logger.info("going to authenticate");
-		authenticator.authenticate();
+		this.authenticator.authenticate();
 		logger.info("going to get identity service configuration");
 
-		String urlPath = fronteggConfig.getUrlConfig().getIdentityService() + PUBLIC_KEY_PATH;
+		String urlPath = this.fronteggConfig.getUrlConfig().getIdentityService() + PUBLIC_KEY_PATH;
 		try
 		{
-			IdentityModel identityModel = apiClient.get(urlPath, withHeaders(), IdentityModel.class).get();
+			IdentityModel identityModel = this.apiClient.get(urlPath, withHeaders(), IdentityModel.class).get();
 			logger.info("got identity service configuration");
 
 			logger.debug("going to extract public key from response");
@@ -136,7 +131,7 @@ public class FronteggIdentityContextResolver implements FronteggContextResolver
 	private Map<String, String> withHeaders()
 	{
 		Map<String, String> headers = new HashMap<>();
-		headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
+		headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, this.authenticator.getAccessToken());
 		return headers;
 	}
 }

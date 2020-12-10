@@ -1,22 +1,27 @@
 package com.frontegg.sdk.middleware.routes.model;
 
-public class KeyValPair {
-    private String key;
-    private String value;
+public class KeyValPair
+{
+	private String key;
+	private String value;
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey()
+	{
+		return this.key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue()
+	{
+		return this.value;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setValue(String value)
+	{
+		this.value = value;
+	}
 }
