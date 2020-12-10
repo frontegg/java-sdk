@@ -1,21 +1,31 @@
 package com.frontegg.sdk.audit;
 
 import com.frontegg.sdk.api.client.ApiClient;
+import com.frontegg.sdk.audit.model.Auditable;
 import com.frontegg.sdk.audit.model.AuditsFilter;
+import com.frontegg.sdk.audit.model.MetadataObject;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-public class AuditsClient implements IAuditsClient
+import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN;
+import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_TENANT_ID;
+
+public class AuditsClient
 {
     private static final Logger logger = LoggerFactory.getLogger(AuditsClient.class);
     private FronteggAuthenticator authenticator;
     private ApiClient apiClient;
     private FronteggConfig config;
+
+    private static final String AUDIT_STATS_PATH = "/stats";
 
     public AuditsClient(FronteggAuthenticator authenticator, ApiClient apiClient, FronteggConfig config) {
         this.authenticator = authenticator;
@@ -23,37 +33,107 @@ public class AuditsClient implements IAuditsClient
         this.config = config;
     }
 
-    @Override
-    public void sendAudit(Object audits) {
+    public void sendAudit(Auditable audit) {
         try {
             logger.info("going to send audit");
             authenticator.validateAuthentication();
-            FronteggHttpResponse<Object> optional = apiClient.post(config.getUrlConfig().getAuditsService(), Object.class, audits);
-            logger.info("sent audit successfully {} ", optional.getBody());
+            Map<String, String> headers = resolveHeaders(audit.getTenantId());
+            FronteggHttpResponse<Object> optional = apiClient.post(
+                    config.getUrlConfig().getAuditsService(),
+                    Object.class,
+                    headers,
+                    audit
+            );
+            logger.info("sent audit successfully - " + optional.getBody());
 
         } catch (Exception e) {
             logger.error("failed to send audit to audits service - ", e);
             throw e;
         }
+
     }
 
-    @Override
     public List<Object> getAudits(AuditsFilter auditsFilter) {
-        return null;
+        logger.info("going to get audits");
+        authenticator.validateAuthentication();
+        Map<String, String> params = resolveFilters(auditsFilter);
+        Map<String, String> headers = resolveHeaders(auditsFilter.getTenantId());
+        Optional<List> response = apiClient.get(
+                config.getUrlConfig().getAuditsService(),
+                headers,
+                params,
+                List.class
+        );
+        return response.get();
     }
 
-    @Override
     public Object getAuditsStats(String tenantId) {
-        return null;
+        logger.info("going to get audits stats");
+
+        authenticator.validateAuthentication();
+        Map<String, String> headers = resolveHeaders(tenantId);
+        Optional<Object> response = apiClient.get(
+                config.getUrlConfig().getAuditsService() + AUDIT_STATS_PATH,
+                headers,
+                Object.class
+        );
+        return response.get();
     }
 
-    @Override
     public Object getAuditsMetadata() {
-        return null;
+        logger.info("going to get audits metadata");
+        Map<String, String> params = new HashMap<>();
+        params.put("entityName", "audits");
+        authenticator.validateAuthentication();
+        Map<String, String> headers = resolveHeaders();
+        Optional<Object> response = apiClient.get(
+                config.getUrlConfig().getMetadataService(),
+                headers,
+                params,
+                Object.class
+        );
+
+        logger.info("got audits metadata");
+        return response.get();
     }
 
-    @Override
-    public Object setAuditsMetadata(Object metadata) {
-        return null;
+    public Object setAuditsMetadata(MetadataObject metadata) {
+        // Make sure to override the entity name
+        metadata.setEntityName("audits");
+        logger.info("going to update audits metadata");
+
+        authenticator.validateAuthentication();
+        Map<String, String> headers = resolveHeaders();
+        FronteggHttpResponse<Object> response = apiClient.post(
+                config.getUrlConfig().getMetadataService(),
+                Object.class,
+                headers,
+                metadata
+        );
+
+        logger.info("done updating audits metadata");
+        return response.getBody();
+    }
+
+    private Map<String, String> resolveHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
+        return headers;
+    }
+
+    private Map<String, String> resolveHeaders(String tenantID) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put(FRONTEGG_HEADER_ACCESS_TOKEN, authenticator.getAccessToken());
+        headers.put(FRONTEGG_HEADER_TENANT_ID, tenantID);
+        return headers;
+    }
+
+    private Map<String, String> resolveFilters(AuditsFilter auditFilter) {
+        Map<String, String> queryParam = new HashMap<>();
+        queryParam.put("filter", auditFilter.getFilter());
+        queryParam.put("offset", String.valueOf(auditFilter.getOffset()));
+        queryParam.put("count", auditFilter.getSortBy());
+        queryParam.put("sortDirection", auditFilter.getSortDirection());
+        return queryParam;
     }
 }
