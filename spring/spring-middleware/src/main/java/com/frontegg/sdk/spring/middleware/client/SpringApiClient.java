@@ -54,6 +54,18 @@ public class SpringApiClient implements ApiClient
 	}
 
 	@Override
+	public <T> Optional<T> get(String url, Map<String, String> headers, Map<String, String> params, Class<T> clazz)
+    {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		resolveQueryParams(builder, params);
+		ResponseEntity<T> responseEntity = this.restTemplate.exchange(builder.toUriString(),
+                                                                      HttpMethod.GET,
+                                                                      createHttpEntity(headers, null),
+                                                                      clazz);
+		return Optional.of(responseEntity.getBody());
+	}
+
+	@Override
 	public <T, R> FronteggHttpResponse<T> post(String url, Class<T> clazz, R body)
 	{
 		return post(url, clazz, null, body);
@@ -205,6 +217,14 @@ public class SpringApiClient implements ApiClient
 			}
 		}
 		return null;
+	}
+
+	private void resolveQueryParams(UriComponentsBuilder builder, Map<String, String> params) {
+		if (params == null) return;
+
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			builder.queryParam(entry.getKey(), entry.getValue());
+		}
 	}
 	//endregion
 

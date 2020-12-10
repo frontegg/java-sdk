@@ -17,7 +17,6 @@ public interface ApiClient {
     <T> Optional<T> get(String url, Map<String,String> headers, Map<String, String> params, Class<T> clazz);
 
     <T,R> FronteggHttpResponse<T> post(String url, Class<T> clazz, R body);
-    <T,R> FronteggHttpResponse<T> post(String url, Class<T> clazz, Map<String, String> headers, Map<String, String> params, R body);
     <T,R> FronteggHttpResponse<T> post(String url, Class<T> clazz, Map<String, String> headers, R body);
 
     <T> FronteggHttpResponse<T> service(String url,
