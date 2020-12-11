@@ -7,15 +7,15 @@ import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.routes.model.KeyValPair;
 import com.frontegg.sdk.middleware.routes.model.RoutesConfig;
 import com.frontegg.sdk.middleware.routes.model.VendorClientPublicRoutes;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,8 +55,8 @@ public class FronteggConfigRoutesServiceTest
 		return routesConfig;
 	}
 
-	@Before
-	public void setUp()
+	@BeforeEach
+	void setUp()
 	{
 		this.apiClient = mock(ApiClient.class);
 		this.request = Mockito.mock(HttpServletRequest.class);

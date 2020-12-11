@@ -4,14 +4,14 @@ import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.config.DefaultConfigProvider;
 import com.frontegg.sdk.config.FronteggConfig;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.time.Instant;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class FronteggAuthenticatorTest {
@@ -24,8 +24,8 @@ public class FronteggAuthenticatorTest {
     private static final String CLIENT_ID = "client-id";
     private static final String API_KEY = "api-key";
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         apiClient = mock(ApiClient.class);
         fronteggAuthenticator = spy(
                 new FronteggAuthenticator(CLIENT_ID, API_KEY, config, apiClient)
