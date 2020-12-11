@@ -1,5 +1,6 @@
 package com.frontegg.sdk.spring.middleware.client;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.exception.FronteggHttpException;
@@ -31,6 +32,8 @@ public class SpringApiClient implements ApiClient
 	public SpringApiClient(RestTemplate restTemplate)
 	{
 		this.restTemplate = restTemplate;
+        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 	}
 
 	@Override
