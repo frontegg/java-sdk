@@ -6,8 +6,11 @@ import com.frontegg.sdk.common.exception.FronteggSDKException;
 import com.frontegg.sdk.common.model.FronteggHttpHeader;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.StringHelper;
+import com.frontegg.sdk.middleware.authenticator.AuthResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,6 +66,19 @@ public class SpringApiClient implements ApiClient
                                                                       HttpMethod.GET,
                                                                       createHttpEntity(headers, null),
                                                                       clazz);
+		return Optional.of(responseEntity.getBody());
+	}
+
+	@Override
+	public <T, R> Optional<T> get(String url, Map<String, String> headers, Map<String, String> params, Class<T> clazz, Class<R> genericClass) {
+		ParameterizedTypeReference<T> parameterizedTypeReference = getParameterizedTypeReference(clazz, genericClass);
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		resolveQueryParams(builder, params);
+		ResponseEntity<T> responseEntity = this.restTemplate.exchange(builder.toUriString(),
+				HttpMethod.GET,
+				createHttpEntity(headers, null),
+				parameterizedTypeReference);
 		return Optional.of(responseEntity.getBody());
 	}
 
@@ -225,6 +242,15 @@ public class SpringApiClient implements ApiClient
 		for (Map.Entry<String, String> entry : params.entrySet()) {
 			builder.queryParam(entry.getKey(), entry.getValue());
 		}
+	}
+
+	private <T, R> ParameterizedTypeReference<T> getParameterizedTypeReference(Class<T> clazz, Class<R> genericClass) {
+		return new ParameterizedTypeReference<T>(){
+			@Override
+			public Type getType() {
+				return ResolvableType.forClassWithGenerics(clazz, genericClass).getType();
+			}
+		};
 	}
 	//endregion
 

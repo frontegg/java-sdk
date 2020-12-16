@@ -53,7 +53,8 @@ public class AuditsClient
 
     }
 
-    public AuditResponse getAudits(AuditsFilter auditsFilter) {
+    public <T extends Auditable> AuditResponse getAudits(AuditsFilter auditsFilter,
+                                                         Class<T> auditableObject) {
         logger.info("going to get audits");
         authenticator.validateAuthentication();
         Map<String, String> params = resolveFilters(auditsFilter);
@@ -61,7 +62,9 @@ public class AuditsClient
         Optional<AuditResponse> response = apiClient.get(config.getUrlConfig().getAuditsService(),
                 headers,
                 params,
-                AuditResponse.class);
+                AuditResponse.class,
+                auditableObject
+        );
         return response.get();
     }
 
