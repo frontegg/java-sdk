@@ -4,6 +4,7 @@ import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.audit.model.Auditable;
 import com.frontegg.sdk.audit.model.AuditsFilter;
 import com.frontegg.sdk.audit.model.MetadataObject;
+import com.frontegg.sdk.audit.response.AuditResponse;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.config.FronteggConfig;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
@@ -11,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,17 +53,15 @@ public class AuditsClient
 
     }
 
-    public List<Object> getAudits(AuditsFilter auditsFilter) {
+    public AuditResponse getAudits(AuditsFilter auditsFilter) {
         logger.info("going to get audits");
         authenticator.validateAuthentication();
         Map<String, String> params = resolveFilters(auditsFilter);
         Map<String, String> headers = resolveHeaders(auditsFilter.getTenantId());
-        Optional<List> response = apiClient.get(
-                config.getUrlConfig().getAuditsService(),
+        Optional<AuditResponse> response = apiClient.get(config.getUrlConfig().getAuditsService(),
                 headers,
                 params,
-                List.class
-        );
+                AuditResponse.class);
         return response.get();
     }
 
@@ -132,7 +130,8 @@ public class AuditsClient
         Map<String, String> queryParam = new HashMap<>();
         queryParam.put("filter", auditFilter.getFilter());
         queryParam.put("offset", String.valueOf(auditFilter.getOffset()));
-        queryParam.put("count", auditFilter.getSortBy());
+        queryParam.put("count", String.valueOf(auditFilter.getCount()));
+        queryParam.put("sortBy", auditFilter.getSortBy());
         queryParam.put("sortDirection", auditFilter.getSortDirection());
         return queryParam;
     }
