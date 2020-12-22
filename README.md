@@ -4,6 +4,9 @@
 
 Frontegg is a web platform where SaaS companies can set up their fully managed, scalable and brand aware - SaaS features and integrate them into their SaaS portals in up to 5 lines of code.
 
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.frontegg.sdk/java-sdk/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.frontegg.sdk/java-sdk)
+
 ## Frontegg SDK
 
 You can find all frontegg sdk dependencies [here](https://search.maven.org/search?q=com.frontegg.sdk)
