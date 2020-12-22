@@ -6,7 +6,7 @@ Frontegg is a web platform where SaaS companies can set up their fully managed, 
 
 ## Frontegg SDK
 
-You can find all frontegg sdk dependencies under [here](https://search.maven.org/search?q=com.frontegg.sdk)
+You can find all frontegg sdk dependencies [here](https://search.maven.org/search?q=com.frontegg.sdk)
 
 Frontegg's sdk provides an easy to use library to authenticate and integrate with frontegg as a vendor.
 
