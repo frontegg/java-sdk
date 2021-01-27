@@ -6,11 +6,10 @@ import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.common.util.HttpHelper;
 import com.frontegg.sdk.config.DefaultConfigProvider;
 import com.frontegg.sdk.config.FronteggConfig;
-import com.frontegg.sdk.middleware.authenticator.AuthenticationException;
 import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 import com.frontegg.sdk.middleware.context.FronteggContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ import java.util.Map;
 
 import static com.frontegg.sdk.common.util.HttpHelper.FRONTEGG_HEADER_HOST;
 import static com.frontegg.sdk.middleware.Constants.FRONTEGG_CONTEXT_KEY;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,7 +43,7 @@ public class FronteggServiceTest
 	private FronteggService fronteggService;
 	private FronteggContext context;
 
-	@Before
+	@BeforeAll
 	public void setUp()
 	{
 		this.apiClient = mock(ApiClient.class);

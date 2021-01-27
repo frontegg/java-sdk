@@ -26,11 +26,12 @@ public class SpringApiClient implements ApiClient
 	private static final Logger logger = LoggerFactory.getLogger(SpringApiClient.class);
 
 	private final RestTemplate restTemplate;
-	private final ObjectMapper mapper = new ObjectMapper();
+	private final ObjectMapper mapper;
 
 	public SpringApiClient(RestTemplate restTemplate)
 	{
 		this.restTemplate = restTemplate;
+		this.mapper = new ObjectMapper();
 	}
 
 	@Override
