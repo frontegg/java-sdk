@@ -10,11 +10,17 @@ import com.frontegg.sdk.middleware.authenticator.FronteggAuthenticator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class SsoClient
 {
-	private static final String PRE_LOGIN_PATH = "/resources/sso/v1/prelogin";
-	private static final String POST_LOGIN_PATH = "/resources/sso/v1/postlogin";
+	private static final String SSO_PATH_PREFIX = "/resources/sso/v1";
+	private static final String PRE_LOGIN_PATH = SSO_PATH_PREFIX + "/prelogin";
+	private static final String POST_LOGIN_PATH = SSO_PATH_PREFIX + "/postlogin";
+
+	private static final String SAML_PATH = SSO_PATH_PREFIX + "/saml";
+	private static final String SAML_CONFIGURATIONS_PATH = SAML_PATH + "/configurations";
+	private static final String SAML_VENDOR_CONFIG_PATH = SAML_CONFIGURATIONS_PATH + "/vendor-config";
 
 	private final FronteggAuthenticator authenticator;
 	private final ApiClient apiClient;
@@ -57,10 +63,37 @@ public class SsoClient
 		return response.getBody();
 	}
 
+	/**
+	 * Returns the vendor SSO config
+	 */
+	public Optional<SamlVendorConfig> getSsoConfiguration()
+	{
+		String urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + SAML_VENDOR_CONFIG_PATH;
+		return this.apiClient.get(urlPath, withHeaders(), SamlVendorConfig.class);
+	}
+
+	/**
+	 * Returns the tenant SSO configuration
+	 */
+	public Optional<SamlTenantConfig> getSsoConfiguration(String tenantId)
+	{
+		String urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + SAML_CONFIGURATIONS_PATH;
+		return this.apiClient.get(urlPath, withHeaders(tenantId), SamlTenantConfig.class);
+	}
+
 	private Map<String, String> withHeaders()
 	{
 		Map<String, String> headers = new HashMap<>();
 		headers.put(HttpHelper.FRONTEGG_HEADER_ACCESS_TOKEN, this.authenticator.getAccessToken());
+		return headers;
+	}
+
+	private Map<String,String> withHeaders(String tenantId) {
+		Map<String,String> headers = withHeaders();
+		if (tenantId != null)
+		{
+			headers.put(HttpHelper.FRONTEGG_HEADER_TENANT_ID, tenantId);
+		}
 		return headers;
 	}
 

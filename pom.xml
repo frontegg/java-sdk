@@ -48,8 +48,8 @@
 
         <version.javax.servlet-api>3.1.0</version.javax.servlet-api>
         <version.slf4j>1.7.30</version.slf4j>
-        <mockito.version>1.10.19</mockito.version>
-        <junit.version>4.12</junit.version>
+        <version.mockito>1.10.19</version.mockito>
+        <version.junit>5.7.0</version.junit>
 
         <version.plugins.maven-deploy>2.8.2</version.plugins.maven-deploy>
         <version.plugins.maven-source>3.2.1</version.plugins.maven-source>
@@ -97,16 +97,16 @@
             <version>${version.slf4j}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
+            <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

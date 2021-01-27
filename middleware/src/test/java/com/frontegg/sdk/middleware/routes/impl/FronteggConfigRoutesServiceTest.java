@@ -7,15 +7,15 @@ import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.routes.model.KeyValPair;
 import com.frontegg.sdk.middleware.routes.model.RoutesConfig;
 import com.frontegg.sdk.middleware.routes.model.VendorClientPublicRoutes;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,11 +24,11 @@ public class FronteggConfigRoutesServiceTest
 
 	private static final String ROUT_PATH = "/configs/routes";
 	private static final RoutesConfig routesConfig = initRoutConfigs();
+	private final FronteggConfig config = new DefaultConfigProvider().resolveConfigs();
+	private final FronteggOptions options = new FronteggOptions(null, null, true, "", 1, "/frontegg");
 	private ApiClient apiClient;
 	private HttpServletRequest request;
 	private FronteggConfigRoutesService fronteggConfigRoutesService;
-	private final FronteggConfig config = new DefaultConfigProvider().resolveConfigs();
-	private final FronteggOptions options = new FronteggOptions(null, null, true, "", 1, "/frontegg");
 
 	private static RoutesConfig initRoutConfigs()
 	{
@@ -55,7 +55,7 @@ public class FronteggConfigRoutesServiceTest
 		return routesConfig;
 	}
 
-	@Before
+	@BeforeAll
 	public void setUp()
 	{
 		this.apiClient = mock(ApiClient.class);
