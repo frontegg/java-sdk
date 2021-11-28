@@ -23,6 +23,7 @@
         <version.spring-boot>1.4.4.RELEASE</version.spring-boot>
         <version.spring-retry>1.2.5.RELEASE</version.spring-retry>
         <version.spring-framework>4.2.6.RELEASE</version.spring-framework>
+        <version.auth0.jwt>3.18.2</version.auth0.jwt>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +61,11 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${version.jackson}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${version.auth0.jwt}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
