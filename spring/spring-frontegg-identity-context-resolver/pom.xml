@@ -10,7 +10,7 @@
     <artifactId>spring-frontegg-identity-context-resolver</artifactId>
 
     <properties>
-        <auth0.jwt.version>3.2.0</auth0.jwt.version>
+        <version.auth0.jwt>3.18.2</version.auth0.jwt>
     </properties>
 
     <dependencies>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>${auth0.jwt.version}</version>
+            <version>${version.auth0.jwt}</version>
         </dependency>
 
     </dependencies>

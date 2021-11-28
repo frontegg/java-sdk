@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 public class AuthClient
 {
-
 	private static final Logger logger = LoggerFactory.getLogger(AuthClient.class);
 	private final ApiClient apiClient;
 
@@ -22,12 +21,14 @@ public class AuthClient
 		try
 		{
 			AuthRequest request = new AuthRequest(clientId, apiKey);
-			authResponse = this.apiClient.post(config.getUrlConfig().getAuthenticationService(), AuthResponse.class, request)
-										 .getBody();
+			authResponse = this.apiClient.post(
+					config.getUrlConfig().getAuthenticationService(),
+					AuthResponse.class,
+					request).getBody();
 		}
 		catch (Exception ex)
 		{
-			logger.error("failed to authenticate with frontegg", ex);
+			logger.error("Failed to authenticate with frontegg", ex);
 			throw new AuthenticationException("Failed to authenticate with frontegg", ex);
 		}
 		return authResponse;

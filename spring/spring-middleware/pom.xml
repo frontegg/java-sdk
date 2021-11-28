@@ -13,7 +13,7 @@
     <artifactId>spring-middleware</artifactId>
 
     <properties>
-        <version.auth0-jwt>3.2.0</version.auth0-jwt>
+        <version.auth0.jwt>3.18.2</version.auth0.jwt>
     </properties>
 
     <dependencies>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>${version.auth0-jwt}</version>
+            <version>${version.auth0.jwt}</version>
         </dependency>
 
         <dependency>
