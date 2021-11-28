@@ -12,10 +12,6 @@
 
     <artifactId>spring-middleware</artifactId>
 
-    <properties>
-        <version.auth0-jwt>3.2.0</version.auth0-jwt>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.frontegg.sdk</groupId>
@@ -26,7 +22,6 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>${version.auth0-jwt}</version>
         </dependency>
 
         <dependency>

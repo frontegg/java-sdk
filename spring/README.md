@@ -13,7 +13,7 @@ To boot frontegg's spring integration just add the following to your `pom.xml` f
 <dependency>
 	<groupId>com.frontegg.sdk.spring</groupId>
 	<artifactId>spring-middleware</artifactId>
-	<version>${project.version}</version>
+	<version>${version.frontegg}</version>
 </dependency>
 ```
 
@@ -38,12 +38,9 @@ In order to use frontegg's services, a tenant id and user is must be provided to
 public class MyContextResolver implements FronteggContextResolver
 {
 	@Override
-	public void resolveContext(HttpServletRequest httpServletRequest)
+	public FronteggContext resolveContext(HttpServletRequest httpServletRequest)
 	{
-		FronteggContext fronteggContext = new FronteggContext();
-		fronteggContext.setTenantId("my-tenant");
-		fronteggContext.setUserId("my-user");
-		FronteggContextHolder.setContext(fronteggContext);
+		return new FronteggContext("my-tenant", "my-user");
 	}
 }
 ```
@@ -102,7 +99,7 @@ class MyAppConfiguration {
 }
 ```
 
-all frontegg specific properties can be defined in the `application.yml` file
+all frontegg specific properties can be defined in the `application.yml` file as follows:
 
 ```yaml
 frontegg:
@@ -119,56 +116,16 @@ frontegg:
 
 | Option Name             |  Type   | Description                                                       |
 | ----------------------- | :-----: | ----------------------------------------------------------------- |
-| **maxRetries**          |   int   | max retries in case of fail the request to frontegg api           |
+| **maxRetries**          |   int   | Maximum number of retries in case            |
 | **disableCors**         | boolean | if cors enabled adds frontegg api appropriate headers to response |
-| **cookieDomainRewrite** | string  | overrides domain from coolies                                     |
+| **cookieDomainRewrite** | string  | overrides cookies domain                                    |
 
-Frontegg uses some headers, and you should add to your cors filter's allowed headers the following headers `Authorization` and `x-frontegg-source`
-Or you can create some filter with the following configuration
-
-```java
-@Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class MyCORSFilter implements Filter {
-
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-
-        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, PATCH, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, x-frontegg-source, Authorization");
-
-        chain.doFilter(req, res);
-    }
-
-    @Override
-    public void init(FilterConfig filterConfig) {
-    }
-
-    @Override
-    public void destroy() {
-    }
-
-}
-```
 
 #### Frontegg Urls
 
 Frontegg Urls configuration is defined in config modules readme file.
-For spring based application sdk provides `ConfigProvider` bean for this configuration.
-To provide custom `configProviders` you need to create/override `configProvider` bean.
 
-The order of configProvider loader is.
 
--   yaml
--   environment variables
--   system variables
--   default
 
 example of yaml
 

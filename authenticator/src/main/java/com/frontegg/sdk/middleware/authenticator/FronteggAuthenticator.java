@@ -10,7 +10,6 @@ import java.time.Instant;
 
 public class FronteggAuthenticator
 {
-
 	private static final Logger logger = LoggerFactory.getLogger(FronteggAuthenticator.class);
 	private final String clientId;
 	private final String apiKey;
@@ -39,31 +38,25 @@ public class FronteggAuthenticator
 			return;
 		}
 
-		logger.info("posting authentication request");
-
+		logger.info("Authenticating with frontegg");
 		AuthResponse response = this.authClient.authenticate(this.clientId, this.apiKey, this.config);
-
-		logger.info("authenticated with frontegg");
-
-		// Get the token and the expiration time
-		// Save the token
 		this.accessToken = response.getToken();
-		// Next refresh is when we have only 20% of the sliding window remaining
-		long nextRefresh = (long) ((response.getExpiresIn() * 1000) * 0.8);
+		long nextRefresh = (long) (response.getExpiresIn() * 0.8); // refresh after 80% of the expiration time
 		this.accessTokenExpiry = Instant.now().plusSeconds(nextRefresh);
 	}
 
 	public void refreshAuthentication()
 	{
+		logger.info("Refreshing token");
 		this.authenticate(true);
 	}
 
 	public void validateAuthentication()
 	{
-		if (StringHelper.isBlank(this.accessToken) || this.accessTokenExpiry == null || Instant.now()
-																							   .isAfter(this.accessTokenExpiry))
+		if (StringHelper.isBlank(this.accessToken) ||
+		    this.accessTokenExpiry == null ||
+		    Instant.now().isAfter(this.accessTokenExpiry))
 		{
-			logger.info("authentication token needs refresh - going to refresh it");
 			refreshAuthentication();
 		}
 	}
