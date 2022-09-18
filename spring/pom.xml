@@ -23,7 +23,7 @@
         <version.spring-boot>1.4.4.RELEASE</version.spring-boot>
         <version.spring-retry>1.2.5.RELEASE</version.spring-retry>
         <version.spring-framework>4.2.6.RELEASE</version.spring-framework>
-        <version.auth0.jwt>3.18.2</version.auth0.jwt>
+        <version.auth0.jwt>3.19.1</version.auth0.jwt>
     </properties>
 
     <dependencyManagement>
