@@ -31,6 +31,7 @@ jobs:
         uses: actions/setup-java@v4`
         with:
           java-version: 17
+          distribution: 'adopt'
           server-id: ossrh
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
@@ -71,6 +72,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'adopt'
           server-id: ossrh
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
