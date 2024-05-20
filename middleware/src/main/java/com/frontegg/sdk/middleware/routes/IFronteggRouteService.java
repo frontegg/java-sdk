@@ -1,6 +1,6 @@
 package com.frontegg.sdk.middleware.routes;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface IFronteggRouteService {
 

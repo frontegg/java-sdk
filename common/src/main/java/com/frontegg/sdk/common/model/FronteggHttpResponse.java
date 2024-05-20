@@ -9,7 +9,7 @@ public class FronteggHttpResponse<T> {
     private int statusCode;
 
     public List<FronteggHttpHeader> getHeaders() {
-        return headers;
+        return this.headers;
     }
 
     public void setHeaders(List<FronteggHttpHeader> headers) {
@@ -17,7 +17,7 @@ public class FronteggHttpResponse<T> {
     }
 
     public T getBody() {
-        return body;
+        return this.body;
     }
 
     public void setBody(T body) {
@@ -25,7 +25,7 @@ public class FronteggHttpResponse<T> {
     }
 
     public int getStatusCode() {
-        return statusCode;
+        return this.statusCode;
     }
 
     public void setStatusCode(int statusCode) {
@@ -35,9 +35,9 @@ public class FronteggHttpResponse<T> {
     @Override
     public String toString() {
         return "FronteggHttpResponse{" +
-                "headers=" + headers +
-                ", body=" + body +
-                ", statusCode=" + statusCode +
-                '}';
+               "headers=" + this.headers +
+               ", body=" + this.body +
+               ", statusCode=" + this.statusCode +
+               '}';
     }
 }
