@@ -7,7 +7,7 @@ public class FronteggConfig
 
 	public static FronteggConfig createDefaults()
 	{
-		FronteggConfig config = new FronteggConfig();
+		var config = new FronteggConfig();
 		config.urlConfig = FronteggUrlConfig.createDefaults();
 		return config;
 	}

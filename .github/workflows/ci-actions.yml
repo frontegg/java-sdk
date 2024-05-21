@@ -15,24 +15,25 @@ env:
   LANG: en_US.UTF-8
 jobs:
   build-and-cache-deps:
-    name: Build JDK 8
+    name: Build JDK 17
     runs-on: ubuntu-latest
     if: github.repository == 'frontegg/java-sdk'
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cancel previous runs
-        uses: n1hility/cancel-previous-runs@v2
+        uses: n1hility/cancel-previous-runs@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup JDK 8
-        uses: actions/setup-java@v1
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: 8
+          java-version: 17
+          distribution: 'adopt'
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -48,21 +49,20 @@ jobs:
       fail-fast: false
       matrix:
         java:
-          - name: "8"
-            java-version: 8
-          - name: "11"
-            java-version: 11
-          - name: "15"
-            java-version: 15
+          - name: "17"
+            java-version: 17
+          - name: "21"
+            java-version: 21
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up JDK ${{ matrix.java.name }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java.java-version }}
+          distribution: 'adopt'
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:

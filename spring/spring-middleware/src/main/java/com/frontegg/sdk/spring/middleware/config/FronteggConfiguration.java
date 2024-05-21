@@ -10,6 +10,8 @@ import com.frontegg.sdk.middleware.routes.impl.FronteggConfigRoutesService;
 import com.frontegg.sdk.spring.middleware.client.SpringApiClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -20,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 public class FronteggConfiguration
 {
 	@Bean
+	@Primary
 	public ConfigProvider configProvider(SpringFronteggConfigProvider springFronteggConfigProvider)
 	{
 		return new FronteggConfigProviderChain(springFronteggConfigProvider,

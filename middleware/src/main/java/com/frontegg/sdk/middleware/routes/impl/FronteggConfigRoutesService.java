@@ -7,11 +7,9 @@ import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.middleware.routes.model.KeyValPair;
 import com.frontegg.sdk.middleware.routes.model.RoutesConfig;
-import com.frontegg.sdk.middleware.routes.model.VendorClientPublicRoutes;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 public class FronteggConfigRoutesService implements IFronteggRouteService
 {
@@ -21,7 +19,9 @@ public class FronteggConfigRoutesService implements IFronteggRouteService
 	private final FronteggOptions fronteggOptions;
 	private RoutesConfig routesConfig;
 
-	public FronteggConfigRoutesService(ApiClient apiClient, FronteggConfig fronteggConfig, FronteggOptions fronteggOptions)
+	public FronteggConfigRoutesService(
+			ApiClient apiClient, FronteggConfig fronteggConfig, FronteggOptions fronteggOptions
+	)
 	{
 		this.apiClient = apiClient;
 		this.fronteggConfig = fronteggConfig;
@@ -42,11 +42,9 @@ public class FronteggConfigRoutesService implements IFronteggRouteService
 			return false;
 		}
 
-		String path = request.getRequestURI()
-							 .substring(this.fronteggOptions.getBasePath().length())
-							 .replaceFirst("/", "");
+		var path = request.getRequestURI().substring(this.fronteggOptions.getBasePath().length()).replaceFirst("/", "");
 
-		for (VendorClientPublicRoutes vendorClientPublicRoutes : this.routesConfig.getVendorClientPublicRoutes())
+		for (var vendorClientPublicRoutes : this.routesConfig.getVendorClientPublicRoutes())
 		{
 			if (!path.equals(vendorClientPublicRoutes.getUrl()))
 			{
@@ -58,9 +56,8 @@ public class FronteggConfigRoutesService implements IFronteggRouteService
 				continue;
 			}
 
-			if (vendorClientPublicRoutes.getWithQueryParams() != null && !isValidateQueryParams(request,
-																								vendorClientPublicRoutes
-																										.getWithQueryParams()))
+			if (vendorClientPublicRoutes.getWithQueryParams() != null &&
+			    !isValidateQueryParams(request, vendorClientPublicRoutes.getWithQueryParams()))
 			{
 				continue;
 			}
@@ -73,12 +70,12 @@ public class FronteggConfigRoutesService implements IFronteggRouteService
 
 	private boolean isValidateQueryParams(HttpServletRequest request, List<KeyValPair> withQueryParams)
 	{
-		Map<String, String[]> queryMap = request.getParameterMap();
+		var queryMap = request.getParameterMap();
 
-		for (KeyValPair keyValPair : withQueryParams)
+		for (var keyValPair : withQueryParams)
 		{
-			String key = keyValPair.getKey();
-			String val = keyValPair.getValue();
+			var key = keyValPair.getKey();
+			var val = keyValPair.getValue();
 
 			if (!queryMap.containsKey(key))
 			{
@@ -105,7 +102,7 @@ public class FronteggConfigRoutesService implements IFronteggRouteService
 
 	private RoutesConfig fetchRoutesConfig()
 	{
-		String url = this.fronteggConfig.getUrlConfig().getBaseUrl() + ROUTE_PATH;
+		var url = this.fronteggConfig.getUrlConfig().getBaseUrl() + ROUTE_PATH;
 		return this.apiClient.get(url, RoutesConfig.class).orElse(null);
 	}
 }

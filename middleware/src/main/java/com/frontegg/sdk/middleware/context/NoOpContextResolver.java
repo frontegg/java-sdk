@@ -2,7 +2,7 @@ package com.frontegg.sdk.middleware.context;
 
 import com.frontegg.sdk.common.exception.FronteggSDKException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class NoOpContextResolver implements FronteggContextResolver
 {

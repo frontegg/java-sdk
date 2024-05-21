@@ -2,19 +2,19 @@ package com.frontegg.sdk.sso;
 
 public class SsoRequest
 {
-	private String payload;
+	private String email;
 
 	public SsoRequest()
 	{
 	}
 
-	public SsoRequest(String email)
+	public SsoRequest(String payload)
 	{
-		this.payload = email;
+		this.email = payload;
 	}
 
-	public String getPayload()
+	public String getEmail()
 	{
-		return this.payload;
+		return this.email;
 	}
 }

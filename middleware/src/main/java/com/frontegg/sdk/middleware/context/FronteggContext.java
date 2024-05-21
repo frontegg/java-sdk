@@ -2,8 +2,8 @@ package com.frontegg.sdk.middleware.context;
 
 public class FronteggContext
 {
-	private String tenantId;
-	private String userId;
+	private final String tenantId;
+	private final String userId;
 
 	public FronteggContext(String tenantId, String userId)
 	{

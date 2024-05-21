@@ -1,6 +1,7 @@
 package com.frontegg.sdk.middleware.authenticator;
 
 import com.frontegg.sdk.api.client.ApiClient;
+import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.config.FronteggConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,11 @@ public class AuthClient
 		AuthResponse authResponse;
 		try
 		{
-			AuthRequest request = new AuthRequest(clientId, apiKey);
-			authResponse = this.apiClient.post(
-					config.getUrlConfig().getAuthenticationService(),
-					AuthResponse.class,
-					request).getBody();
+			var request = new AuthRequest(clientId, apiKey);
+			var post = this.apiClient.post(config.getUrlConfig().getAuthenticationService(),
+			                               AuthResponse.class,
+			                               request);
+			authResponse = post.getBody();
 		}
 		catch (Exception ex)
 		{

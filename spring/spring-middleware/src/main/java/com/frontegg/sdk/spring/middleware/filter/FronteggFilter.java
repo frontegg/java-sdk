@@ -11,6 +11,12 @@ import com.frontegg.sdk.middleware.context.FronteggContext;
 import com.frontegg.sdk.middleware.context.FronteggContextResolver;
 import com.frontegg.sdk.middleware.routes.IFronteggRouteService;
 import com.frontegg.sdk.spring.middleware.FronteggServiceDelegate;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,12 +24,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.GenericFilterBean;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -63,11 +63,11 @@ public class FronteggFilter extends GenericFilterBean
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
 	throws IOException, ServletException
 	{
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		HttpServletResponse response = (HttpServletResponse) servletResponse;
+		var request = (HttpServletRequest) servletRequest;
+		var response = (HttpServletResponse) servletResponse;
 
-		AntPathMatcher matcher = new AntPathMatcher();
-		boolean isRequestMatches = matcher.match(this.options.getBasePath() + "/**", request.getRequestURI());
+		var matcher = new AntPathMatcher();
+		var isRequestMatches = matcher.match(this.options.getBasePath() + "/**", request.getRequestURI());
 
 		if (isRequestMatches)
 		{
@@ -95,7 +95,7 @@ public class FronteggFilter extends GenericFilterBean
 				}
 
 				FronteggHttpResponse<Object> fronteggHttpResponse = this.fronteggServiceDelegate.doProcess(request,
-																										   response);
+				                                                                                           response);
 				populateHeaders(fronteggHttpResponse.getHeaders(), response);
 
 				manageCorsHeaders(response, fronteggHttpResponse);
@@ -137,10 +137,10 @@ public class FronteggFilter extends GenericFilterBean
 		if (this.options.isDisableCors())
 		{
 			HttpHelper.deleteHeaders(response,
-									 ACCESS_CONTROL_REQUEST_METHOD,
-									 ACCESS_CONTROL_REQUEST_HEADERS,
-									 ACCESS_CONTROL_ALLOW_ORIGIN,
-									 ACCESS_CONTROL_ALLOW_CREDENTIALS);
+			                         ACCESS_CONTROL_REQUEST_METHOD,
+			                         ACCESS_CONTROL_REQUEST_HEADERS,
+			                         ACCESS_CONTROL_ALLOW_ORIGIN,
+			                         ACCESS_CONTROL_ALLOW_CREDENTIALS);
 		}
 		else
 		{
@@ -151,15 +151,13 @@ public class FronteggFilter extends GenericFilterBean
 	private void resolverException(Exception ex, HttpServletResponse response) throws IOException
 	{
 		PrintWriter printWriter = response.getWriter();
-		if (ex instanceof FronteggHttpException)
+		if (ex instanceof FronteggHttpException exception)
 		{
-			FronteggHttpException exception = (FronteggHttpException) ex;
 			response.setStatus(exception.getStatus());
 			printWriter.write(exception.getMessage());
 		}
-		else if (ex instanceof HttpClientErrorException)
+		else if (ex instanceof HttpClientErrorException restException)
 		{
-			HttpClientErrorException restException = (HttpClientErrorException) ex;
 			response.setStatus(restException.getStatusCode().value());
 			printWriter.write(restException.getResponseBodyAsString());
 		}

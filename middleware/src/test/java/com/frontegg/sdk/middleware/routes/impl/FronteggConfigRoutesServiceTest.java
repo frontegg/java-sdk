@@ -7,34 +7,37 @@ import com.frontegg.sdk.middleware.FronteggOptions;
 import com.frontegg.sdk.middleware.routes.model.KeyValPair;
 import com.frontegg.sdk.middleware.routes.model.RoutesConfig;
 import com.frontegg.sdk.middleware.routes.model.VendorClientPublicRoutes;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 public class FronteggConfigRoutesServiceTest
 {
-
-	private static final String ROUT_PATH = "/configs/routes";
-	private static final RoutesConfig routesConfig = initRoutConfigs();
-	private final FronteggConfig config = new DefaultConfigProvider().resolveConfigs();
-	private final FronteggOptions options = new FronteggOptions(null, null, true, "", 1, "/frontegg");
-	private ApiClient apiClient;
-	private HttpServletRequest request;
-	private FronteggConfigRoutesService fronteggConfigRoutesService;
+	private static final String ROUTE_PATH = "/configs/routes";
+	private static final RoutesConfig ROUTES_CONFIG = initRoutConfigs();
+	private static final FronteggConfig config = new DefaultConfigProvider().resolveConfigs();
+	private static final FronteggOptions options = new FronteggOptions(null, null, true, "", 1, "/frontegg");
+	private static final String URL = config.getUrlConfig().getBaseUrl() + ROUTE_PATH;
 
 	private static RoutesConfig initRoutConfigs()
 	{
-		RoutesConfig routesConfig = new RoutesConfig();
-		List<VendorClientPublicRoutes> vendorClientPublicRouts = new ArrayList<>();
-		VendorClientPublicRoutes route = new VendorClientPublicRoutes();
+		var routesConfig = new RoutesConfig();
+		var vendorClientPublicRouts = new ArrayList<VendorClientPublicRoutes>();
+		var route = new VendorClientPublicRoutes();
 		route.setUrl("identity/resources/auth/v1/user");
 		route.setDescription("Authenticate user");
 		route.setMethod("POST");
@@ -44,8 +47,8 @@ public class FronteggConfigRoutesServiceTest
 		route.setMethod("GET");
 		route.setDescription("Get vendor saml config");
 		route.setUrl("metadata");
-		List<KeyValPair> withQueryParams = new ArrayList<>();
-		KeyValPair keyValPair = new KeyValPair();
+		var withQueryParams = new ArrayList<KeyValPair>();
+		var keyValPair = new KeyValPair();
 		keyValPair.setKey("entityName");
 		keyValPair.setValue("saml");
 		withQueryParams.add(keyValPair);
@@ -55,65 +58,74 @@ public class FronteggConfigRoutesServiceTest
 		return routesConfig;
 	}
 
-	@BeforeAll
-	public void setUp()
+	public void setup(ApiClient mockApiClient)
 	{
-		this.apiClient = mock(ApiClient.class);
-		this.request = Mockito.mock(HttpServletRequest.class);
-
-		String url = this.config.getUrlConfig().getBaseUrl() + ROUT_PATH;
-		when(this.apiClient.get(url, RoutesConfig.class)).thenReturn(Optional.of(routesConfig));
-		this.fronteggConfigRoutesService = new FronteggConfigRoutesService(this.apiClient, this.config, this.options);
+		when(mockApiClient.get(URL, RoutesConfig.class)).thenReturn(Optional.of(ROUTES_CONFIG));
 	}
 
 	@Test
-	public void isFronteggPublicRoute_WithQueryParam_matching()
+	public void isFronteggPublicRoute_WithQueryParam_matching(
+			@Mock ApiClient mockApiClient, @Mock HttpServletRequest mockRequest
+	)
 	{
-		Map<String, String[]> queryMap = new HashMap<>();
+		setup(mockApiClient);
+		var cut = new FronteggConfigRoutesService(mockApiClient, config, options);
+		var queryMap = new HashMap<String, String[]>();
 		queryMap.put("entityName", new String[]{ "saml" });
-		HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
-		when(request.getRequestURI()).thenReturn("/frontegg/metadata");
-		when(request.getMethod()).thenReturn("GET");
-		when(request.getParameterMap()).thenReturn(queryMap);
-		assertTrue(this.fronteggConfigRoutesService.isFronteggPublicRoute(request));
+		when(mockRequest.getRequestURI()).thenReturn("/frontegg/metadata");
+		when(mockRequest.getMethod()).thenReturn("GET");
+		when(mockRequest.getParameterMap()).thenReturn(queryMap);
+		assertTrue(cut.isFronteggPublicRoute(mockRequest));
 	}
 
 	@Test
-	public void isFronteggPublicRoute_WithQueryParam_notMatchingQueryParam()
+	public void isFronteggPublicRoute_WithQueryParam_notMatchingQueryParam(
+			@Mock ApiClient mockApiClient, @Mock HttpServletRequest mockRequest
+	)
 	{
-		Map queryMap = new HashMap<>();
+		setup(mockApiClient);
+		var cut = new FronteggConfigRoutesService(mockApiClient, config, options);
+		var queryMap = new HashMap<String, String[]>();
 		queryMap.put("entityName", new String[]{ "saml2" });
-		when(this.request.getRequestURI()).thenReturn("/frontegg/metadata");
-		when(this.request.getMethod()).thenReturn("GET");
-		when(this.request.getParameterMap()).thenReturn(queryMap);
-		assertFalse(this.fronteggConfigRoutesService.isFronteggPublicRoute(this.request));
+		when(mockRequest.getRequestURI()).thenReturn("/frontegg/metadata");
+		when(mockRequest.getMethod()).thenReturn("GET");
+		when(mockRequest.getParameterMap()).thenReturn(queryMap);
+		assertFalse(cut.isFronteggPublicRoute(mockRequest));
 	}
 
 	@Test
-	public void isFronteggPublicRoute_WithQueryParam_notMatchingMethod()
+	public void isFronteggPublicRoute_WithQueryParam_notMatchingMethod(
+			@Mock ApiClient mockApiClient, @Mock HttpServletRequest mockRequest
+	)
 	{
-		Map queryMap = new HashMap<>();
-		queryMap.put("entityName", new String[]{ "saml" });
-		when(this.request.getRequestURI()).thenReturn("/frontegg/metadata");
-		when(this.request.getMethod()).thenReturn("POST");
-		when(this.request.getParameterMap()).thenReturn(queryMap);
-		assertFalse(this.fronteggConfigRoutesService.isFronteggPublicRoute(this.request));
+		setup(mockApiClient);
+		var cut = new FronteggConfigRoutesService(mockApiClient, config, options);
+		when(mockRequest.getRequestURI()).thenReturn("/frontegg/metadata");
+		when(mockRequest.getMethod()).thenReturn("POST");
+		assertFalse(cut.isFronteggPublicRoute(mockRequest));
 	}
 
 	@Test
-	public void isFronteggPublicRoute_withoutQueryParam_matching()
+	public void isFronteggPublicRoute_withoutQueryParam_matching(
+			@Mock ApiClient mockApiClient, @Mock HttpServletRequest mockRequest
+	)
 	{
-		when(this.request.getRequestURI()).thenReturn("/frontegg/identity/resources/auth/v1/user");
-		when(this.request.getMethod()).thenReturn("POST");
-		assertTrue(this.fronteggConfigRoutesService.isFronteggPublicRoute(this.request));
+		setup(mockApiClient);
+		var cut = new FronteggConfigRoutesService(mockApiClient, config, options);
+		when(mockRequest.getRequestURI()).thenReturn("/frontegg/identity/resources/auth/v1/user");
+		when(mockRequest.getMethod()).thenReturn("POST");
+		assertTrue(cut.isFronteggPublicRoute(mockRequest));
 	}
 
 	@Test
-	public void isFronteggPublicRoute_notMatchingUrl()
+	public void isFronteggPublicRoute_notMatchingUrl(
+			@Mock ApiClient mockApiClient, @Mock HttpServletRequest mockRequest
+	)
 	{
-		when(this.request.getRequestURI()).thenReturn("/frontegg/identity/resources/auth/");
-		when(this.request.getMethod()).thenReturn("POST");
-		assertFalse(this.fronteggConfigRoutesService.isFronteggPublicRoute(this.request));
+		setup(mockApiClient);
+		var cut = new FronteggConfigRoutesService(mockApiClient, config, options);
+		when(mockRequest.getRequestURI()).thenReturn("/frontegg/identity/resources/auth/");
+		assertFalse(cut.isFronteggPublicRoute(mockRequest));
 	}
 }

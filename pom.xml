@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.frontegg.sdk</groupId>
@@ -43,20 +44,20 @@
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.resources.sourceEncoding>${encoding}</project.resources.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
-        <version.javax.servlet-api>3.1.0</version.javax.servlet-api>
-        <version.slf4j>1.7.30</version.slf4j>
-        <version.mockito>1.10.19</version.mockito>
-        <version.junit>5.7.0</version.junit>
+        <version.jakarta.servlet-api>6.0.0</version.jakarta.servlet-api>
+        <version.slf4j>2.0.13</version.slf4j>
+        <version.mockito>5.12.0</version.mockito>
+        <version.junit>5.10.2</version.junit>
 
-        <version.plugins.maven-deploy>2.8.2</version.plugins.maven-deploy>
-        <version.plugins.maven-source>3.2.1</version.plugins.maven-source>
-        <version.plugins.maven-javadoc>3.2.0</version.plugins.maven-javadoc>
-        <version.plugins.maven-release>3.0.0-M1</version.plugins.maven-release>
-        <version.plugins.maven-gpg>1.6</version.plugins.maven-gpg>
-        <version.plugins.nexus-staging>1.6.8</version.plugins.nexus-staging>
+        <version.plugins.maven-deploy>3.1.2</version.plugins.maven-deploy>
+        <version.plugins.maven-source>3.3.1</version.plugins.maven-source>
+        <version.plugins.maven-javadoc>3.6.3</version.plugins.maven-javadoc>
+        <version.plugins.maven-release>3.0.1</version.plugins.maven-release>
+        <version.plugins.maven-gpg>3.2.4</version.plugins.maven-gpg>
+        <version.plugins.nexus-staging>1.6.13</version.plugins.nexus-staging>
     </properties>
 
     <modules>
@@ -105,7 +106,13 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>${version.mockito}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
@@ -114,10 +121,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${version.javax.servlet-api}</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${version.jakarta.servlet-api}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.mockito</groupId>-->
+<!--                <artifactId>mockito-bom</artifactId>-->
+<!--                <version>${version.mockito}</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

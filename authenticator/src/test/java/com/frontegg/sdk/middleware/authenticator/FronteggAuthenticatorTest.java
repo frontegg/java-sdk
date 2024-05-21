@@ -4,85 +4,87 @@ import com.frontegg.sdk.api.client.ApiClient;
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 import com.frontegg.sdk.config.DefaultConfigProvider;
 import com.frontegg.sdk.config.FronteggConfig;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class FronteggAuthenticatorTest
 {
-
 	private static final String AUTH_TOKEN = "some_token";
 	private static final String CLIENT_ID = "client-id";
 	private static final String API_KEY = "api-key";
-	private FronteggAuthenticator fronteggAuthenticator;
-	private ApiClient apiClient;
-	private final FronteggConfig config = new DefaultConfigProvider().resolveConfigs();
+	private static final FronteggConfig config = new DefaultConfigProvider().resolveConfigs();
 
-	@BeforeAll
-	public void setUp()
+
+	public static void setup(ApiClient mockApiClient)
 	{
-        this.apiClient = mock(ApiClient.class);
-        this.fronteggAuthenticator = spy(new FronteggAuthenticator(CLIENT_ID, API_KEY, this.config, this.apiClient));
-
-		AuthResponse authResponse = new AuthResponse();
+		var authResponse = new AuthResponse();
 		authResponse.setToken(AUTH_TOKEN);
-		authResponse.setExpiresIn(100l);
-		FronteggHttpResponse<AuthResponse> fronteggHttpResponse = new FronteggHttpResponse<>();
+		authResponse.setExpiresIn(100);
+		var fronteggHttpResponse = new FronteggHttpResponse<AuthResponse>();
 		fronteggHttpResponse.setBody(authResponse);
 
-		when(this.apiClient.post(anyString(), eq(AuthResponse.class), any(AuthRequest.class))).thenReturn(
+		when(mockApiClient.post(anyString(), eq(AuthResponse.class), any(AuthRequest.class))).thenReturn(
 				fronteggHttpResponse);
 	}
 
 	@Test
-	public void refreshAuthentication_forceRefreshToken()
+	public void refreshAuthentication_forceRefreshToken(@Mock ApiClient mockApiClient)
 	{
-		Whitebox.setInternalState(this.fronteggAuthenticator, "accessToken", "expired-token");
-        this.fronteggAuthenticator.refreshAuthentication();
+		setup(mockApiClient);
+		var cut = new FronteggAuthenticator(CLIENT_ID, API_KEY, config, mockApiClient);
+		cut.setAccessToken("expired-token"); // Protected accessor
+		cut.refreshAuthentication();
 
-		ArgumentCaptor<AuthRequest> captor = ArgumentCaptor.forClass(AuthRequest.class);
-		verify(this.apiClient, times(1)).post(eq(this.config.getUrlConfig().getAuthenticationService()),
-                                              eq(AuthResponse.class),
-                                              captor.capture());
+		var captor = ArgumentCaptor.forClass(AuthRequest.class);
+		verify(mockApiClient, times(1)).post(eq(config.getUrlConfig().getAuthenticationService()),
+		                                     eq(AuthResponse.class),
+		                                     captor.capture());
 
-		AuthRequest authRequest = captor.getValue();
+		var authRequest = captor.getValue();
 		assertEquals(CLIENT_ID, authRequest.getClientId());
 		assertEquals(API_KEY, authRequest.getSecret());
 
-		assertEquals(AUTH_TOKEN, this.fronteggAuthenticator.getAccessToken());
+		assertEquals(AUTH_TOKEN, cut.getAccessToken());
 	}
 
 	@Test
-	public void validateAuthentication_missingAccessToken()
+	public void validateAuthentication_missingAccessToken(@Mock ApiClient mockApiClient)
 	{
-		Whitebox.setInternalState(this.fronteggAuthenticator, "accessToken", null);
-        this.fronteggAuthenticator.validateAuthentication();
-
-		verify(this.fronteggAuthenticator, times(1)).refreshAuthentication();
+		setup(mockApiClient);
+		var cut = new FronteggAuthenticator(CLIENT_ID, API_KEY, config, mockApiClient);
+		cut.validateAuthentication();
+		assertNotNull(cut.getAccessToken());
 	}
 
 	@Test
-	public void validateAuthentication_expiredToken()
+	public void validateAuthentication_expiredToken(@Mock ApiClient mockApiClient)
 	{
-		Whitebox.setInternalState(this.fronteggAuthenticator, "accessTokenExpiry", Instant.now().minusSeconds(5000));
-        this.fronteggAuthenticator.validateAuthentication();
+		setup(mockApiClient);
+		var cut = new FronteggAuthenticator(CLIENT_ID, API_KEY, config, mockApiClient);
+		cut.setAccessTokenExpiry(Instant.now().minusSeconds(5000));
+		cut.validateAuthentication();
 
-		verify(this.fronteggAuthenticator, times(1)).refreshAuthentication();
+		verify(mockApiClient, times(1)).post(anyString(), eq(AuthResponse.class), any(AuthRequest.class));
 	}
 
 	@Test
-	public void validateAuthentication_validToken()
+	public void validateAuthentication_validToken(@Mock ApiClient mockApiClient)
 	{
-		Whitebox.setInternalState(this.fronteggAuthenticator, "accessTokenExpiry", Instant.now().plusSeconds(15000));
-		Whitebox.setInternalState(this.fronteggAuthenticator, "accessToken", AUTH_TOKEN);
-        this.fronteggAuthenticator.validateAuthentication();
+		var cut = new FronteggAuthenticator(CLIENT_ID, API_KEY, config, mockApiClient);
+		cut.setAccessTokenExpiry(Instant.now().plusSeconds(15000));
+		cut.setAccessToken(AUTH_TOKEN);
+		cut.validateAuthentication();
 
-		verify(this.fronteggAuthenticator, times(0)).refreshAuthentication();
+		verify(mockApiClient, times(0)).post(anyString(), eq(AuthResponse.class), any(AuthRequest.class));
 	}
 }

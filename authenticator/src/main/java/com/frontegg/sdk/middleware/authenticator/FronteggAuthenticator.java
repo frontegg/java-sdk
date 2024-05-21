@@ -16,7 +16,7 @@ public class FronteggAuthenticator
 	private final AuthClient authClient;
 	private final FronteggConfig config;
 	private String accessToken;
-	private Instant accessTokenExpiry = Instant.now();
+	private Instant accessTokenExpiry;
 
 	public FronteggAuthenticator(String clientID, String apiKey, FronteggConfig config, ApiClient client)
 	{
@@ -24,6 +24,7 @@ public class FronteggAuthenticator
 		this.apiKey = apiKey;
 		this.config = config;
 		this.authClient = new AuthClient(client);
+		this.accessTokenExpiry = Instant.now();
 	}
 
 	public void authenticate()
@@ -39,7 +40,7 @@ public class FronteggAuthenticator
 		}
 
 		logger.info("Authenticating with frontegg");
-		AuthResponse response = this.authClient.authenticate(this.clientId, this.apiKey, this.config);
+		var response = this.authClient.authenticate(this.clientId, this.apiKey, this.config);
 		this.accessToken = response.getToken();
 		long nextRefresh = (long) (response.getExpiresIn() * 0.8); // refresh after 80% of the expiration time
 		this.accessTokenExpiry = Instant.now().plusSeconds(nextRefresh);
@@ -65,5 +66,15 @@ public class FronteggAuthenticator
 	{
 		validateAuthentication();
 		return this.accessToken;
+	}
+
+	void setAccessToken(String accessToken)
+	{
+		this.accessToken = accessToken;
+	}
+
+	void setAccessTokenExpiry(Instant expiry)
+	{
+		this.accessTokenExpiry = expiry;
 	}
 }

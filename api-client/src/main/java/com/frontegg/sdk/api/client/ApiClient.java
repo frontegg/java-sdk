@@ -2,8 +2,8 @@ package com.frontegg.sdk.api.client;
 
 import com.frontegg.sdk.common.model.FronteggHttpResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 
