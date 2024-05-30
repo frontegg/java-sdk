@@ -12,7 +12,10 @@ public abstract class BaseConfigProvider implements ConfigProvider
 	public FronteggConfig resolveConfigs()
 	{
 		var urlConfig = new FronteggUrlConfig();
-		var baseURL = Optional.ofNullable(this.getBaseUrl(BASE_URL_PROPERTY_KEY)).orElse(DEFAULT_BASE_URL);
+		var baseURL = this.getBaseUrl(BASE_URL_PROPERTY_KEY)
+		                  .filter(s -> !s.isBlank())
+		                  .map(String::trim)
+		                  .orElse(DEFAULT_BASE_URL);
 		urlConfig.setBaseUrl(baseURL);
 
 		try
@@ -43,5 +46,5 @@ public abstract class BaseConfigProvider implements ConfigProvider
 		return fronteggConfig;
 	}
 
-	protected abstract String getBaseUrl(String key);
+	protected abstract Optional<String> getBaseUrl(String key);
 }

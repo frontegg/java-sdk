@@ -1,10 +1,12 @@
 package com.frontegg.sdk.config;
 
+import java.util.Optional;
+
 public class EnvironmentVariableConfigProvider extends BaseConfigProvider
 {
 	@Override
-	protected String getBaseUrl(String key)
+	protected Optional<String> getBaseUrl(String key)
 	{
-		return System.getenv(key).trim();
+		return Optional.ofNullable(System.getenv(key));
 	}
 }
