@@ -1,10 +1,12 @@
 package com.frontegg.sdk.config;
 
+import java.util.Optional;
+
 public class SystemPropertiesConfigProvider extends BaseConfigProvider
 {
 	@Override
-	protected String getBaseUrl(String key)
+	protected Optional<String> getBaseUrl(String key)
 	{
-		return System.getProperty(key).trim();
+		return Optional.ofNullable(System.getProperty(key));
 	}
 }

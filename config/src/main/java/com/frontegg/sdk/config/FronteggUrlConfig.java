@@ -1,5 +1,8 @@
 package com.frontegg.sdk.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class FronteggUrlConfig
 {
 	public static final String DEFAULT_BASE_URL = "https://api.frontegg.com";
@@ -26,14 +29,29 @@ public class FronteggUrlConfig
 	public static FronteggUrlConfig createDefaults()
 	{
 		var urlConfig = new FronteggUrlConfig();
-		urlConfig.baseUrl = DEFAULT_BASE_URL;
-		urlConfig.authenticationService = AUTH_SERVICE_URL;
-		urlConfig.auditsService = AUDITS_SERVICE_URL;
-		urlConfig.tenantsService = TENANT_SERVICE_URL;
-		urlConfig.metadataService = METADATA_SERVICE_URL;
-		urlConfig.teamService = TEAM_SERVICE_URL;
-		urlConfig.eventService = EVENT_SERVICE_URL;
-		urlConfig.identityService = IDENTITY_SERVICE_URL;
+		try
+		{
+			urlConfig.baseUrl = DEFAULT_BASE_URL;
+			var auth = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(AUTH_SERVICE_URL);
+			var audits = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(AUDITS_SERVICE_URL);
+			var metadata = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(METADATA_SERVICE_URL);
+			var tenants = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(TENANT_SERVICE_URL);
+			var team = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(TEAM_SERVICE_URL);
+			var events = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(EVENT_SERVICE_URL);
+			var identity = new URI(urlConfig.baseUrl).parseServerAuthority().resolve(IDENTITY_SERVICE_URL);
+
+			urlConfig.setAuthenticationService(auth.toString());
+			urlConfig.setAuditsService(audits.toString());
+			urlConfig.setMetadataService(metadata.toString());
+			urlConfig.setTenantsService(tenants.toString());
+			urlConfig.setTeamService(team.toString());
+			urlConfig.setEventService(events.toString());
+			urlConfig.setIdentityService(identity.toString());
+		}
+		catch (URISyntaxException e)
+		{
+			throw new RuntimeException(e);
+		}
 		return urlConfig;
 	}
 

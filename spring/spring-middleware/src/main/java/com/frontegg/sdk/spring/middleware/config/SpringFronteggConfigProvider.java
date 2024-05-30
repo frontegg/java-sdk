@@ -5,16 +5,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Order(4)
 @Component
 public class SpringFronteggConfigProvider extends BaseConfigProvider
 {
-	@Value("${frontegg.config.urls.baseUrl:#{''}}")
+	@Value("${frontegg.config.urls.baseUrl:#{null}}")
 	private String baseUrl;
 
 	@Override
-	protected String getBaseUrl(String key)
+	protected Optional<String> getBaseUrl(String key)
 	{
-		return this.baseUrl;
+		return Optional.ofNullable(this.baseUrl);
 	}
 }
