@@ -18,6 +18,9 @@ public class SsoClient
 	private static final String PRE_LOGIN_PATH = SSO_PATH_PREFIX + "/prelogin";
 	private static final String POST_LOGIN_PATH = SSO_PATH_PREFIX + "/postlogin";
 
+	private static final String DEPRECATED_SSO_PATH_PREFIX = "/resources/sso/v1";
+	private static final String DEPRECATED_PRE_LOGIN_PATH = DEPRECATED_SSO_PATH_PREFIX + "/prelogin";
+
 	private static final String SAML_PATH = SSO_PATH_PREFIX + "/saml";
 	private static final String SAML_CONFIGURATIONS_PATH = SAML_PATH + "/configurations";
 	private static final String SAML_VENDOR_CONFIG_PATH = SAML_CONFIGURATIONS_PATH + "/vendor-config";
@@ -35,10 +38,6 @@ public class SsoClient
 
 	public String preLogin(String payload)
 	{
-//		new URI(this.fronteggConfig.getUrlConfig().getTeamService())
-//				.parseServerAuthority()
-//				.resolve(PRE_LOGIN_PATH)
-//				.resolve()
 		var urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + PRE_LOGIN_PATH;
 		var response = this.apiClient.post(urlPath, Object.class, withHeaders(), new SsoRequest(payload));
 		validateStatus(urlPath, response);
@@ -49,6 +48,20 @@ public class SsoClient
 		                             .orElse(null);
 		return locationHeader != null ? locationHeader.getValue() : null;
 	}
+
+	public String preLoginWithEmailOrTenantId(String payload)
+	{
+		var urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + DEPRECATED_PRE_LOGIN_PATH;
+		var response = this.apiClient.post(urlPath, Object.class, withHeaders(), new SsoRequest(payload));
+		validateStatus(urlPath, response);
+		var locationHeader = response.getHeaders()
+		                             .stream()
+		                             .filter(fh -> fh.getName().equals("location"))
+		                             .findFirst()
+		                             .orElse(null);
+		return locationHeader != null ? locationHeader.getValue() : null;
+	}
+
 
 	public Object postLogin(SamlResponse samlResponse)
 	{
