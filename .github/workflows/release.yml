@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - "main"
+permissions:
+  actions: read
+  checks: write
+  contents: write
+  
+  
+
 env:
   LANG: en_US.UTF-8
 jobs:
@@ -13,6 +20,7 @@ jobs:
     if: |
       github.repository == 'frontegg/java-sdk' &&
       !startsWith(github.event.head_commit.message, '[maven-release-plugin]')
+      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
