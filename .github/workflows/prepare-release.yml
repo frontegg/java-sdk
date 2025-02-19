@@ -1,4 +1,4 @@
-name: Frontegg Java SDK - create release
+name: Frontegg Java SDK - prepare release
 
 on:
   push:
