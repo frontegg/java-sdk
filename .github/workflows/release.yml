@@ -17,6 +17,9 @@ jobs:
   release:
     name: Release the new version
     runs-on: ubuntu-latest
+    if: |
+      github.repository == 'frontegg/java-sdk' &&
+      startsWith(github.event.head_commit.message, '[maven-release-plugin]')
     steps:
       - id: create_bot_token
         name: Create bot token
