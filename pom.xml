@@ -147,6 +147,7 @@
                         <configuration>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <serverId>ossrh</serverId>
+                            <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                             <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
                             <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
