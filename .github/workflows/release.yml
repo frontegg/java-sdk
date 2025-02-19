@@ -28,7 +28,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_FRONTEGG_BOT_APP_ID }}
           private_key: ${{ secrets.GH_FRONTEGG_BOT_APP_SECRET }}
-      - id: TODO remove
+      - id: todo_remove
         run: echo ${{ github.ref }}
 
   #     - name: Checkout repo

@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "main"
+    tags-ignore:
+      - v*
 permissions:
   actions: read
   checks: write
@@ -42,7 +44,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'adopt'
+          distribution: "adopt"
           server-id: ossrh
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
