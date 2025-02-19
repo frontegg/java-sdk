@@ -27,8 +27,7 @@ jobs:
           app_id: ${{ secrets.GH_FRONTEGG_BOT_APP_ID }}
           private_key: ${{ secrets.GH_FRONTEGG_BOT_APP_SECRET }}
       - id: todo_remove
-        run: echo ${{ github.sha }}
-
+        run: echo ${{ github.sha }} ${{ github.event.head_commit.message }}
   #     - name: Checkout repo
   #       uses: actions/checkout@v4
   #       with:
