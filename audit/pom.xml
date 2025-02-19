@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.frontegg.sdk</groupId>
 		<artifactId>java-sdk</artifactId>
-		<version>0.0.25</version>
+		<version>0.0.26-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
