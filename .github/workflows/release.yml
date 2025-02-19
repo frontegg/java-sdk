@@ -15,9 +15,8 @@ env:
   LANG: en_US.UTF-8
 jobs:
   release:
-    name: Release new version
+    name: Release the new version
     runs-on: ubuntu-latest
-    needs: build-and-test
     steps:
       - id: create_bot_token
         name: Create bot token

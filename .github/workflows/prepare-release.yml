@@ -14,8 +14,8 @@ permissions:
 env:
   LANG: en_US.UTF-8
 jobs:
-  build-and-test:
-    name: Build JDK 17
+  prepare-version:
+    name: Prepare for release
     runs-on: ubuntu-latest
     if: |
       github.repository == 'frontegg/java-sdk' &&
