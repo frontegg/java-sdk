@@ -5,7 +5,7 @@
     <groupId>com.frontegg.sdk</groupId>
     <artifactId>java-sdk</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.20-SNAPSHOT</version>
+    <version>0.0.20</version>
 
     <licenses>
         <license>
@@ -22,7 +22,7 @@
         <connection>scm:git:https://github.com/frontegg/java-sdk.git</connection>
         <developerConnection>scm:git:https://github.com/frontegg/java-sdk.git</developerConnection>
         <url>https://github.com/frontegg/java-sdk</url>
-        <tag>v0.0.16</tag>
+        <tag>v0.0.20</tag>
     </scm>
 
     <organization>
