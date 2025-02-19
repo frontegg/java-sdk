@@ -1,4 +1,4 @@
-name: Frontegg Java SDK - create release
+name: Frontegg Java SDK - release
 
 on:
   push:
@@ -8,8 +8,6 @@ permissions:
   actions: read
   checks: write
   contents: write
-  
-  
 
 env:
   LANG: en_US.UTF-8
