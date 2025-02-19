@@ -19,8 +19,8 @@
     <url>https://github.com/frontegg/java-sdk</url>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:frontegg/java-sdk.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:frontegg/java-sdk.git</developerConnection>
+        <connection>scm:git:git@github.com:frontegg/java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:frontegg/java-sdk.git</developerConnection>
         <url>https://github.com/frontegg/java-sdk</url>
         <tag>v@{project.version}</tag>
     </scm>
