@@ -18,9 +18,9 @@
     <description>Frontegg Java SDK parent project</description>
     <url>https://github.com/frontegg/java-sdk</url>
 
-    <scm>
-        <connection>scm:git:git@github.com:frontegg/java-sdk.git</connection>
-        <developerConnection>scm:git:git@github.com:frontegg/java-sdk.git</developerConnection>
+   <scm>
+        <connection>scm:git:https://github.com/frontegg/java-sdk.git</connection>
+        <developerConnection>scm:git:https://github.com/frontegg/java-sdk.git</developerConnection>
         <url>https://github.com/frontegg/java-sdk</url>
         <tag>v@{project.version}</tag>
     </scm>
