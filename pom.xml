@@ -158,7 +158,7 @@
                         <configuration>
                             <tagNameFormat>v@{project.version}</tagNameFormat>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
-                            <branchName>release/v@{project.version}</branchName>
+                            <updateWorkingCopyVersions>false</updateWorkingCopyVersions>
                             <pushChanges>true</pushChanges>
                         </configuration>
                     </plugin>
