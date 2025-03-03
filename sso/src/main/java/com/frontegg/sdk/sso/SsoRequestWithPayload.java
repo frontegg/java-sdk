@@ -1,14 +1,11 @@
 package com.frontegg.sdk.sso;
 
-public class SsoRequestPayload
+public class SsoRequestWithPayload
 {
 	private String payload;
 
-	public SsoRequestPayload()
-	{
-	}
 
-	public SsoRequestPayload(String payload)
+	public SsoRequestWithPayload(String payload)
 	{
 		this.payload = payload;
 	}
