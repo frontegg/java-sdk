@@ -52,7 +52,7 @@ public class SsoClient
 	public String preLoginWithEmailOrTenantId(String payload)
 	{
 		var urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + DEPRECATED_PRE_LOGIN_PATH;
-		var response = this.apiClient.post(urlPath, Object.class, withHeaders(), new SsoRequest(payload));
+		var response = this.apiClient.post(urlPath, Object.class, withHeaders(), new SsoRequestWithPayload(payload));
 		validateStatus(urlPath, response);
 		var locationHeader = response.getHeaders()
 		                             .stream()
