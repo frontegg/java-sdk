@@ -21,7 +21,7 @@ public class SsoClient
 	private static final String DEPRECATED_SSO_PATH_PREFIX = "/resources/sso/v1";
 	private static final String DEPRECATED_PRE_LOGIN_PATH = DEPRECATED_SSO_PATH_PREFIX + "/prelogin";
 
-	private static final String SAML_PATH = SSO_PATH_PREFIX + "/saml";
+	private static final String SAML_PATH = DEPRECATED_SSO_PATH_PREFIX + "/saml";
 	private static final String SAML_CONFIGURATIONS_PATH = SAML_PATH + "/configurations";
 	private static final String SAML_VENDOR_CONFIG_PATH = SAML_CONFIGURATIONS_PATH + "/vendor-config";
 
