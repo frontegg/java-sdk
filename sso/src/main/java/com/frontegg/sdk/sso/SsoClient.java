@@ -20,6 +20,7 @@ public class SsoClient
 
 	private static final String DEPRECATED_SSO_PATH_PREFIX = "/resources/sso/v1";
 	private static final String DEPRECATED_PRE_LOGIN_PATH = DEPRECATED_SSO_PATH_PREFIX + "/prelogin";
+	private static final String DEPRECATED_POST_LOGIN_PATH = DEPRECATED_SSO_PATH_PREFIX + "/postlogin";
 
 	private static final String SAML_PATH = DEPRECATED_SSO_PATH_PREFIX + "/saml";
 	private static final String SAML_CONFIGURATIONS_PATH = SAML_PATH + "/configurations";
@@ -73,6 +74,18 @@ public class SsoClient
 		validateStatus(urlPath, response);
 		return response.getBody();
 	}
+
+	public Object postLoginWithEmailOrTenantId(SamlResponse samlResponse)
+	{
+		var urlPath = this.fronteggConfig.getUrlConfig().getTeamService() + DEPRECATED_POST_LOGIN_PATH;
+		var explicitValues = new HashMap<String, String>();
+		explicitValues.put("SAMLResponse", samlResponse.getSAMLResponse());
+		explicitValues.put("RelayState", samlResponse.getRelayState());
+		var response = this.apiClient.post(urlPath, Object.class, withHeaders(), explicitValues);
+		validateStatus(urlPath, response);
+		return response.getBody();
+	}
+
 
 	/**
 	 * Returns the vendor SSO config
